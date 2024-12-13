@@ -21,7 +21,7 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=SPOTIPY_CLIENT_ID,
 
 # Conversational function
 def speak(text):
-    text = "Hello. I am your robot assistant. How can I help you today?"
+    text = "Hello. I am your Spotify player. How can I assist you today?"
     tts = gTTS(text=text, lang='en')
     tts.save("pcvoice.mp3")
     os.system("start pcvoice.mp3")
@@ -70,7 +70,7 @@ def play_track(song_name):
 
 # Main function
 def main():
-    speak("Hello, I am your robot assistant. How can I help you today?")
+    speak("Hello, I am your Spotify player. How can I assist you today?")
     while True:
         command = recognize_speech()
         if "play" in command:
