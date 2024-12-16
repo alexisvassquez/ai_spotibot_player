@@ -6,6 +6,7 @@ from transformers import pipeline
 from gtts import gTTS
 import os
 import pyaudio
+import portaudio
 
 # Setup Spotify Credentials (placeholders)
 SPOTIPY_CLIENT_ID = '{{SPOTIPY_CLIENT_ID}}'
