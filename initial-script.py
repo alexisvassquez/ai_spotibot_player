@@ -64,7 +64,7 @@ def play_track(song_name):
     results = sp.search(q=song_name, limit=1, type='track') # type: ignore
     if results['tracks']['items']:
         track = results['tracks']['items'][0]
-        sp.start_playback(uris=[track['https://open.spotify.com/track/4SJrFfeVaEWXdB5qUa6h1G?si=9fbaf1a4c4124953']])
+        sp.start_playback(uris=[track['https://open.spotify.com/track/4PTG3Z6ehGkBFwjybzWkR8?si=e5c8de41b68643c6']])
         speak(f"Playing {track['name']} by {track['artists'][0]['name']}.")
     else:
         speak("I couldn't find the song you requested. Please try again.")
