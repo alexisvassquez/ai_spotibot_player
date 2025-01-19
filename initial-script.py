@@ -1,5 +1,5 @@
 # Necessary APIs (pip install)
-import speech_recognition as sr
+import speechRecognition as sr
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from transformers import pipeline
