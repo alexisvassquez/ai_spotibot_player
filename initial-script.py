@@ -1,4 +1,4 @@
-# Necessary APIs (pip install)
+# Libraries and APIs install
 import speechRecognition as sr
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
@@ -9,8 +9,8 @@ import pyaudio
 import portaudio
 
 # Setup Spotify Credentials (placeholders)
-SPOTIPY_CLIENT_ID = '{{SPOTIPY_CLIENT_ID}}'
-SPOTIPY_CLIENT_SECRET = '{{SPOTIPY_CLIENT_SECRET}}'
+SPOTIPY_CLIENT_ID = 'b81aee4d918e419e9223fb91662ae5cf'
+SPOTIPY_CLIENT_SECRET = 'c01c4ea2755e4546ac46eaf6779c3861'
 SPOTIPY_REDIRECT_URI = 'http://localhost:8888/callback'
 SCOPE = 'user-read-playback-state user-modify-playback-state user-read-currently-playing'
 
@@ -61,7 +61,7 @@ def detect_mood(text):
 
 # Spotify control
 def play_track(song_name):
-    results = sp.search(q=song_name, limit=1, type='track') # type: ignore
+    results = sp.search(q=song_name, limit=1, type='track')
     if results['tracks']['items']:
         track = results['tracks']['items'][0]
         sp.start_playback(uris=[track['https://open.spotify.com/track/4PTG3Z6ehGkBFwjybzWkR8?si=e5c8de41b68643c6']])
@@ -94,3 +94,73 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# Mood LED Architecture
+import serial
+import random
+
+class LEDController:
+	def __init__(self, port: str, baudrate: int = 9600): 
+	# LEDController port will be replaced
+		try:
+			self.serial_connection = serial.Serial(port, baudrate)
+			print ("Serial connection established.")
+		except serial.SerialException as e:
+			print (f"Error initializing serial connection: {e}")
+			self.serial_connection = None
+	
+	def send_color(self, color: tuple): 
+	# Send RGB color to LED controller. Tuple of (R,G,B) values.
+	if self.serial_connection:
+		try:
+			color_command = f"{color[0]},{color[1]},{color[2]}\n"
+			print (f"Sending color: {color_command.strip()}")
+			self.serial_connection.write(color_command.encode())
+		except serial.SerialException as e:
+			print (f"Error sending color data: {e}")
+	else:
+		print ("No serial connection available.")
+	
+	def close_connection(self):
+		if self.serial_connection:
+			self.serial_connection.close()
+			print ("Serial connection closed.")
+
+class MoodDetector:
+	def __init__(self):
+		self.mood_color_map = {
+			'happy': (255, 223, 0), # Yellow
+			'calm': (171, 71, 188), # Purple
+			'energetic': (255, 109, 0), # Orange
+			'sad': (41, 98, 255), # Blue
+			'relaxed': (0, 255, 128) # Green
+			'angry': (213, 0, 0) # Red
+		}
+
+	def detect_mood(self, input_data: str) -> str:
+	# Dummy mood detection logic. To replace with actual ML model or API call. 
+	moods = list(self.mood_color_map.keys())
+	detected_mood = random.choice(moods) # Select random mood for testing purposes
+	print (f"Detected mood: {detected_mood}")
+	return detected_mood
+	
+	def get_color_for_mood(self, mood: str) -> tuple:
+		return self.mood_color_map.get(mood, (255, 255, 255)) # White default
+
+if __name__ == "__main__": # Initialize components
+	led_controller = LEDController(port='/dev/ttyUSB0')
+	# LEDController port will be replaced
+	mood_detector = MoodDetector()
+
+	try:
+		while True:
+		# User input/audio data simulation for testing
+		user_input = input("Enter audio or press Enter for random mood detection: ")
+		mood = mood_detector.detect_mood(user_input)
+		color = mood_detector.get_color_for_mood(mood)
+		led_controller.send_color(color)
+	
+	except KeyboardInterrupt:
+		print ("Exiting program...")
+	finally:
+		led_controller.close_connection() 
