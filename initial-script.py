@@ -9,8 +9,8 @@ import pyaudio
 import portaudio
 
 # Setup Spotify Credentials (placeholders)
-SPOTIPY_CLIENT_ID = 'b81aee4d918e419e9223fb91662ae5cf'
-SPOTIPY_CLIENT_SECRET = 'c01c4ea2755e4546ac46eaf6779c3861'
+SPOTIPY_CLIENT_ID = '{{SPOTIPY_CLIENT_ID}}'
+SPOTIPY_CLIENT_SECRET = '{{SPOTIPY_CLIENT_SECRET}}'
 SPOTIPY_REDIRECT_URI = 'http://localhost:8888/callback'
 SCOPE = 'user-read-playback-state user-modify-playback-state user-read-currently-playing'
 
