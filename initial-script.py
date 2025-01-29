@@ -222,7 +222,3 @@ void setLEDColor(int r, int g, int b) {
     }
         FastLED.show();
 }
-
-        }
-        FastLED.show();
-}
