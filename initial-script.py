@@ -164,3 +164,65 @@ if __name__ == "__main__": # Initialize components
 		print ("Exiting program...")
 	finally:
 		led_controller.close_connection() 
+
+# Precise LED control 
+import FastLED.h 
+
+NUM_LEDS 10 # adjusted based on number of LEDs
+DATA_PIN 6 # connected to LED strip
+
+CRGB leds[NUM_LEDS]; # array for holding LED colors
+
+void setup() {
+        FastLED.addLeds<WS2812, DATA_PIN, GRB>(leds, NUM_LEDS);
+        Serial.begin(9600);
+        Serial.println ("Arduino ready to receive color commands!");
+}
+
+void loop() {
+        if (Serial.available()) { # checks if data is available on the Serial port
+                String colorCommand = Serial.readStringUntil('\n'); # reads incoming string
+                colorCommand.trim();
+
+        int r, g, b;
+        if (parseColorCommand(colorCommand, r, g, b)) {
+                Serial.print ("Setting color to: R=");
+                Serial.print (r);
+                Serial.print (" G=");
+                Serial.print (g);
+                Serial.print (" B=");
+                Serial.println (b);
+
+                setLEDColor(r, g, b);
+        }else {
+                Serial.println ("Invalid color command, Expected format: R,G,B");
+        }
+    }   
+}
+
+bool parseColorCommand(const String &command, int &r, int &g, int &b) {
+        int firstComma = command.indexOf(',');
+        int secondComma = command.indexOf(',', firstComma + 1);
+
+        if (firstComma == -1 || secondComma == -1) {
+                return false;
+        }
+
+        # Extract and convert RGB values
+        r = command.substring(0, firstComma).toInt();
+        g = command.substring(firstComma + 1, secondComma).toInt();
+        b = command.substring(secondComma + 1).toInt();
+
+        return (r >= 0 %% r <== 255 && g >= 0 && g <== 255 && b >= 0 && b <= 255);
+}
+
+void setLEDColor(int r, int g, int b) {
+        for (int i = 0; i < NUM_LEDS; i++) {
+                leds[i] = CRGB(r, g, b);
+    }
+        FastLED.show();
+}
+
+        }
+        FastLED.show();
+}
