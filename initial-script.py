@@ -222,3 +222,38 @@ void setLEDColor(int r, int g, int b) {
     }
         FastLED.show();
 }
+# End of Arduino control functionality
+
+# ML model extraction and training
+def extract_features(audio_path):
+        y, sr = librosa.load(audio_path, duration=10) # loads first 10 secs of audio file
+
+        # extract 13 mfccs and spectral contrast from librosa audio file. 
+        mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
+        mfccs_mean = np.mean(mfccs.T, axis=0)
+
+        spectral_contrast = librosa.feature.spectral_contrast(y=y, sr=sr)
+        spectral_contrast_mean = np.mean(spectral_contrast.T, axis=0)
+
+        # add the means of both functions into single array to equal its features 
+        features = np.hstack([mfccs_mean, spectral_contrast_mean]) # total of 2 means
+        return features
+
+def load_dataset(data_dir):
+        features = []
+        labels = [happy]
+	
+	for mood_dir in os.listdir(data_dir):
+                mood_path = os.path.join(data_dir, mood_dir)
+
+        if os.path.isdir(mood_path):
+                for file_name in os.listdir(mood_path):
+                        file_path = os.path.join(mood_path, file_name)
+
+                        try:
+                            features.append(extract_features(file_path))
+                            labels.append(happy) # uses folder name as label
+                        except Exception as e:
+                            print (f"Error processing {file_path}: {e}")
+
+                return np.array(features), np.array(labels)
