@@ -115,6 +115,10 @@ class LEDController:
 	
 	def send_color(self, color: tuple): 
 	# Send RGB color to LED controller. Tuple of (R,G,B) values.
+	""
+	Send RGB color to the LED controller.
+		:param color: Tuple of (R, G, B) values.
+	""
 	if self.serial_connection:
 		try:
 			color_command = "{color[0]},{color[1]},{color[2]}\n"
@@ -122,6 +126,18 @@ class LEDController:
 			self.serial_connection.write(color_command.encode())
 		except serial.SerialException as e:
 			print ("Error sending color data: {e}")
+	else:
+		print ("No serial connection available.")
+
+	# Send lighting patterns to LED controller.
+	def send_pattern(self, pattern_name: str):
+	""
+	Send predefined lighting pattern to the LED controller.
+		:param pattern_name: Name of the lighting pattern.
+	""
+	if self.serial_connection:
+		print ("Sending pattern command: {pattern_name}")
+		self.serial_connection.write("PATTERN:{pattern_name}\n".encode())
 	else:
 		print ("No serial connection available.")
 	
@@ -139,6 +155,14 @@ class MoodDetector:
 			'sad': (41, 98, 255), # Blue
 			'relaxed': (0, 255, 128) # Green
 			'angry': (213, 0, 0) # Red
+		}
+		self.mood_pattern_map = {
+			'happy': 'blink',
+			'calm': 'wave',
+			'energetic': 'chase',
+			'sad': 'fade',
+			'relaxed': 'sparkle',
+			'angry': 'strobe'
 		}
 
 	def detect_mood(self, input_data: str) -> str:
@@ -168,7 +192,10 @@ if __name__ == "__main__": # Initialize components
 		user_input = input("Enter audio or press Enter for random mood detection: ")
 		mood = mood_detector.detect_mood(user_input)
 		color = mood_detector.get_color_for_mood(mood)
+		pattern = mood_detector.get_color_for_mood(mood)
 		led_controller.send_color(color)
+		time.sleep(0.5) # brief delay before sending pattern
+		led_controller.send_pattern(pattern)
 	
 	except KeyboardInterrupt:
 		print ("Exiting program...")
