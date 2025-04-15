@@ -1,0 +1,11 @@
+gTTS
+joblib
+librosa
+numpy
+PyAudio
+scikit-learn
+pyserial
+SpeechRecognition
+sounddevice
+spotipy
+transformers
