@@ -1,0 +1,49 @@
+# === Python ===
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+myenv/
+venv/
+
+# === CMake & Build ===
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.o
+*.a
+*.so
+*.dll
+
+# === Executables ===
+*.out
+*.exe
+spotibot_exec
+
+# === Logs & Debug ===
+*.log
+*.trace
+
+# === Audio & Media Files ===
+*.wav
+*.mp3
+*.flac
+*.aiff
+*.m4a
+
+# === System ===
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# === VSCode or JetBrains IDEs (optional) ===
+.vscode/
+.idea/
+
+# === Git ===
+*.swp
+*.swo
