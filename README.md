@@ -1,13 +1,13 @@
-# Spotibot - AI-Powered Modular Music Production Tool for Indie Artists & Creators 
+# AudioMIX / Spotibot - AI-Powered Modular Music Production Tool for Indie Artists & Creators 
 
 ---
 
-Meet **Spotibot** - an open-source and intelligent artist-friendly music tool. Spotibot 
+Meet **AudioMIX** and its first test use case, **Spotibot** - an open-source and intelligent artist-friendly music tool. Spotibot 
 features AI-powered audio analysis and mood-aware music interaction.
 
 ---
 
-Spotibot's LED light can match its colors and song or playlist suggestions to 
+AudioMIX's LED light can match its colors and song or playlist suggestions to 
 the user's mood through the phenomenon of mood detection. 
 **Small and simple, yet technical and powerful at the same time.**
 
@@ -29,12 +29,12 @@ I update this repo continuously via my local terminal. :)
 ---
 
 ## License
-MIT (open-source and free to use for indie artists)
+GNU General Public License v3 (open-source and free to use for indie artists, please refer to LICENSE.txt)
 
 ---
 
 ## Project Modules
-Spotibot is modular by design, allowing for rapid extension into a full-scale music AI and 
+AudioMIX is modular by design, allowing for rapid extension into a full-scale music AI and 
 production framework. The system will be organized into the following key components:
 
 ### 1. audio/extraction.py
@@ -62,7 +62,7 @@ production framework. The system will be organized into the following key compon
 
 ---
 
-### 3. audio/audio-utils.cpp + audio_utils.h + pulseaudio_oss.sh + led_response.cpp
+### 3. audio/main.cpp + audio_utils.h + pulseaudio_oss.sh + led_response.cpp
 **Purpose:** Real-time audio playback + mood-responsive LED control
 **Current Capabilities:**
 - C++ PortAudio-based playback 
@@ -98,7 +98,7 @@ production framework. The system will be organized into the following key compon
 ---
 
 ## System Map (Coming Soon)
-I will publish a full architectural diagram of how Spotibot's components connect across 
+I will publish a full architectural diagram of how AudioMIX + Spotibot's components connect across 
 Python + C++ + frontend.
 **Spotibot will rave. Thank you :)**
 
