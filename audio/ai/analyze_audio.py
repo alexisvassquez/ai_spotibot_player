@@ -3,10 +3,22 @@ import json
 import sys
 import numpy as np
 # import sounddevice as sd
+from pydub import AudioSegment
+import tempfile
 import os
 import time
 
+def convert_to_wav(input_path):
+    audio = AudioSegment.from_file(input_path) # Load original file (mp3, flac, etc.)
+    audio = audio.set_frame_rate(44100).set_channels(2).normalize() # Normalize + ensure consistent sample rate/channel format
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as temp_wav: # Export to temp .wav file
+        audio.export(temp_wave.name, format="wav")
+        return temp_wav.name
+
 def analyze(file_path, sr=22050, duration=None, hop_length=1024, verbose=True):
+    wav_path = convert_to_wav(file_path)
+    y, sr = librosa.load(wav_path, sr=None)
+
     start_time = time.time()
 
     y, sr = librosa.load(file_path, sr=sr, duration=duration)
