@@ -1,5 +1,5 @@
-from .controller import LightController
-from .color_profiles import get_color_for_mood, get_pattern_for_mood
+from controller import LightController
+from color_profiles import get_color_for_mood, get_pattern_for_mood
 
 def react_to_audio(mood, bpm):
     led = LightController()
@@ -13,4 +13,4 @@ def react_to_audio(mood, bpm):
     else:
         led.fade_to(color, duration=2.0)
 
-return color
+    return color

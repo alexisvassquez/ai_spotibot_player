@@ -1,5 +1,8 @@
 import json
 import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../led')))
+
 from fastapi import FastAPI
 from pydantic import BaseModel
 from controller import LightController
@@ -25,7 +28,7 @@ try:
     react_to_audio(mood, bpm)
 
 except Exception as e:
-    print (f'[ERROR] {e}")
+    print (f"[ERROR] {e}")
     sys.exit(1)
 
 class LEDRequest(BaseModel):
@@ -36,11 +39,11 @@ class LEDRequest(BaseModel):
 
 @app.post("/led")
 def control_led(req: LEDRequest):
-    if req.mode == "pulse"
+    if req.mode == "pulse":
          led.pulse(req.rgb, req.bpm)
-    elif req.mode == "fade"
+    elif req.mode == "fade":
          led.fade_to(req.rgb, req.duration)
-    elif req.mode == "strobe"
+    elif req.mode == "strobe":
          led.strobe(req.rgb, req.bpm)
     else:
          led.set_color(req.rgb)
