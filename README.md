@@ -2,14 +2,12 @@
 
 ---
 
-Meet **AudioMIX** and its first test use case, **Spotibot** - an open-source and intelligent artist-friendly music tool. Spotibot 
-features AI-powered audio analysis and mood-aware music interaction.
+Meet **AudioMIX** and its first test use case, **Spotibot** - an open-source and intelligent artist-friendly music tool. Spotibot features AI-powered audio analysis and mood-aware music interaction.
 
 ---
 
-AudioMIX's LED light can match its colors and song or playlist suggestions to 
-the user's mood through the phenomenon of mood detection. 
-**Small and simple, yet technical and powerful at the same time.**
+AudioMIX's LED light can match its colors and song or playlist suggestions to the user's mood through the phenomenon of mood detection. 
+**Modular, expressive, and built for real-time creative performance.**
 
 ---
 
@@ -24,9 +22,16 @@ I update this repo continuously via my local terminal. :)
 - Spotify integration: import playlists, analyze mood tracks (in development)
 - LED output logic for physical interaction
 - Modular codebase (using Python + C/C++)
+- **Live performance engine** for real-time interaction and show control (in development)
+- **CLI-parseable JSON output** for mood + BPM classification
 - Built with musicians in mind
 
 ---
+## 📜 Ethical AI
+AudioMIX follows an open-source, emotionally-aware, and artist-first development philosophy.  
+See [ETHICAL_AI_MANIFESTO.md](./ETHICAL_AI_MANIFESTO.md) for our creative mission and guiding principles.
+
+--
 
 ## License
 GNU General Public License v3 (open-source and free to use for indie artists, please refer to LICENSE.txt)
@@ -34,8 +39,7 @@ GNU General Public License v3 (open-source and free to use for indie artists, pl
 ---
 
 ## Project Modules
-AudioMIX is modular by design, allowing for rapid extension into a full-scale music AI and 
-production framework. The system will be organized into the following key components:
+AudioMIX is modular by design, allowing for rapid extension into a full-scale music AI and production framework. The system will be organized into the following key components:
 
 ### 1. audio/extraction.py
 **Purpose:** Feature extraction from audio files
@@ -90,16 +94,28 @@ production framework. The system will be organized into the following key compon
 **Current Format:**
 - Metadata syncing with Spotify API
 - Manual labeling for mood, BPM, genre
+- JSON parsing logic per track
 **Future Expansion:**
-- JSON + CSV per track
+- CSV per track
 - Open contributor mood tag dataset
 - Dataset visualizer UI
 
 ---
 
+### 6. led-service/
+**Purpose:** LED control microservice for live color pattern output based on mood/BPM JSON input  
+**Current Capabilities:**
+- CLI-parseable JSON endpoint (e.g. `python main.py '{"mood": "hype", "bpm": 135}'`)
+- Pattern selection (strobe, pulse, fade)
+- Mood → RGB mapping with custom color profiles  
+**Future Expansion:**
+- Socket-based live trigger events
+- DMX lighting integration for venue-scale output
+
+---
+
 ## System Map (Coming Soon)
-I will publish a full architectural diagram of how AudioMIX + Spotibot's components connect across 
-Python + C++ + frontend.
+I will publish a full architectural diagram of how AudioMIX + Spotibot's components connect across Python + C++ + frontend.
 **Spotibot will rave. Thank you :)**
 
 ---
@@ -120,3 +136,4 @@ pip install -r requirements.txt
 mkdir build && cd build
 cmake ..
 make
+```
