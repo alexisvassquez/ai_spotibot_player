@@ -1,8 +1,8 @@
-# AudioMIX / Spotibot - AI-Powered Modular Music Production Tool for Indie Artists & Creators 
+# AudioMIX / Spotibot - AI-Powered Modular Music Production Tool for Independent Artists & Creators 
 
 ---
 
-Meet **AudioMIX** and its first test use case, **Spotibot** - an open-source and intelligent artist-friendly music tool. Spotibot features AI-powered audio analysis and mood-aware music interaction.
+Meet **AudioMIX** and its first test use case, **Spotibot** - an open-source and intelligent artist-friendly music tool. AudioMIX features AI-powered audio analysis and mood-aware music interaction.
 
 ---
 
@@ -27,11 +27,12 @@ I update this repo continuously via my local terminal. :)
 - Built with musicians in mind
 
 ---
-## 📜 Ethical AI
+
+## Ethical AI
 AudioMIX follows an open-source, emotionally-aware, and artist-first development philosophy.  
 See [ETHICAL_AI_MANIFESTO.md](./ETHICAL_AI_MANIFESTO.md) for our creative mission and guiding principles.
 
---
+---
 
 ## License
 GNU General Public License v3 (open-source and free to use for indie artists, please refer to LICENSE.txt)
@@ -116,7 +117,7 @@ AudioMIX is modular by design, allowing for rapid extension into a full-scale mu
 
 ## System Map (Coming Soon)
 I will publish a full architectural diagram of how AudioMIX + Spotibot's components connect across Python + C++ + frontend.
-**Spotibot will rave. Thank you :)**
+**AudioMIX will rave. Thank you :)**
 
 ---
 
