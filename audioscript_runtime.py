@@ -1,6 +1,46 @@
+import sys
+import os
+import importlib
+from performance_engine.modules.context import command_registry
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 USE_EMOJIS = True
+USE_SYMBOLS = True
+VERBOSE = False # Set to True for debugging logs
+ 
+def load_modules():
+    module_dir = "performance_engine/modules"
+    for file in os.listdir(module_dir):
+        if file.endswith(".py") and not file.startswith("__"):
+            mod_path = f"performance_engine.modules.{file[:-3]}" # dot-path
+            mod_path = mod_path.replace("-", "_") # for safety
+            module = importlib.import_module(mod_path)
+            try:
+                module = importlib.import_module(mod_path)
+                if hasattr(module, "register"):
+                    registered = module.register()
+                    if registered:
+                        if VERBOSE:                        
+                            say(f"Registering from {file}: {list(registered.keys())}", "🧠")
+                        command_registry.update(registered)
+                    elif VERBOSE:                    
+                        say(f"⚠️ {file} register() returned nothing", "❓")
+                elif VERBOSE:
+                    say(f"⚠️ No register() in {file}", "🚫")
+            except Exception as e:
+                if VERBOSE:
+                    say(f"❌ Failed to import {file}: {e}", "💥")
 
 def say(text, emoji=""):
+    from audioscript_runtime import USE_EMOJIS, USE_SYMBOLS
+
+    # Replace visual symbols with Unicode-safe versions
+    if USE_EMOJIS and emoji:
+        text = text.replace("->", "\u2192")
+        text = text.replace("=>", "\u21D2")
+        text = text.replace("<-", "\u2190")
+
     if USE_EMOJIS and emoji:
         print (f"{emoji} {text}")
     else:
@@ -18,43 +58,61 @@ def pulse(color, bpm):
 def mood_set(mood):
     say(f"[MOOD] context set to: {mood}", "🎼")
 
-# Registry maps script calls to Python functions
-command_registry = {
-    "glow": glow,
-    "play": play,
-    "pulse": pulse,
-    "mood.set": mood_set,
-}
-
 # Basic Command Parser
 def parse_and_execute(line):
     line = line.strip()
-    if line.startswith("mood.set("):
-        arg = line[len("mood.set("):-1].strip('"')
-        mood_set(arg)
-    elif line.startswith("glow("):
-        arg = line[len("glow("):-1].strip('"')
-        glow(arg)
-    elif line.startswith("play("):
-        arg = line[len("play("):-1].strip('"')
-        play(arg)
-    elif line.startswith("pulse("):
-        inside = line[len("pulse("):-1]
-        color, bpm = [x.strip().strip('"') for x in inside.split(",")]
-        pulse(color, int(bpm))
+
+    if line.startswith("#") or not line:
+        return # ignore comments and blank lines
+
+    if "(" in line and line.endswith(")"):
+        command, arg_str = line.split("(", 1)
+        arg_str = arg_str[:-1] # Remove trailing ")"
+
+        if "@" in arg_str:
+            parts = [p.strip().strip('"') for p in arg_str.split("@")]
+        else: 
+            parts = [p.strip().strip('"') for p in arg_str.split(",")]
+
+        func = command_registry.get(command)
+        if func:
+            try:
+                func(*parts)
+            except Exception as e:
+                say(f"[ERROR] Execution failed: {e}", "❌")
+        else:
+            say(f"[ERROR] Unknown command: {command}", "⚠️")
     else:
-        say(f"[ERROR] Unknown command: {line}", "⚠️")
+        say(f"[ERROR] Invalid syntax: {line}", "❕")
 
 # Interactive Loop
 def main():
-    global USE_EMOJIS
+    global USE_EMOJIS, USE_SYMBOLS
     import sys
+
     if "--no-emoji" in sys.argv:
         USE_EMOJIS = False
+    if "--no-symbols" in sys.argv:
+        USE_SYMBOLS = False
+    if "--debug" in sys.argv:
+        VERBOSE = True
+
+    # Load command modules after global settings are set
+    load_modules()
 
     say("Welcome to AudioMIX - AudioScript Shell v0.1", "🎚️")
     say("Type AudioScript commands below. Ctrl+C to exit.\\n")
 
+    # Check for script file
+    for arg in sys.argv[1:]:
+        if arg.endswith(".audioscript") or arg.endswith(".as"):
+            say(f"Running AudioScript file: {arg}", "▶️")
+            with open(arg, "r") as f:
+                for line in f:
+                    parse_and_execute(line.strip())
+            return
+
+    # Interactive loop
     while True:
         try:
             line = input("🎛️ > ")
