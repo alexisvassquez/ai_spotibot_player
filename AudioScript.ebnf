@@ -1,0 +1,45 @@
+(* AudioScript Grammar Specification v0.1 *)
+
+script = { statement } ;
+
+statement = function_call | function_def | control_structure | comment ;
+
+function_call = identifier "(" [ argument_list ] ")" ;
+
+function_def = "@define" identifier "{" { statement } "}" ;
+
+control_structure = wait_statement | if_block | loop_block ;
+
+wait_statement = "@wait" duration ;
+
+if_block = "@if" condition "{" { statement } "}" [ "@else" "{" { statement } "}" ] ;
+
+loop_block = "@loop" number "{" { statement } "}" ;
+
+argument_list = argument { "," argument } ;
+
+argument = string | number | named_argument | tempo_modifier ;
+
+named_argument = identifier "=" value ;
+
+tempo_modifier = "@" value ;
+
+value = string | number ;
+
+comment = "#" { any_character_except_newline } ;
+
+identifier = letter { letter | digit | "_" } ;
+
+string = '"' { character } '"' ;
+
+number = digit { digit } ;
+
+duration = number ("s" | "m") ;
+
+condition = identifier "==" string ;
+
+letter = "A" | "B" | ... | "Z" | "a" | "b" | ... | "z" ;
+
+digit = "0" | "1" | ... | "9" ;
+
+character = any printable character except '"' ;
