@@ -1,0 +1,54 @@
+## === AudioScript Syntax Highlighting ===
+
+syntax "audioscript" "\.as$"
+
+# Comments
+color brightblack "#.*"
+
+# Block Comment Start (greedy pattern)
+color brightblack start="/\*" end="\*/"
+
+# Keywords (with neon style)
+color brightcyan "\<(define|if|else|while|return|break|continue|function|end|as|from|import|include|match|when|otherwise|do)\>"
+
+# Functions and 'say'
+color brightblue "\<(print|say)\>"
+
+# Constants / Literals
+color brightyellow "\<(true|false|null|on|off)\>"
+
+# Strings
+color brightgreen "\"(\\.|[^\"])*\""
+
+# Numbers
+color brightwhite "\b[0-9]+(\.[0-9]+)?\b"
+
+# Variables with $
+color brightmagenta "\$[A-Za-z_][A-Za-z0-9_]*"
+
+# @ decorators or event handlers
+color brightyellow "\@[A-Za-z_][A-Za-z0-9_]*"
+
+# Brackets
+color brightgreen "[\[\]\{\}\(\)\<\>]"
+
+# Operators
+color brightblue "[-+/*=<>!]+"
+
+# Audio Playback
+color brightmagenta "\<(play|pause|stop|rewind|ff|loop|cue)\>"
+
+# Control + Mix
+color brightcyan "\<(volume|bpm|fade|crossfade|eq|pan)\>"
+
+# Light + Mood
+color brightgreen "\<(glow|pulse|flash|strobe|led\.mood_react|vibe|mood\.set)\>"
+
+# User Blocks
+color brightblue "@(define|track|section|wait|loop|if|else|end)"
+
+# Metadata or Directives
+color brightyellow "\.(audioscript|as)\>"
+ 
+# Enable filetype detection
+header "^#!.*\baudioscript\b"

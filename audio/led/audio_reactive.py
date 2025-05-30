@@ -1,4 +1,4 @@
-from controller import LightController
+from audio.led.controller import LightController
 from color_profiles import get_color_for_mood, get_pattern_for_mood
 
 def react_to_audio(mood, bpm):

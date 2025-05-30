@@ -1,0 +1,4 @@
+glow("calm")
+pulse("energetic" @ 128)
+led.mood_react("reflective" @ 90)
+list_commands()
