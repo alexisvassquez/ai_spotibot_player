@@ -1,0 +1,20 @@
+{
+  "bass_boost": {
+    "sub_bass": 6,
+    "bass": 4,
+    "low_mid": 2
+  },
+  "vocal_clarity": {
+    "mid": 3,
+    "presence": 4,
+    "brilliance": 2
+  },
+  "flat": {
+    "sub_bass": 0,
+    "bass": 0,
+    "low_mid": 0,
+    "mid": 0,
+    "presence": 0,
+    "brilliance": 0
+  }
+}

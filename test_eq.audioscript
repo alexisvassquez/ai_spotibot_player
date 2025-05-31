@@ -1,0 +1,13 @@
+# Test AudioScript EQ Presets
+
+eq.preset(flat)
+eq.status()
+
+eq.preset(bass_boost)
+eq.status()
+
+eq.set("bass", 5)
+eq.status()
+
+eq.reset()
+eq.status()

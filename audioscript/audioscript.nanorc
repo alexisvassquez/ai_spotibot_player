@@ -1,6 +1,6 @@
 ## === AudioScript Syntax Highlighting ===
 
-syntax "audioscript" "\.as$"
+syntax "audioscript" "\.as$" "\.audioscript$"
 
 # Comments
 color brightblack "#.*"
