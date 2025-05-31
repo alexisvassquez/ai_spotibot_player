@@ -10,6 +10,7 @@ Welcome to the `audioscript/` directory - the official home of the **AudioScript
 | File | Purpose |
 | ------ | ---------|
 | `AudioScript.ebnf` | Official EBNF grammar definition for AudioScript |
+| `AUDIOSCRIPT_SPEC.md` | Markdown-based syntax + grammar reference |
 | `audioscript.nanorc` | Syntax highlighting rules for GNU Nano |
 | `example.as` | Sample AudioScript program demonstarting current supported syntax |
 | *Future* `audioscript.tmLanguage.json` | VS Code/TextMate syntax highlighting (in progress) |
