@@ -2,11 +2,11 @@
 
 ---
 
-Meet **AudioMIX** and its first test use case, **Spotibot** - an open-source and intelligent artist-friendly music tool. AudioMIX features AI-powered audio analysis and mood-aware music interaction.
+Meet **AudioMIX** and its first test use case, **Spotibot** - an open-source and intelligent artist-friendly music tool. **AudioMIX** features AI-powered audio analysis and mood-aware music interaction.
 
 ---
 
-AudioMIX's LED light can match its colors and song or playlist suggestions to the user's mood through the phenomenon of mood detection. 
+**AudioMIX's** LED light can match its colors and song or playlist suggestions to the user's mood through the phenomenon of mood detection. 
 **Modular, expressive, and built for real-time creative performance.**
 
 ---
@@ -29,7 +29,7 @@ I update this repo continuously via my local terminal. :)
 ---
 
 ## Ethical AI
-AudioMIX follows an open-source, emotionally-aware, and artist-first development philosophy.  
+**AudioMIX** follows an open-source, emotionally-aware, and artist-first development philosophy.  
 See [ETHICAL_AI_MANIFESTO.md](./ETHICAL_AI_MANIFESTO.md) for our creative mission and guiding principles.
 
 ---
@@ -40,7 +40,7 @@ GNU General Public License v3 (open-source and free to use for indie artists, pl
 ---
 
 ## Project Modules
-AudioMIX is modular by design, allowing for rapid extension into a full-scale music AI and production framework. The system will be organized into the following key components:
+**AudioMIX** is modular by design, allowing for rapid extension into a full-scale music AI and production framework. The system will be organized into the following key components:
 
 ### 1. audio/extraction.py
 **Purpose:** Feature extraction from audio files
@@ -117,7 +117,7 @@ AudioMIX is modular by design, allowing for rapid extension into a full-scale mu
 
 ## AudioScript - The Language of AudioMIX
 
-**AudioScript** is a custom domain-specific language (DSL) created for AudioMIX. It allows users to control audio playback, LED behaviors, and mood transitions using expressive, scriptable commands in high-level syntax.
+**AudioScript** is a custom domain-specific language (DSL) created for **AudioMIX.** It allows users to control audio playback, LED behaviors, and mood transitions using expressive, scriptable commands in high-level syntax.
 
 ### Features:
 - Human-readable, whitespace-sensitive syntax
@@ -141,21 +141,28 @@ pulse("yellow", bpm=120)
 
 **Juniper2.0** is the intelligent assistant inside AudioMIX, designed to:
 
-- Assist with AudioScript generation and debugging
+- Assist with **AudioScript** generation and debugging
 - Suggest mood-optimized track flows
 - Recommend LED and emotional mappings
 - Guide live performance scripting in real time
 
-Juniper2.0 will be integrated into the CLI and future UI to provide intelligent inline suggestions and personalized creative support for musicians and coders alike.
+**Juniper2.0** will be integrated into the CLI and future UI to provide intelligent inline suggestions and personalized creative support for musicians and coders alike.
 
 *Juniper doesn’t just automate—she collaborates.*
 
 ---
 
-## System Map (Coming Soon)
-I will publish a full architectural diagram of how AudioMIX + Spotibot's components connect across Python + C++ + frontend.
+## System Architecture Map
+
+Below is the current system-level architecture of **AudioMIX,** including modules written in *Python*, *C++,* and *AudioScript:*
 **AudioMIX will rave. Thank you :)**
 
+![AudioMIX System Map](docs/system_map.png)
+
+### Project Tree
+
+A full snapshot of the current project structure can be found in [`AudioMIX_project_tree.txt`](docs/AudioMIX_project_tree.txt).
+ 
 ---
 
 ### Requirements
