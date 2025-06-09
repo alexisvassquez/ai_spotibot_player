@@ -8,6 +8,17 @@ import os
 def load_eq_preset(preset_name, preset_file="audio/eq/eq_presets.json"):
     with open(preset_file, "r") as f:
         presets = json.load(f)
+
+    if preset_name not in presets:
+        raise ValueError(f"Preset '{preset_name}' not found.")
+
+    preset = presets[preset_name]
+
+    for band in preset:
+        gain = band["gain_db"]
+        if isinstance(gain, str):
+            band["gain_db"] = semantic_gain_level(gain)
+
     return presets.get(preset_name, [])
 
 # === Design Biquad Filters ===
@@ -63,3 +74,15 @@ def stream_with_eq(preset_name="vocal_clarity"):
 
 if __name__ == "__main__":
     stream_with_eq("vocal_clarity") # Change to "bass_boost", etc.
+
+# === Semantic Gain Leveling ===
+def semantic_gain_level(level):
+    levels = {
+        "low": 2,
+        "medium": 5,
+        "high": 8,
+        "extreme": 12,
+        "cut": -6,
+        "kill": -12
+    }
+    return levels.get(level, 0) # default to 0 dB
