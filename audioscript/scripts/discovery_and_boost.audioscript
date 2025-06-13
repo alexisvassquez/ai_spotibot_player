@@ -1,0 +1,10 @@
+# discovery_and_boost.as
+
+eq.list
+eq.mode("filter")
+eq.preset("flat")
+
+# Optional: boost all presets with a "brilliance" tag
+eq.boost_semantic("brilliance", 2.0)
+
+eq.status

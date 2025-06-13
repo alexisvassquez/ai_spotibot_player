@@ -1,0 +1,13 @@
+# reset_and_switch.as
+
+eq.mode("semantic")
+eq.set("mid", 3.0)
+eq.set("sparkle", 2.5)
+
+eq.status
+
+# Reset everything and load a filter preset instead
+eq.reset
+eq.mode("filter")
+eq.preset("vocal_clarity")
+eq.status
