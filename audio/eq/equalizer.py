@@ -1,6 +1,7 @@
 import numpy as np
 import scipy.signal as signal
 
+# === Configuration ===
 # Default EQ bands (frequencies in Hz for 10-band system)
 DEFAULT_BANDS = {
     "sub_bass": 60,
@@ -15,39 +16,81 @@ DEFAULT_BANDS = {
     "ultra": 16000
 }
 
-# Gain levels in dB
+# Stores semantic EQ values (in dB)
 eq_settings = {band: 0.0 for band in DEFAULT_BANDS}
 
-def apply_eq(audio_chunk, sample_rate, gains=None):
-    """
-    Apply EQ to a given audio chunk using band filters.
-    """
-    if gains is None:
-        gains = eq_settings
+# Stores active filter list from preset
+active_filter_chain = []
 
+# "semantic" or "filter"
+eq_mode = "semantic"
+
+
+# === Core EQ Logic ===
+
+def apply_eq(audio_chunk, sample_rate):
+    global eq_mode
     processed = np.copy(audio_chunk)
-    for band, freq in DEFAULT_BANDS.items():
-        gain = gains.get(band, 0.0)
-        if gain != 0.0:
-            # Simple peaking filter example
-            b, a = signal.iirpeak(freq / (0.5 * sample_rate), Q=1)
+
+    if eq_mode == "filter":  # Uses explicit filters from a preset
+        for f in active_filter_chain:
+            freq = f["freq"]
+            q = f["q"]
+            gain_db = f["gain_db"]
+
+            gain = 10 ** (gain_db / 20)
+            b, a = signal.iirpeak(freq / (0.5 * sample_rate), q)
+            b *= gain
             filtered = signal.lfilter(b, a, processed)
-            processed += gain * filtered
-    return
+            processed += filtered
+
+    elif eqmode == "semantic": # Uses semantic EQ bands (eq_settings)
+        for band, freq in DEFAULT_BANDS.items():
+            gain = eq_settings.get(band, 0.0)
+            if gain != 0.0:
+                b, a = signal.iirpeak(freq / (0.5 * sample_rate), Q=1)
+                filtered = signal.lfilter(b, a, processed)
+                processed += gain * filtered
+
+    return processed
+
+
+# === Mode Switching ===
+
+def set_eq_mode(mode):
+    global eq_mode
+    if mode not in ["semantic", "filter"]:
+        raise ValueError("Invalid EQ mode. Use 'semantic' or 'filter'.")
+    eq_mode = mode
+
+def get_eq_mode():
+    return eq_mode
+
+# === Sematic EQ Functions ===
 
 def set_band(band_name, gain_db):
     if band_name in eq_settings:
         eq_settings[band_name] = gain_db
+        set_eq_mode("semantic")
 
 def reset_eq():
     for band in eq_settings:
         eq_settings[band] = 0.0
+    set_eq_mode("semantic")
 
 def get_status():
     return dict(eq_settings)
 
-def load_preset(preset_dict):
-    eq_settings.update(preset_dict)
+
+# === Filter Preset Loader ===
+
+def load_preset(filters):
+    global active_filter_chain
+    active_filter_chain = filters
+    set_eq_mode("filter")
+
+def get_active_filters():
+    return list(active_filter_chain)
 
 def save_preset():
     return dict(eq_settings)

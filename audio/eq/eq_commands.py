@@ -1,6 +1,15 @@
 from performance_engine.modules.shared import say
 from performance_engine.modules.context import command_registry
-from audio.eq.equalizer import set_band, reset_eq, load_preset, save_preset, get_status
+from audio.eq.equalizer import (
+    set_band, 
+    reset_eq, 
+    load_preset, 
+    save_preset, 
+    get_status,
+    set_eq_mode,
+    get_eq_mode
+)
+from audio.eq.eq_loader import load_eq_preset
 import json
 import os
 
@@ -28,58 +37,44 @@ def eq_reset(_):
 
 def eq_status(_):
     status = get_status()
+    current_mode = get_eq_mode()
+    say(f"EQ Mode: {current_mode.upper()}", "🔉")
     say("Current EQ Settings:", "📊")
     for band, gain in status.items():
         say(f" - {band}: {gain} dB")
 
+def eq_mode_set(args):
+    mode = args.strip().lower()
+    if mode not in ["semantic", "filter"]:
+        say("Usage: eq.mode(semantic) or eq.mode(filter)", "🔉")
+        return
+
+    set_eq_mode(mode)
+    say(f"Switched EQ mode to: {mode.upper()}", "🧠")
+
+# At module level (load once)
+PRESETS = load_eq_preset(os.path.join(os.path.dirname(__file__), "presets_combined.json"))
+
 def eq_preset(args):
     preset_name = args.strip()
-    preset_loaded = False
-
-    # Fallback: hardcoded presets
-    fallback_presets = {
-        "bass_boost": {
-            "sub_bass": 6,
-            "bass": 4,
-            "low_mid": 2
-        },
-        "vocal_clarity": {
-            "mid": 3,
-            "presence": 4,
-            "brilliance": 2
-        },
-        "flat": {
-            "sub_bass": 0,
-            "bass": 0,
-            "low_mid": 0,
-            "mid": 0,
-            "presence": 0,
-            "brilliance": 0,
-            "air": 0,
-            "sparkle": 0,
-            "ultra": 0
-        }
-    }
-
-    try:    
-        presets_path = os.path.join(os.path.dirname(__file__), "presets.json")
-        with open(presets_path, "r") as f:
-            presets = json.load(f)
-
-        if preset_name in presets:
-            load_preset(presets[preset_name])
-            say(f"Loaded EQ preset: {preset_name}", "🎧")
-            return
-        else:
-            say(f"[ERROR] Preset '{preset_name}' not found", "⚠️")
-    except Exception as e:
-        say(f"[ERROR] Couldn't load presets.json: {str(e)}", "❌")
-    
-    if preset_name in fallback_presets:
-        load_preset(fallback_presets[preset_name])
-        say(f"Loaded EQ preset (fallback): {preset_name}", "🎧")
+    if preset_name in PRESETS:
+        filters = PRESETS[preset_name]["filters"]
+        load_preset(filters) # Applies gain per band under the hood
+        say(f"Loaded EQ preset: {preset_name}", "🎧")
     else:
         say(f"[ERROR] Preset '{preset_name}' not found", "❌")
+
+def eq_boost_semantic(tag, delta_gain):
+    for name, preset in PRESETS.items():
+        if "semantic" in preset and tag in preset["semantic"]:
+            preset["semantic"][tag] += delta_gain
+            say(f"Boosted '{tag}' by {delta_gain}dB in all relevant presets", "🔊")
+
+def eq_list(_):
+    say("Available EQ Presets:", "📊")
+    for name in PRESETS.keys():
+        say(f" - {name}")
+
 
 # Registering commands
 def register():
@@ -87,5 +82,8 @@ def register():
         "eq.set": eq_set,
         "eq.reset": eq_reset,
         "eq.status": eq_status,
-        "eq.preset": eq_preset
+        "eq.preset": eq_preset,
+        "eq.mode": eq_mode_set,
+        "eq.boost_semantic": eq_boost_semantic,
+        "eq.list": eq_list
     }
