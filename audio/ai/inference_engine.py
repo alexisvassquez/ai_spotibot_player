@@ -2,6 +2,7 @@ import os
 import json
 from led.color_profiles import get_color_for_mood, get_pattern_for_mood
 from audio.audio_reactive import react_to_audio
+from audio.ai.modules.tempo_analysis import get_bpm_from_audio
 
 def interpret_from_features(features, output_path="audio/analysis_output/inferred_script.audioscript"):
     events = []
