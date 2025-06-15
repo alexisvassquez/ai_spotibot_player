@@ -3,52 +3,34 @@
 syntax "audioscript" "\.as$" "\.audioscript$"
 
 # Comments
-color brightblack "#.*"
+color magenta "^\s*#.*"
 
 # Block Comment Start (greedy pattern)
-color brightblack start="/\*" end="\*/"
-
-# Keywords (with neon style)
-color brightcyan "\<(define|if|else|while|return|break|continue|function|end|as|from|import|include|match|when|otherwise|do)\>"
+color magenta start="/\*" end="\*/"
 
 # Functions and 'say'
-color brightblue "\<(print|say)\>"
+color brightcyan "\beq\.(print|say|set|reset|preset|status|mode|list|boost_semantic|play|pause|stop|rewind|ff|cue)\b"
 
-# Constants / Literals
-color brightyellow "\<(true|false|null|on|off)\>"
-
-# Strings
-color brightgreen "\"(\\.|[^\"])*\""
-
-# Numbers
-color brightwhite "\b[0-9]+(\.[0-9]+)?\b"
-
-# Variables with $
-color brightmagenta "\$[A-Za-z_][A-Za-z0-9_]*"
-
-# @ decorators or event handlers
-color brightyellow "\@[A-Za-z_][A-Za-z0-9_]*"
-
-# Brackets
-color brightgreen "[\[\]\{\}\(\)\<\>]"
-
-# Operators
-color brightblue "[-+/*=<>!]+"
-
-# Audio Playback
-color brightmagenta "\<(play|pause|stop|rewind|ff|loop|cue)\>"
-
-# Control + Mix
-color brightcyan "\<(volume|bpm|fade|crossfade|eq|pan)\>"
+# @ Trigger handlers
+color brightgreen "@on(start|drop|build|climax|verse|bridge|break|silence|volume|bpm|fade|crossfade|eq|pan)\b"
 
 # Light + Mood
-color brightgreen "\<(glow|pulse|flash|strobe|led\.mood_react|vibe|mood\.set)\>"
+color brightmagenta "\<(glow|pulse|flash|strobe|led\.mood_react|vibe|mood\.set)\>"
 
 # User Blocks
 color brightblue "@(define|track|section|wait|loop|if|else|end)"
 
-# Metadata or Directives
-color brightyellow "\.(audioscript|as)\>"
- 
+# Quotes and Parentheses
+color brightyellow "[()\"]"
+
+# Numeric Value
+color brightyellow "\b[0-9]+(\.[0-9]+)?\b"
+
+# Unclosed Quote Error (debug aid)
+# color brightred "['\"]{1}[^'\"]*$"
+
+# Preset Names (words in quotes)
+color brightmagenta "\"(sparkle|semantic|filter|bass_boost|vocal_clarity|flat|treble_cut)\""
+
 # Enable filetype detection
 header "^#!.*\baudioscript\b"
