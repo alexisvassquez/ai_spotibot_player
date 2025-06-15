@@ -17,7 +17,7 @@ class LightController:
     def strobe(self, rgb, bpm, zone="main"):
         print (f"[LED:{zone}] Strobing {rgb} at {bpm} BPM")
 
-    def apply_mood(self, mood, color, pattern, zone="main", bpm=120, duration=2)
+    def apply_mood(self, mood, color, pattern, zone="main", bpm=120, duration=2):
         if pattern == "pulse":
             self.pulse(color, bpm, zone)
         elif pattern == "fade":

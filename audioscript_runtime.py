@@ -2,6 +2,7 @@ import sys
 import os
 import importlib
 from performance_engine.modules.context import command_registry
+from audio.ai.inference_engine import generate_lighting_profile
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -21,10 +22,11 @@ def load_modules():
                 if hasattr(module, "register"):
                     registered = module.register()
                     if registered:
-                        if VERBOSE:                        
+                        if VERBOSE:
                             say(f"Registering from {file}: {list(registered.keys())}", "🧠")
                         command_registry.update(registered)
-                    elif VERBOSE:                    
+                        command_registry["trigger_zones"] = trigger_zones
+                    elif VERBOSE:
                         say(f"⚠️ {file} register() returned nothing", "❓")
                 elif VERBOSE:
                     say(f"⚠️ No register() in {file}", "🚫")
@@ -57,6 +59,13 @@ def pulse(color, bpm):
 
 def mood_set(mood):
     say(f"[MOOD] context set to: {mood}", "🎼")
+
+def trigger_zones(zones, mood="calm", bpm=120):
+    try:
+        generate_lighting_profile({mood}, bpm=bpm, zones=zones)
+        say(f"[LIGHTING] Triggered zones: {zones} | Mood: {mood} | BPM: {bpm}", "🌈")
+    except Exception as e:
+        say(f"[ERROR] Lighting trigger failed: {e}", "❌")
 
 # Basic Command Parser
 def parse_and_execute(line):

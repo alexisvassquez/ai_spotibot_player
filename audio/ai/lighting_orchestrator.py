@@ -1,8 +1,7 @@
 import json
-from audio.audio_reactive import react_to_audio
+from audio.led.audio_reactive import react_to_audio
 from audio.led.controller import LightController
-from audio.ai.modules.tempo_analysis import get_bpm_from audio
-from audio.ai.inference_engine import emotion_tags
+from audio.ai.modules.tempo_analysis import get_bpm_from_audio
 
 # Emotion-to-zone mapping
 EMOTION_ZONE_MAP = {
@@ -32,7 +31,7 @@ wav_path = features.get("source_path") # to be passed manually
 bpm = get_bpm_from_audio(wav_path)
 
 # Main function
-def apply_dynamic_zoning(emotion_tags, bpm=120, debug=False)
+def apply_dynamic_zoning(emotion_tags, bpm=120, debug=False):
     controller = LightController()
 
     for mood in emotion_tags:
@@ -60,5 +59,5 @@ def run_lighting_orchestration():
 
     apply_dynamic_zoning(emotion_tags, bpm)
 
-if __name__ == "__main__"
+if __name__ == "__main__":
     run_lighting_orchestration()
