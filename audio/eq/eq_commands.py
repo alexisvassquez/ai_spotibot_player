@@ -53,7 +53,7 @@ def eq_mode_set(args):
     say(f"Switched EQ mode to: {mode.upper()}", "🧠")
 
 # At module level (load once)
-PRESETS = load_eq_preset(os.path.join(os.path.dirname(__file__), "presets_combined.json"))
+PRESETS = load_eq_preset("presets_combined.json")
 
 def eq_preset(args):
     preset_name = args.strip()

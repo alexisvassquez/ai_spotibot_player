@@ -1,14 +1,20 @@
 # audio/eq/eq_loader.py
-
 import os
 import json
 import yaml
 
 # Load a single EQ preset file (JSON or YAML)
-def load_eq_preset(filepath):
-    ext = os.path.splitext(filepath)[1].lower()
+def load_eq_preset(filename):
+    base_dir = os.path.dirname(os.path.realpath(__file__))
 
-    with open(filepath, 'r') as f:
+    # Build full path to presets/
+    preset_path = os.path.join(base_dir, "presets", filename)
+
+    print(f"[DEBUG] Loading EQ presets from: {preset_path}")
+
+    ext = os.path.splitext(preset_path)[1].lower()
+
+    with open(preset_path, 'r') as f:
         if ext == ".json":
             data = json.load(f)
         elif ext in [".yaml", ".yml"]:
