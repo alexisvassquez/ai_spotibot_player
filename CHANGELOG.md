@@ -65,3 +65,9 @@ Future releases will include:
 ### Fixed
 - Git move/restore issue with legacy Spotibot files
 - PulseAudio environment handling under non-owner ChromeOS user accounts
+
+### Added
+- `sampler.py`: AudioScript-based sample trigger engine with `load_sample()` and `trigger_sample()`
+- Real-time LED pulse feedback when triggering samples
+- Support for PCM `.wav` file playback via `aplay`
+- Logging of sample playback metadata (bitrate, channels, frequency)
