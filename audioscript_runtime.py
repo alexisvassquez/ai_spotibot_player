@@ -1,6 +1,7 @@
 import sys
 import os
 import importlib
+import shlex
 from performance_engine.modules.context import command_registry
 from audio.ai.inference_engine import generate_lighting_profile
 
@@ -79,9 +80,9 @@ def parse_and_execute(line):
         arg_str = arg_str[:-1] # Remove trailing ")"
 
         if "@" in arg_str:
-            parts = [p.strip().strip('"') for p in arg_str.split("@")]
+            parts = shlex.split(arg_str)
         else: 
-            parts = [p.strip().strip('"') for p in arg_str.split(",")]
+            parts = shlex.split(arg_str)
 
         func = command_registry.get(command)
         if func:

@@ -71,3 +71,14 @@ Future releases will include:
 - Real-time LED pulse feedback when triggering samples
 - Support for PCM `.wav` file playback via `aplay`
 - Logging of sample playback metadata (bitrate, channels, frequency)
+
+### Added
+- `sequencer.py`: Step-based pattern engine with `define_pattern()` and `play_pattern()` commands
+- AudioScript DSL support for BPM-controlled sample sequencing
+- Multi-threaded playback with internal `sequence_loop()` logic
+- Real-time LED pulses and PCM playback for each active step
+- CLI-safe pattern parsing via `shlex` for string-encoded step sequences
+
+### Fixed
+- Casted BPM string argument to `float()` inside `play_pattern()` to prevent type errors
+- Updated `parse_and_execute()` in `audioscript_runtime.py` to use `shlex.split()` for safe comma handling in string arguments
