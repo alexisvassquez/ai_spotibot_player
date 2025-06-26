@@ -43,3 +43,25 @@ Future releases will include:
 - Arduino LED integration layer
 - System map + visual architecture
 - Artist-facing UI and Electron/Flask-based interaction layer
+
+---
+
+## [v0.3-dev] - 2025-06-26
+
+### Added
+- `track_engine.py`: foundational `Track` class with volume, mute, and clip storage
+- `crossfade.py`: threaded volume crossfader between tracks with real-time feedback
+- AudioScript commands: `add_track()`, `add_clip()`, `set_volume()`, `mute_track()`, `crossfade()`
+- ASCII VU meter output in shell reflecting real-time track volumes
+- LED pulse logic tied to dominant track volume, scaled 60–200 BPM
+- Juniper2.0 shell narration for transitions and system feedback (`say()`)
+- Shell visual enhancements: emoji support, LED logs, mood context logs
+- `pcvoice.mp3` (moved to `interface/`): original Spotibot voice now canonized as Juniper2.0's audio intro
+
+### Changed
+- Refactored shell logging to route through `say()` for consistent emoji-based output
+- Updated `pulseaudio_oss.sh` for modern Crostini compatibility
+
+### Fixed
+- Git move/restore issue with legacy Spotibot files
+- PulseAudio environment handling under non-owner ChromeOS user accounts
