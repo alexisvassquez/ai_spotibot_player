@@ -1,6 +1,12 @@
-#!/bin/sh
+#!/bin/bash
 
-LIST_OF_OSS_APPS="aumix sox"
+# Start PulseAudio with proper socket location
+pulseaudio --start --exit-idle-time=-1
 
-show_help() {
-    echo "setup-pulseaudio [ --enable ]}
+# Export environment variable to force sound routing
+export SDL_AUDIODRIVER=alsa
+export AUDIODEV=hw:0,0
+
+export PYTHON_SOUNDCARD_BACKEND=alsa
+
+echo "PulseAudio initialized with ALSA fallback."
