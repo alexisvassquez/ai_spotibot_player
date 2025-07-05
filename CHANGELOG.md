@@ -27,7 +27,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [v0.1-alpha] - 2024-04-20
+## [v0.1-alpha] - 2025-04-20
 
 ### Added
 - `analyze_audio.py` with MFCC, spectral contrast, and BPM analysis
@@ -82,3 +82,22 @@ Future releases will include:
 ### Fixed
 - Casted BPM string argument to `float()` inside `play_pattern()` to prevent type errors
 - Updated `parse_and_execute()` in `audioscript_runtime.py` to use `shlex.split()` for safe comma handling in string arguments
+
+## [v0.3.1] - 2025-07-05
+
+### Added
+- `color(color)` AudioScript command to set static LED color
+- `fade(color, duration)` command for LED fade transitions
+- `delay(seconds)` command for pausing scripts
+- `set_zone(zone)` command for targeting LED regions
+- Persistent command history saved to `~/.audioscript_history`
+- Arrow key support via `readline` for CLI shell editing
+
+### Changed
+- Refactored `shell_tools.py` to instantiate `LightController` properly
+- Updated LED command feedback with zone-aware output and emojis
+- Improved developer experience for AudioScript Shell CLI
+
+### Fixed
+- Resolved `ImportError` when accessing LED controller methods inside class
+
