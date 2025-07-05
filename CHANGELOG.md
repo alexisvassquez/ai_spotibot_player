@@ -4,7 +4,26 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [v0.2-dev] - 2024-05-13
+## [v0.1-alpha] - 2025-04-20
+
+### Added
+- `analyze_audio.py` with MFCC, spectral contrast, and BPM analysis
+- Initial `main.cpp` and `audio_utils.cpp` for C++ PortAudio integration
+- `initial-script.py` prototype and CMake configuration for dual-language build
+- Spotibot LED + mood mapping draft
+- First public repo structure and commit
+
+---
+
+Future releases will include:
+- AudioScript DSL for user-programmable logic
+- Arduino LED integration layer
+- System map + visual architecture
+- Artist-facing UI and Electron/Flask-based interaction layer
+
+---
+
+## [v0.2-dev] - 2025-05-13
 
 ### Added
 - `led/` and `led-service/` modules for mood-to-RGB control and CLI-triggerable LED response
@@ -24,25 +43,6 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Cleaned Git references and removed hardcoded API secrets from committed files
 - Regenerated and secured Spotify API credentials; `.env` pattern recommended
-
----
-
-## [v0.1-alpha] - 2025-04-20
-
-### Added
-- `analyze_audio.py` with MFCC, spectral contrast, and BPM analysis
-- Initial `main.cpp` and `audio_utils.cpp` for C++ PortAudio integration
-- `initial-script.py` prototype and CMake configuration for dual-language build
-- Spotibot LED + mood mapping draft
-- First public repo structure and commit
-
----
-
-Future releases will include:
-- AudioScript DSL for user-programmable logic
-- Arduino LED integration layer
-- System map + visual architecture
-- Artist-facing UI and Electron/Flask-based interaction layer
 
 ---
 
@@ -82,6 +82,8 @@ Future releases will include:
 ### Fixed
 - Casted BPM string argument to `float()` inside `play_pattern()` to prevent type errors
 - Updated `parse_and_execute()` in `audioscript_runtime.py` to use `shlex.split()` for safe comma handling in string arguments
+
+---
 
 ## [v0.3.1] - 2025-07-05
 
