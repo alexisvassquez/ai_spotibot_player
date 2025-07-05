@@ -1,9 +1,19 @@
 import sys
+import readline
 import os
 import importlib
 import shlex
+import atexit
 from performance_engine.modules.context import command_registry
 from audio.ai.inference_engine import generate_lighting_profile
+
+# Enable persistent shell history
+histfile = os.path.expanduser("~/.audioscript_history")
+try:
+    readline.read_history_file(histfile)
+except FileNotFoundError:
+    pass
+atexit.register(readline.write_history_file, histfile)
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
