@@ -1,3 +1,6 @@
+# ai_spotibot_player
+# AudioMIX
+# audioscript_runtime.py
 import sys
 import readline
 import os
@@ -6,6 +9,9 @@ import shlex
 import atexit
 from performance_engine.modules.context import command_registry
 from audio.ai.inference_engine import generate_lighting_profile
+from performance_engine.modules import fade_mod
+from performance_engine.modules.shell_tools import load_dynamic_commands
+load_dynamic_commands()
 
 # Enable persistent shell history
 histfile = os.path.expanduser("~/.audioscript_history")
@@ -81,6 +87,11 @@ def trigger_zones(zones, mood="calm", bpm=120):
 # Basic Command Parser
 def parse_and_execute(line):
     line = line.strip()
+    if line.strip() == "test_lines":
+        return [
+            print ("[TEST] Line 1"),
+            print ("[TEST] Line 2")
+        ]
 
     if line.startswith("#") or not line:
         return # ignore comments and blank lines
@@ -97,7 +108,14 @@ def parse_and_execute(line):
         func = command_registry.get(command)
         if func:
             try:
-                func(*parts)
+                result = func(parts)
+                if isinstance(result, list):
+                    for line in result:
+                        say(line)
+                elif isinstance(result, str):
+                    say(result)
+                elif result is not None:
+                    say(str(result))
             except Exception as e:
                 say(f"[ERROR] Execution failed: {e}", "❌")
         else:
@@ -115,7 +133,7 @@ def main():
     if "--no-symbols" in sys.argv:
         USE_SYMBOLS = False
     if "--debug" in sys.argv:
-        VERBOSE = True
+        VERBOSE = False
 
     # Load command modules after global settings are set
     load_modules()
