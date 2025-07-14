@@ -4,7 +4,7 @@ sys.path.append("audio/led")
 from audio.led.controller import LightController
 from audio_reactive import react_to_audio
 from color_profiles import get_color_for_mood
-from performance_engine.modules.shared import say
+from performance_engine.utils.shell_output import say
 from performance_engine.modules.context import command_registry
 from audio.ai.inference_engine import generate_lighting_profile
 

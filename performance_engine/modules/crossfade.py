@@ -1,7 +1,8 @@
 import threading
 import time
 from performance_engine.modules.track_engine import track_registry
-from audioscript_runtime import say, pulse
+from performance_engine.modules.led_controller import pulse
+from performance_engine.utils.shell_output import say
 
 def crossfade(track_a, track_b, duration=4.0):
     try:

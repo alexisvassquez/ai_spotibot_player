@@ -1,7 +1,8 @@
 import os
 import subprocess
 from performance_engine.modules.track_engine import track_registry
-from audioscript_runtime import say, pulse
+from performance_engine.modules.led_controller import pulse
+from performance_engine.utils.shell_output import say
 
 sample_registry = {}
 

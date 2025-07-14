@@ -1,7 +1,8 @@
 import time
 import threading
 from performance_engine.modules.sampler import trigger_sample
-from audioscript_runtime import say, pulse
+from performance_engine.modules.audio_player import play
+from performance_engine.utils.shell_output import say
 
 patterns = {}
 
