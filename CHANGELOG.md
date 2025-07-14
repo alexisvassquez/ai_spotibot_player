@@ -103,3 +103,14 @@ Future releases will include:
 ### Fixed
 - Resolved `ImportError` when accessing LED controller methods inside class
 
+---
+
+## [v0.2.2] - 2025-07-14
+### Added
+- Modular command loader via `load_dynamic_commands()` in `shell_tools.py`
+- `fade_mod` command as proof-of-concept for dynamic CLI modules
+
+### Fixed
+- Resolved circular import issues by moving `say()` to `utils/shell_output.py`
+- Normalized command parsing to pass arguments as list to `run(args)`
+
