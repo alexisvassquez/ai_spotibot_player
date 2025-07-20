@@ -125,6 +125,7 @@ Future releases will include:
 - Created `lightning_module.py` using PyTorch Lightning for training models to infer EQ presets from MFCC + spectral contrast
 - Linked `presets_combined.json` as unified preset source
 - Synced local environment with GCP (Google Cloud Platform), created multi-region storage bucket for AudioMIX training data
+- `version.py` to keep track of version control via CLI
 
 ### Changed
 - Updated plotting script to parse `gain_db` instead of `gain` field
