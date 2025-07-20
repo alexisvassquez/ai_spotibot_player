@@ -46,7 +46,7 @@ Future releases will include:
 
 ---
 
-## [v0.3-dev] - 2025-06-26
+## [v0.2-dev] - 2025-06-26
 
 ### Added
 - `track_engine.py`: foundational `Track` class with volume, mute, and clip storage
@@ -85,7 +85,7 @@ Future releases will include:
 
 ---
 
-## [v0.3.1] - 2025-07-05
+## [v0.2.1] - 2025-07-05
 
 ### Added
 - `color(color)` AudioScript command to set static LED color
@@ -116,7 +116,7 @@ Future releases will include:
 
 ---
 
-## [v0.2-dev] - 2025-07-20
+## [v0.3.0] - 2025-07-20
 ### Added
 - Implemented `eq_dataset.py` to dynamically load features and label EQ presets from audio directory and combined JSON
 - Built and debugged `plot_eq_presets.py` for visualizing EQ profiles using matplotlib, with smart parsing of both dict and list formats
