@@ -114,3 +114,21 @@ Future releases will include:
 - Resolved circular import issues by moving `say()` to `utils/shell_output.py`
 - Normalized command parsing to pass arguments as list to `run(args)`
 
+---
+
+## [v0.2-dev] - 2025-07-20
+### Added
+- Implemented `eq_dataset.py` to dynamically load features and label EQ presets from audio directory and combined JSON
+- Built and debugged `plot_eq_presets.py` for visualizing EQ profiles using matplotlib, with smart parsing of both dict and list formats
+- Added support for color-coded line plots, log-scaled frequency axes, and auto-saving plots to `docs/plots/`
+- Integrated debug print logs and validation checks for preset data integrity
+- Created `lightning_module.py` using PyTorch Lightning for training models to infer EQ presets from MFCC + spectral contrast
+- Linked `presets_combined.json` as unified preset source
+- Synced local environment with GCP (Google Cloud Platform), created multi-region storage bucket for AudioMIX training data
+
+### Changed
+- Updated plotting script to parse `gain_db` instead of `gain` field
+- Reorganized project tree and confirmed compatibility with GCP CLI utilities
+
+### Fixed
+- Multiple goblins involving invalid filter structures, empty presets, and incorrect JSON parsing during plotting
