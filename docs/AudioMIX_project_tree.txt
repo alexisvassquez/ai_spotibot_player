@@ -1,0 +1,572 @@
+.
+├── audio
+│   ├── ai
+│   │   ├── analyze_audio.py
+│   │   ├── audience_listener.py
+│   │   ├── core_runtime.py
+│   │   ├── features_summary.py
+│   │   ├── inference_engine.py
+│   │   ├── lighting_orchestrator.py
+│   │   └── modules
+│   │       ├── convert_audio.py
+│   │       ├── feature_extraction.py
+│   │       ├── lightning_module.py
+│   │       └── tempo_analysis.py
+│   ├── analysis_output
+│   │   ├── analysis.py
+│   │   └── features_summary.json
+│   ├── eq
+│   │   ├── eq_apply.py
+│   │   ├── eq_commands.py
+│   │   ├── eq_engine.py
+│   │   ├── eq_loader.py
+│   │   ├── equalizer.py
+│   │   ├── live_eq_stream.py
+│   │   ├── presets
+│   │   │   ├── eq_presets.json
+│   │   │   ├── presets_combined.json
+│   │   │   └── presets.json
+│   │   └── test_eq_preset.py
+│   ├── extraction.py
+│   ├── __init__.py
+│   ├── launch_ai.py
+│   ├── led
+│   │   ├── audio_reactive.py
+│   │   ├── color_profiles.py
+│   │   ├── controller.py
+│   │   ├── __init__.py
+│   │   └── run_lights.py
+│   ├── led-service
+│   │   ├── __init__.py
+│   │   └── main.py
+│   ├── mood-analyzer
+│   ├── mood_classifier.py
+│   ├── player-core
+│   └── samples
+│       ├── clean_sample.wav
+│       ├── cvltiv8r_clean.wav
+│       ├── cvltiv8r__odd-time-hyper-funk-beat-loop-w-bass.wav
+│       └── ilariio_soft-chill-vibes.mp3
+├── AudioMIX_project_tree.txt
+├── audioscript
+│   ├── AudioScript.ebnf
+│   ├── audioscript.nanorc
+│   ├── AUDIOSCRIPT_SPEC.md
+│   ├── example.as
+│   ├── intro_showcase.audioscript
+│   ├── README.md
+│   └── scripts
+│       ├── basic_performance.as
+│       ├── discovery_and_boost.audioscript
+│       ├── reset_and_switch.audioscript
+│       └── semantic_live_mix.as
+├── audioscript_runtime.py
+├── audioscript_runtime.py.save
+├── audio_utils.h
+├── CHANGELOG.md
+├── cmake_install.cmake
+├── CMakeLists.txt
+├── docs
+│   ├── AudioMIX_project_tree.txt
+│   ├── command_registry.yaml
+│   ├── Data Visuals
+│   │   ├── audio_features_plot.png
+│   │   ├── eq_preset_experimental_cut_figure_1.png
+│   │   ├── eq_preset_flat_figure_1.png
+│   │   └── Figure_1.png
+│   ├── requirements.txt
+│   └── system_map.png
+├── ETHICAL_AI_MANIFESTO.md
+├── .github
+│   ├── FUNDING.yml
+│   └── __init__.py
+├── .gitignore
+├── hardware
+│   ├── __init__.py
+│   ├── led_controller.py
+│   └── mood_feedback.py
+├── initial-script.py
+├── interface
+│   ├── audio
+│   │   └── pcvoice.mp3
+│   ├── bot_response.py
+│   ├── __init__.py
+│   ├── pcvoice.mp3
+│   ├── speech.py
+│   └── tts.py
+├── LICENSE.txt
+├── main.cpp
+├── Makefile
+├── performance_engine
+│   ├── __init__.py
+│   ├── modules
+│   │   ├── audio_player.py
+│   │   ├── context.py
+│   │   ├── crossfade.py
+│   │   ├── eq.py
+│   │   ├── fade_mod.py
+│   │   ├── __init__.py
+│   │   ├── led_controller.py
+│   │   ├── mood_engine.py
+│   │   ├── sampler.py
+│   │   ├── sequencer.py
+│   │   ├── shared.py
+│   │   ├── shell_tools.py
+│   │   └── track_engine.py
+│   ├── preview.py
+│   ├── serial_listener.py
+│   └── utils
+│       └── shell_output.py
+├── portaudio
+│   ├── aclocal.m4
+│   ├── bindings
+│   │   ├── cpp
+│   │   │   ├── aclocal.m4
+│   │   │   ├── AUTHORS
+│   │   │   ├── bin
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── Makefile.am
+│   │   │   │   └── Makefile.in
+│   │   │   ├── ChangeLog
+│   │   │   ├── cmake
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── modules
+│   │   │   │   │   ├── FindASIO.cmake
+│   │   │   │   │   ├── FindPortAudio.cmake
+│   │   │   │   │   └── __init__.py
+│   │   │   │   ├── PortAudioCppConfig.cmake.in
+│   │   │   │   └── portaudiocpp.pc.in
+│   │   │   ├── CMakeLists.txt
+│   │   │   ├── configure
+│   │   │   ├── configure.ac
+│   │   │   ├── COPYING
+│   │   │   ├── doc
+│   │   │   │   ├── config.doxy
+│   │   │   │   ├── config.doxy.linux
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── Makefile.am
+│   │   │   │   ├── Makefile.in
+│   │   │   │   └── README
+│   │   │   ├── example
+│   │   │   │   ├── devs.cxx
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── sine.cxx
+│   │   │   ├── include
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── Makefile.am
+│   │   │   │   ├── Makefile.in
+│   │   │   │   └── portaudiocpp
+│   │   │   │       ├── AsioDeviceAdapter.hxx
+│   │   │   │       ├── AutoSystem.hxx
+│   │   │   │       ├── BlockingStream.hxx
+│   │   │   │       ├── CallbackInterface.hxx
+│   │   │   │       ├── CallbackStream.hxx
+│   │   │   │       ├── CFunCallbackStream.hxx
+│   │   │   │       ├── CppFunCallbackStream.hxx
+│   │   │   │       ├── Device.hxx
+│   │   │   │       ├── DirectionSpecificStreamParameters.hxx
+│   │   │   │       ├── Exception.hxx
+│   │   │   │       ├── HostApi.hxx
+│   │   │   │       ├── __init__.py
+│   │   │   │       ├── InterfaceCallbackStream.hxx
+│   │   │   │       ├── MemFunCallbackStream.hxx
+│   │   │   │       ├── PortAudioCpp.hxx
+│   │   │   │       ├── SampleDataFormat.hxx
+│   │   │   │       ├── Stream.hxx
+│   │   │   │       ├── StreamParameters.hxx
+│   │   │   │       ├── SystemDeviceIterator.hxx
+│   │   │   │       ├── SystemHostApiIterator.hxx
+│   │   │   │       └── System.hxx
+│   │   │   ├── __init__.py
+│   │   │   ├── INSTALL
+│   │   │   ├── lib
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── Makefile.am
+│   │   │   │   └── Makefile.in
+│   │   │   ├── Makefile.am
+│   │   │   ├── Makefile.in
+│   │   │   ├── NEWS
+│   │   │   ├── portaudiocpp.pc.in
+│   │   │   ├── README
+│   │   │   └── source
+│   │   │       ├── __init__.py
+│   │   │       └── portaudiocpp
+│   │   │           ├── AsioDeviceAdapter.cxx
+│   │   │           ├── BlockingStream.cxx
+│   │   │           ├── CallbackInterface.cxx
+│   │   │           ├── CallbackStream.cxx
+│   │   │           ├── CFunCallbackStream.cxx
+│   │   │           ├── CMakeLists.txt
+│   │   │           ├── CppFunCallbackStream.cxx
+│   │   │           ├── Device.cxx
+│   │   │           ├── DirectionSpecificStreamParameters.cxx
+│   │   │           ├── Exception.cxx
+│   │   │           ├── HostApi.cxx
+│   │   │           ├── __init__.py
+│   │   │           ├── InterfaceCallbackStream.cxx
+│   │   │           ├── MemFunCallbackStream.cxx
+│   │   │           ├── Stream.cxx
+│   │   │           ├── StreamParameters.cxx
+│   │   │           ├── System.cxx
+│   │   │           ├── SystemDeviceIterator.cxx
+│   │   │           └── SystemHostApiIterator.cxx
+│   │   └── __init__.py
+│   ├── clear_gitrevision.sh
+│   ├── cmake
+│   │   ├── cmake_uninstall.cmake.in
+│   │   ├── __init__.py
+│   │   ├── modules
+│   │   │   ├── FindASIO.cmake
+│   │   │   ├── FindJACK.cmake
+│   │   │   ├── FindOSS.cmake
+│   │   │   ├── FindPulseAudio.cmake
+│   │   │   ├── FindRegex.cmake
+│   │   │   └── __init__.py
+│   │   ├── portaudio-2.0.pc.in
+│   │   ├── PortAudioConfig.cmake.in
+│   │   └── portaudio.def.in
+│   ├── CMakeLists.txt
+│   ├── config.guess
+│   ├── config.sub
+│   ├── configure
+│   ├── configure.in
+│   ├── depcomp
+│   ├── doc
+│   │   ├── __init__.py
+│   │   ├── src
+│   │   │   ├── api_overview.dox
+│   │   │   ├── images
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── portaudio-external-architecture-diagram.png
+│   │   │   ├── __init__.py
+│   │   │   ├── license.dox
+│   │   │   ├── mainpage.dox
+│   │   │   ├── srcguide.dox
+│   │   │   └── tutorial
+│   │   │       ├── blocking_read_write.dox
+│   │   │       ├── compile_cmake.dox
+│   │   │       ├── compile_linux.dox
+│   │   │       ├── compile_mac_coreaudio.dox
+│   │   │       ├── compile_windows_asio_msvc.dox
+│   │   │       ├── compile_windows.dox
+│   │   │       ├── compile_windows_mingw.dox
+│   │   │       ├── compile_windows_mingw-w64.dox
+│   │   │       ├── exploring.dox
+│   │   │       ├── initializing_portaudio.dox
+│   │   │       ├── __init__.py
+│   │   │       ├── open_default_stream.dox
+│   │   │       ├── querying_devices.dox
+│   │   │       ├── start_stop_abort.dox
+│   │   │       ├── terminating_portaudio.dox
+│   │   │       ├── tutorial_start.dox
+│   │   │       ├── utility_functions.dox
+│   │   │       └── writing_a_callback.dox
+│   │   └── utils
+│   │       ├── checkfiledocs.py
+│   │       └── __init__.py
+│   ├── Doxyfile
+│   ├── Doxyfile.developer
+│   ├── .editorconfig
+│   ├── examples
+│   │   ├── CMakeLists.txt
+│   │   ├── __init__.py
+│   │   ├── pa_devs.c
+│   │   ├── paex_mono_asio_channel_select.c
+│   │   ├── paex_ocean_shore.c
+│   │   ├── paex_pink.c
+│   │   ├── paex_read_write_wire.c
+│   │   ├── paex_record.c
+│   │   ├── paex_record_file.c
+│   │   ├── paex_saw.c
+│   │   ├── paex_sine.c
+│   │   ├── paex_sine_c++.cpp
+│   │   ├── paex_wmme_ac3.c
+│   │   ├── paex_wmme_surround.c
+│   │   ├── paex_write_sine.c
+│   │   ├── paex_write_sine_nonint.c
+│   │   └── pa_fuzz.c
+│   ├── .gitattributes
+│   ├── .github
+│   │   ├── asiosdk-version.txt
+│   │   ├── __init__.py
+│   │   ├── ISSUE_TEMPLATE
+│   │   │   ├── bug_report.md
+│   │   │   └── __init__.py
+│   │   └── workflows
+│   │       ├── autotools.yml
+│   │       ├── cmake.yml
+│   │       ├── compare_def_files.yml
+│   │       ├── __init__.py
+│   │       ├── MSBuild.yml
+│   │       └── whitelint.yml
+│   ├── .gitignore
+│   ├── include
+│   │   ├── __init__.py
+│   │   ├── pa_asio.h
+│   │   ├── pa_jack.h
+│   │   ├── pa_linux_alsa.h
+│   │   ├── pa_linux_pulseaudio.h
+│   │   ├── pa_mac_core.h
+│   │   ├── pa_win_ds.h
+│   │   ├── pa_win_wasapi.h
+│   │   ├── pa_win_waveformat.h
+│   │   ├── pa_win_wdmks.h
+│   │   ├── pa_win_wmme.h
+│   │   └── portaudio.h
+│   ├── __init__.py
+│   ├── install-sh
+│   ├── LICENSE.txt
+│   ├── ltmain.sh
+│   ├── Makefile.in
+│   ├── missing
+│   ├── msvc
+│   │   ├── __init__.py
+│   │   ├── portaudio.def
+│   │   ├── portaudio.dsp
+│   │   ├── portaudio.dsw
+│   │   ├── portaudio.sln
+│   │   ├── portaudio.vcproj
+│   │   └── readme.txt
+│   ├── pa_compare_def_files.py
+│   ├── pa_whitelint.py
+│   ├── portaudio-2.0.pc.in
+│   ├── qa
+│   │   ├── CMakeLists.txt
+│   │   ├── __init__.py
+│   │   ├── loopback
+│   │   │   ├── CMakeLists.txt
+│   │   │   ├── __init__.py
+│   │   │   ├── README.txt
+│   │   │   └── src
+│   │   │       ├── audio_analyzer.c
+│   │   │       ├── audio_analyzer.h
+│   │   │       ├── biquad_filter.c
+│   │   │       ├── biquad_filter.h
+│   │   │       ├── __init__.py
+│   │   │       ├── paqa.c
+│   │   │       ├── paqa_tools.c
+│   │   │       ├── paqa_tools.h
+│   │   │       ├── qa_tools.h
+│   │   │       ├── test_audio_analyzer.c
+│   │   │       ├── test_audio_analyzer.h
+│   │   │       ├── write_wav.c
+│   │   │       └── write_wav.h
+│   │   ├── paqa_devs.c
+│   │   ├── paqa_errs.c
+│   │   ├── paqa_latency.c
+│   │   └── paqa_macros.h
+│   ├── README.configure.txt
+│   ├── README.md
+│   ├── src
+│   │   ├── common
+│   │   │   ├── __init__.py
+│   │   │   ├── pa_allocation.c
+│   │   │   ├── pa_allocation.h
+│   │   │   ├── pa_converters.c
+│   │   │   ├── pa_converters.h
+│   │   │   ├── pa_cpuload.c
+│   │   │   ├── pa_cpuload.h
+│   │   │   ├── pa_debugprint.c
+│   │   │   ├── pa_debugprint.h
+│   │   │   ├── pa_dither.c
+│   │   │   ├── pa_dither.h
+│   │   │   ├── pa_endianness.h
+│   │   │   ├── pa_front.c
+│   │   │   ├── pa_gitrevision.h
+│   │   │   ├── pa_hostapi.h
+│   │   │   ├── pa_memorybarrier.h
+│   │   │   ├── pa_process.c
+│   │   │   ├── pa_process.h
+│   │   │   ├── pa_ringbuffer.c
+│   │   │   ├── pa_ringbuffer.h
+│   │   │   ├── pa_stream.c
+│   │   │   ├── pa_stream.h
+│   │   │   ├── pa_trace.c
+│   │   │   ├── pa_trace.h
+│   │   │   ├── pa_types.h
+│   │   │   └── pa_util.h
+│   │   ├── hostapi
+│   │   │   ├── alsa
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── pa_linux_alsa.c
+│   │   │   ├── asihpi
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── pa_linux_asihpi.c
+│   │   │   ├── asio
+│   │   │   │   ├── ASIO-README.txt
+│   │   │   │   ├── Callback_adaptation_.pdf
+│   │   │   │   ├── iasiothiscallresolver.cpp
+│   │   │   │   ├── iasiothiscallresolver.h
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── pa_asio.cpp
+│   │   │   │   └── Pa_ASIO.pdf
+│   │   │   ├── audioio
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── pa_unix_audioio.c
+│   │   │   ├── coreaudio
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── notes.txt
+│   │   │   │   ├── pa_mac_core_blocking.c
+│   │   │   │   ├── pa_mac_core_blocking.h
+│   │   │   │   ├── pa_mac_core.c
+│   │   │   │   ├── pa_mac_core_internal.h
+│   │   │   │   ├── pa_mac_core_utilities.c
+│   │   │   │   └── pa_mac_core_utilities.h
+│   │   │   ├── dsound
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── pa_win_ds.c
+│   │   │   │   ├── pa_win_ds_dynlink.c
+│   │   │   │   └── pa_win_ds_dynlink.h
+│   │   │   ├── __init__.py
+│   │   │   ├── jack
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── pa_jack.c
+│   │   │   ├── oss
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── low_latency_tip.txt
+│   │   │   │   ├── pa_unix_oss.c
+│   │   │   │   └── recplay.c
+│   │   │   ├── pulseaudio
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── pa_linux_pulseaudio_block.c
+│   │   │   │   ├── pa_linux_pulseaudio_block_internal.h
+│   │   │   │   ├── pa_linux_pulseaudio.c
+│   │   │   │   ├── pa_linux_pulseaudio_cb.c
+│   │   │   │   ├── pa_linux_pulseaudio_cb_internal.h
+│   │   │   │   └── pa_linux_pulseaudio_internal.h
+│   │   │   ├── skeleton
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── pa_hostapi_skeleton.c
+│   │   │   │   └── README.txt
+│   │   │   ├── sndio
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── pa_sndio.c
+│   │   │   ├── wasapi
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── mingw-include
+│   │   │   │   │   ├── audioclient.h
+│   │   │   │   │   ├── AudioSessionTypes.h
+│   │   │   │   │   ├── devicetopology.h
+│   │   │   │   │   ├── endpointvolume.h
+│   │   │   │   │   ├── functiondiscoverykeys_devpkey.h
+│   │   │   │   │   ├── functiondiscoverykeys.h
+│   │   │   │   │   ├── __init__.py
+│   │   │   │   │   ├── ksguid.h
+│   │   │   │   │   ├── ks.h
+│   │   │   │   │   ├── ksmedia.h
+│   │   │   │   │   ├── ksproxy.h
+│   │   │   │   │   ├── ksuuids.h
+│   │   │   │   │   ├── mmdeviceapi.h
+│   │   │   │   │   ├── PropIdl.h
+│   │   │   │   │   ├── propkeydef.h
+│   │   │   │   │   ├── propkey.h
+│   │   │   │   │   ├── propsys.h
+│   │   │   │   │   ├── rpcsal.h
+│   │   │   │   │   ├── sal.h
+│   │   │   │   │   ├── sdkddkver.h
+│   │   │   │   │   ├── ShTypes.h
+│   │   │   │   │   ├── structuredquery.h
+│   │   │   │   │   └── winapifamily.h
+│   │   │   │   ├── pa_win_wasapi.c
+│   │   │   │   └── readme.txt
+│   │   │   ├── wdmks
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── pa_win_wdmks.c
+│   │   │   │   └── readme.txt
+│   │   │   └── wmme
+│   │   │       ├── __init__.py
+│   │   │       └── pa_win_wmme.c
+│   │   ├── __init__.py
+│   │   └── os
+│   │       ├── __init__.py
+│   │       ├── unix
+│   │       │   ├── __init__.py
+│   │       │   ├── pa_pthread_util.c
+│   │       │   ├── pa_pthread_util.h
+│   │       │   ├── pa_unix_hostapis.c
+│   │       │   ├── pa_unix_util.c
+│   │       │   └── pa_unix_util.h
+│   │       └── win
+│   │           ├── __init__.py
+│   │           ├── pa_win_coinitialize.c
+│   │           ├── pa_win_coinitialize.h
+│   │           ├── pa_win_hostapis.c
+│   │           ├── pa_win_util.c
+│   │           ├── pa_win_util.h
+│   │           ├── pa_win_version.c
+│   │           ├── pa_win_version.h
+│   │           ├── pa_win_waveformat.c
+│   │           ├── pa_win_wdmks_utils.c
+│   │           ├── pa_win_wdmks_utils.h
+│   │           ├── pa_x86_plain_converters.c
+│   │           └── pa_x86_plain_converters.h
+│   ├── test
+│   │   ├── CMakeLists.txt
+│   │   ├── __init__.py
+│   │   ├── pa_minlat.c
+│   │   ├── patest1.c
+│   │   ├── patest_buffer.c
+│   │   ├── patest_callbackstop.c
+│   │   ├── patest_clip.c
+│   │   ├── patest_converters.c
+│   │   ├── patest_dither.c
+│   │   ├── patest_dsound_find_best_latency_params.c
+│   │   ├── patest_dsound_low_level_latency_params.c
+│   │   ├── patest_dsound_surround.c
+│   │   ├── patest_enumerate_default_latency.c
+│   │   ├── patest_hang.c
+│   │   ├── patest_init.c
+│   │   ├── patest_in_overflow.c
+│   │   ├── patest_jack_wasapi.c
+│   │   ├── patest_latency.c
+│   │   ├── patest_leftright.c
+│   │   ├── patest_longsine.c
+│   │   ├── patest_many.c
+│   │   ├── patest_maxsines.c
+│   │   ├── patest_mono.c
+│   │   ├── patest_multi_sine.c
+│   │   ├── patest_out_underflow.c
+│   │   ├── patest_prime.c
+│   │   ├── patest_read_record.c
+│   │   ├── patest_read_record_wasapi.c
+│   │   ├── patest_read_write_wire_wasapi.c
+│   │   ├── patest_ringmix.c
+│   │   ├── patest_sine8.c
+│   │   ├── patest_sine_channelmaps.c
+│   │   ├── patest_sine_formats.c
+│   │   ├── patest_sine_srate.c
+│   │   ├── patest_sine_time.c
+│   │   ├── patest_start_stop.c
+│   │   ├── patest_stop.c
+│   │   ├── patest_stop_playout.c
+│   │   ├── patest_suggested_vs_streaminfo_latency.c
+│   │   ├── patest_suggested_vs_streaminfo_latency.py
+│   │   ├── patest_sync.c
+│   │   ├── patest_timing.c
+│   │   ├── patest_toomanysines.c
+│   │   ├── patest_two_rates.c
+│   │   ├── patest_underflow.c
+│   │   ├── patest_unplug.c
+│   │   ├── patest_wasapi_ac3.c
+│   │   ├── patest_wasapi_eac3.c
+│   │   ├── patest_wire.c
+│   │   ├── patest_wmme_find_best_latency_params.c
+│   │   ├── patest_wmme_low_level_latency_params.c
+│   │   ├── patest_write_stop.c
+│   │   ├── patest_write_stop_hang_illegal.c
+│   │   ├── README.md
+│   │   ├── README.txt
+│   │   └── test_use_cmake
+│   │       ├── CMakeLists.txt
+│   │       └── __init__.py
+│   ├── update_gitrevision.sh
+│   └── vcpkg.json
+├── pulseaudio_oss.sh
+├── README.md
+├── spotibot_exec
+├── spotify
+│   ├── __init__.py
+│   └── player.py
+└── test_eq.audioscript
+
+76 directories, 494 files
