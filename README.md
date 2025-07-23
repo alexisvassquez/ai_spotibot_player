@@ -117,8 +117,13 @@ GNU General Public License v3 (open-source and free to use for indie artists, pl
 
 ### 7. spotify/
 **Purpose:** Ethical API Use
-**No Scraping Data**
-This project interacts with Spotify through the **official Spotify Web API**, utilizing authenticated access and approved scopes. No scraping is used at any point. All audio feature extraction is handled through permitted endpoints provided by Spotify, in accordance with their [Developer Terms of Service](https://developer.spotify.com/terms). This ensures ethical, transparent, and respectful use of artist and user data. The purpose of these features is to support creative analysis and mood-based musical applications—not to exploit or misrepresent Spotify’s platform.
+**No Scraping Data:**
+- This project interacts with Spotify through the **official Spotify Web API**, utilizing authenticated access and approved scopes. 
+- No scraping is used at any point. 
+- All audio feature extraction is handled through permitted endpoints provided by Spotify, in accordance with their [Developer Terms of Service](https://developer.spotify.com/terms). 
+- This ensures ethical, transparent, and respectful use of artist and user data. 
+
+> The purpose of these features is to support creative analysis and mood-based musical applications—not to exploit or misrepresent Spotify’s platform.
 
 ---
 
