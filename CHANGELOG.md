@@ -155,9 +155,10 @@ Future releases will include:
 ## [0.3.1] – 2025-07-23
 ### Added
 - New `Ethical API Use` section in README.md outlining responsible, non-scraping interaction with the Spotify Web API.
+- Added working `spotify/diagnostic.py` test script for initial Spotify API integration.
 
 ### Changed
-- Renamed `extract_spotify_features.py` for clarity and better alignment with project goals.
+- Renamed `extract_spotify_features.py` to `spotify_api_features.py` for clarity and better alignment with project goals.
 
 ### Notes
 - This update reinforces the project's commitment to API transparency, ethical data use, and support for artist integrity.
