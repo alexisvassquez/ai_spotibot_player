@@ -1,8 +1,8 @@
-# AudioMIX / Spotibot - AI-Powered Modular Music Production Tool for Independent Artists & Creators 
+# AudioMIX / Spotibot - AI-Powered Modular Music Production Software for Independent Artists & Creators 
 
 ---
 
-Meet **AudioMIX** and its first test use case, **Spotibot** - an open-source and intelligent artist-friendly music tool. **AudioMIX** features AI-powered audio analysis and mood-aware music interaction.
+Meet **AudioMIX** and its test use case, **Spotibot** - an open-source and intelligent artist-friendly digital audio workstation. **AudioMIX** features AI-powered audio analysis and mood-aware music interaction.
 
 ---
 
@@ -19,10 +19,12 @@ I update this repo continuously via my local terminal. :)
 - Mood detection from audio files
 - Spectral + MFCC-based analysis
 - Integrated Spotify API for playlist input with room for future extensions
-- Spotify integration: import playlists, analyze mood tracks (in development)
+- Spotify integration: import playlists, analyze mood tracks, collaborative
 - LED output logic for physical interaction
-- Modular codebase (using Python + C/C++)
-- **Live performance engine** for real-time interaction and show control (in development)
+- Modular codebase (using Python + C/C++ + AudioScript (custom DSL))
+- **Live performance engine** for real-time interaction and show control
+- **Audience listener** to hype up live performances based on audience input
+- **AudioScript Shell** for live coding features
 - **CLI-parseable JSON output** for mood + BPM classification
 - Built with musicians in mind
 
