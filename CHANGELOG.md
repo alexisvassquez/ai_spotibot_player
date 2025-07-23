@@ -137,7 +137,6 @@ Future releases will include:
 ---
 
 ## [0.3.1] - 2025-07-22
-
 ### Added
 - 🎚️ `train_eq_model.py` script to train a Lightning PyTorch model for EQ classification
 - 🧠 `LightningEQNet` model with support for multi-label output: `bass_boost`, `mids_cut`, `treble`
@@ -150,3 +149,16 @@ Future releases will include:
 - EQ predictions are fully aligned with expected outputs (0.99–1.00 confidence for trained tags)
 - No GPU required; model trains and runs inference entirely on CPU inside Chromebook CLI
 - Began adding Spotify integration with `extract_spotify_features.py` for model training, but ran into some 403 goblins due to CA certificate mismatch on Crostini. Will need to run from GCP. 
+
+---
+
+## [0.3.1] – 2025-07-23
+### Added
+- New `Ethical API Use` section in README.md outlining responsible, non-scraping interaction with the Spotify Web API.
+
+### Changed
+- Renamed `extract_spotify_features.py` for clarity and better alignment with project goals.
+
+### Notes
+- This update reinforces the project's commitment to API transparency, ethical data use, and support for artist integrity.
+
