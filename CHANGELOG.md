@@ -138,11 +138,11 @@ Future releases will include:
 
 ## [0.3.1] - 2025-07-22
 ### Added
-- 🎚️ `train_eq_model.py` script to train a Lightning PyTorch model for EQ classification
-- 🧠 `LightningEQNet` model with support for multi-label output: `bass_boost`, `mids_cut`, `treble`
-- 🗃️ `EQDataset` with MFCC + Spectral Contrast feature extraction via `librosa`
-- ✅ `predict_eq.py` script to infer EQ tags from new `.wav` or `.mp3` files
-- 💾 Saved model checkpoint at `models/eq_model.pt` and class labels in `models/eq_labels.txt`
+- `train_eq_model.py` script to train a Lightning PyTorch model for EQ classification
+- `LightningEQNet` model with support for multi-label output: `bass_boost`, `mids_cut`, `treble`
+- `EQDataset` with MFCC + Spectral Contrast feature extraction via `librosa`
+- `predict_eq.py` script to infer EQ tags from new `.wav` or `.mp3` files
+- Saved model checkpoint at `models/eq_model.pt` and class labels in `models/eq_labels.txt`
 
 ### Notes
 - First successful end-to-end ML flow: custom audio → features → model training → prediction
