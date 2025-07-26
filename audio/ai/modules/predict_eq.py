@@ -11,23 +11,33 @@ from audio.ai.modules.lightning_module import LightningEQNet
 LABELS_PATH = "models/eq_labels.txt"
 MODEL_PATH = "models/eq_model.pt"
 
-def extract_features(filepath):
-    y, sr = librosa.load(filepath, duration=10, sr=22050)
-    mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
-    contrast = librosa.feature.spectral_contrast(y=y, sr=sr)
-    return np.hstack([np.mean(mfcc, axis=1), np.mean(contrast, axis=1)])
-
 def load_labels():
     with open(LABELS_PATH, "r") as f:
         return f.read().strip().split(",")
 
-def predict(filepath):
-    print (f"🎧 Analyzing: {filepath}")
-    features = extract_features(filepath)
-    x = torch.tensor(features, dtype=torch.float32).unsqueeze(0)
+def flatten_features_dict(features_dict):
+    flat = []
+    for key, value in features_dict.items():
+        if isinstance(value, dict):    # nested mean/var
+            flat.extend(value.get("mean", []))
+            flat.extend(value.get("var", []))
+        elif isinstance(value, (list, np.ndarray)):
+            flat.extend(value)
+        elif isinstance(value, (int, float)):
+            flat.append(value)
+        else:
+            print (f"[⚠️] Skipping unsupported feature type: {key}")
+    return flat
 
+def predict_labels(features_dict):
     labels = load_labels()
-    model = LightningEQNet(input_dim=20, num_classes=len(labels))
+    flat_features = flatten_features_dict(features_dict)
+
+    # Handle input features 
+    x = torch.tensor(flat_features, dtype=torch.float32).unsqueeze(0)
+
+    # Load Lightning model
+    model = LightningEQNet(input_dim=len(flat_features), num_classes=len(labels))
     model.load_state_dict(torch.load(MODEL_PATH))
     model.eval()
 
@@ -38,13 +48,12 @@ def predict(filepath):
     sorted_preds = sorted(predictions.items(), key=lambda x: x[1], reverse=True)
 
     print ("\n🎛️ Predicted EQ Tags:")
+    selected_labels = []
     for label, score in sorted_preds:
         status = "✅" if score > 0.5 else "❌"
         print (f"{status} {label:<10} -> confidence: {score:.2f}")
+        if score > 0.5:
+            selected_labels.append(label)
 
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print ("Usage: python3 audio/ai/modules/predict_eq.py <path_to_audio_file>")
-        sys.exit(1)
+    return selected_labels
 
-    predict(sys.argv[1])
