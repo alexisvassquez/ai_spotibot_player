@@ -163,3 +163,21 @@ Future releases will include:
 ### Notes
 - This update reinforces the project's commitment to API transparency, ethical data use, and support for artist integrity.
 
+---
+
+## [0.3.1] - 2025-07-27
+### Added
+- `train_eq_model.py`: Complete EQ model training pipeline using precomputed audio features and EQ label annotations.
+- `flatten_features()` method to dynamically flatten all relevant audio feature structures.
+- Debug logging for label/feature key matching, sample count, and input shape diagnostics.
+
+### Fixed
+- Feature-label mismatch errors due to structural assumptions.
+- AttributeError caused by missing `flatten_features()` method in `EQDataset`.
+- Deprecation warnings and formatting issues in `analyze_audio.py` related to `tempo` parsing.
+- Overwriting issue in `audio_features.json` — now supports append-and-merge logic for multiple sample feature entries.
+
+### Notes
+- EQ model now successfully loads features from `audio/analysis_output/data/audio_features.json` and labels from `eq_labels.json`.
+- Current state: **Model training confirmed working. Still in test mode.**
+
