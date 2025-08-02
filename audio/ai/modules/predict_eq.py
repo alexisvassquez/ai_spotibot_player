@@ -57,3 +57,21 @@ def predict_labels(features_dict):
 
     return selected_labels
 
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print ("Usage: python3 -m audio.ai.modules.predict_eq <audio_file>")
+        sys.exit(1)
+
+    file_path = sys.argv[1]
+
+    from audio.ai.modules.feature_extraction import extract_features
+    features = extract_features(file_path)
+
+    if not features:
+        print ("[❌] Failed to extract features.")
+        sys.exit(1)
+
+    print (f"[+] Extracted features from {file_path}")
+    tags = predict_labels(features)
+
+    print ("\🎧 Final EQ Tags Selected:", tags)
