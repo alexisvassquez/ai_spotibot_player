@@ -2,7 +2,7 @@
   "bass_boost": {
     "semantic": {
       "sub_bass": 6,
-      "bass": 4,
+      "bass": 5,
       "low_mid": 2
     },
     "filters": [
@@ -12,9 +12,80 @@
         "gain_db": 6.0
       },
       {
-        "freq": 250,
+        "freq": 150,
         "q": 1.2,
+        "gain_db": 4.0
+      }
+    ]
+  },
+  "deep_808": {
+    "semantic": {
+      "sub_bass": 8,
+      "bass": 6
+    },
+    "filters": [
+      {
+        "freq": 45,
+        "q": 0.9,
+        "gain_db": 7.0
+      },
+      {
+        "freq": 90,
+        "q": 1.1,
+        "gain_db": 5.0
+      }
+    ]
+  },
+  "warm_low": {
+    "semantic": {
+      "sub_bass": 4,
+      "bass": 3
+    },
+    "filters": [
+      {
+        "freq": 70,
+        "q": 0.8,
         "gain_db": 3.0
+      },
+      {
+        "freq": 150,
+        "q": 1.0,
+        "gain_db": 2.5
+      }
+    ]
+  },
+  "punchy_kick": {
+    "semantic": {
+      "bass": 5,
+      "low_mid": 3
+    },
+    "filters": [
+      {
+        "freq": 100,
+        "q": 1.3,
+        "gain_db": 5.0
+      },
+      {
+        "freq": 250,
+        "q": 1.0,
+        "gain_db": 3.5
+      }
+    ]
+  },
+  "subquake": {
+    "semantic": {
+      "sub_bass": 10
+    },
+    "filters": [
+      {
+        "freq": 30,
+        "q": 0.7,
+        "gain_db": 9.0
+      },
+      {
+        "freq": 50,
+        "q": 0.9,
+        "gain_db": 8.0
       }
     ]
   },
@@ -76,6 +147,103 @@
         "freq": 16000,
         "q": 1.0,
         "gain_db": -6.0
+      }
+    ]
+  },
+  "mids_cut": {
+    "semantic": {
+      "mid": -5,
+      "low_mid": -2
+    },
+    "filters": [
+      {
+        "freq": 500,
+        "q": 1.0,
+        "gain_db": -3.5
+      },
+      {
+        "freq": 1000,
+        "q": 1.1,
+        "gain_db": -4.5
+      }
+    ]
+  },
+  "clarity_plus": {
+    "semantic": {
+      "presence": 4,
+      "brilliance": 3
+    },
+    "filters": [
+      {
+        "freq": 4000,
+        "q": 1.0,
+        "gain_db": 3.5
+      }, 
+      {
+        "freq": 10000,
+        "q": 0.9,
+        "gain_db": 3.0
+      }
+    ]
+  },
+  "lofi_warmth": {
+    "semantic": {
+      "bass": 2,
+      "mid": 1
+    },
+    "filters": [
+      {
+        "freq": 80,
+        "q": 1.0,
+        "gain_db": 2.0
+      },
+      {
+        "freq": 6000,
+        "q": 1.2,
+        "gain_db": -5.0
+      }
+    ]
+  },
+  "v_shape": {
+    "semantic": {
+      "sub_bass": 6,
+      "bass": 5,
+      "mid": -3,
+      "brilliance": 5
+    },
+    "filters": [
+      {
+        "freq": 60,
+        "q": 1.0,
+        "gain_db": 5.0
+      },
+      {
+        "freq": 1000,
+        "q": 1.1,
+        "gain_db": -4.0
+      },
+      {
+        "freq": 120000,
+        "q": 0.9,
+        "gain_db": 5.0
+      }
+    ]
+  },
+  "bass_cut": {
+    "semantic": {
+      "sub_bass": -5,
+      "bass": -3
+    },
+    "filters": [
+      {
+        "freq": 60,
+        "q": 1.0,
+        "gain_db": -6.0
+      },
+      {
+        "freq": 120,
+        "q": 1.2,
+        "gain_db": -3.0
       }
     ]
   },
