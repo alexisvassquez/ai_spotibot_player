@@ -37,6 +37,29 @@
       }
     ]
   },
+  "treble" : {
+    "semantic": {
+      "presence": 3,
+      "brilliance": 5
+    },
+    "filters": [
+      {
+        "freq": 8000,
+        "q": 1.0,
+        "gain_db": 4.5
+      },
+      {
+        "freq": 12000,
+        "q": 0.9,
+        "gain_db": 5.0
+      },
+      {
+        "freq": 16000,
+        "q": 1.0,
+        "gain_db": 3.5
+      }
+    ]
+  },
   "treble_cut": {
     "filters": [
       {
