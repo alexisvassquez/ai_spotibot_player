@@ -181,3 +181,41 @@ Future releases will include:
 - EQ model now successfully loads features from `audio/analysis_output/data/audio_features.json` and labels from `eq_labels.json`.
 - Current state: **Model training confirmed working. Still in test mode.**
 
+---
+
+## [0.3.2] - 2025-08-02
+
+### Added
+- **PyTorch EQ Model Inference**:
+  - Implemented `predict_eq.py` to load `eq_model.pt` and extract features.
+  - Predicted multi-label EQ tags with confidence scores from `.wav` and `.mp3` files.
+  - Added CLI support for individual file prediction.
+
+- **Auto-EQ Application Pipeline**:
+  - Enhanced `predict_and_apply_eq.py` to apply predicted EQ presets to input files.
+  - Integrated dynamic preset loading with fallback warnings for unknown tags.
+  - Generated matching `.audioscript` files for downstream AudioScript processing.
+
+- **New Presets for Bass Enthusiasts**:
+  - Added `"bass_plus"` and `"super_bass"` EQ profiles for enhanced low-end emphasis.
+  - Improved label detection to match model output with available presets.
+
+- **Waveform JSON Export Tool**:
+  - Introduced `waveform_to_json.py` in `dev_tools/`.
+  - Downsamples audio waveforms to 1000-point JSON arrays.
+  - Supports waveform duration, samplerate, and amplitude-normalized points.
+  - Includes `--markers` CLI flag for custom loop timestamps (e.g., `--markers "intro=0,drop=25"`).
+
+- **Audio Format Auto-Conversion**:
+  - Auto-converts `.mp3`, `.m4a`, and `.aac` to `.wav` using `pydub` + `ffmpeg`.
+  - Ensures consistent waveform output and compatibility with `soundfile`.
+
+### Fixed
+- Fixed `ModuleNotFoundError` for `predict_eq.py` by using `-m` execution (`python3 -m audio.ai.modules.predict_eq`).
+- Resolved `NameError` and `TypeError` in `waveform_to_json.py` caused by variable mismatches and data type goblins (e.g., list vs dict).
+
+### Misc
+- Added `dev_tools/` directory for safe, shell-free developer utilities.
+- Laid groundwork for future MIDI parsing and live waveform visualization in AudioScript shell.
+
+

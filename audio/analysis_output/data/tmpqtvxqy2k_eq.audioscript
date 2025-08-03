@@ -1,0 +1,5 @@
+# AudioScript generated for tmpqtvxqy2k_eq.wav
+eq.set("bass_boost")
+eq.set("treble")
+play("tmpqtvxqy2k_eq.wav")
+pulse("cyan", bpm=120)
