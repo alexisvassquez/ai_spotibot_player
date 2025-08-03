@@ -184,7 +184,6 @@ Future releases will include:
 ---
 
 ## [0.3.2] - 2025-08-02
-
 ### Added
 - **PyTorch EQ Model Inference**:
   - Implemented `predict_eq.py` to load `eq_model.pt` and extract features.
