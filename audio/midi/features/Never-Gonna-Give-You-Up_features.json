@@ -1,0 +1,98 @@
+{
+  "file_name": "Never-Gonna-Give-You-Up.mid",
+  "duration_seconds": 214.663,
+  "tempo_bpm": 233.38,
+  "note_count": 7469,
+  "note_density_per_sec": 34.794,
+  "avg_velocity": 76.96,
+  "first_10_notes": [
+    "C#4",
+    "F#3",
+    "F4",
+    "A#3",
+    "C4",
+    "G#3",
+    "D#4",
+    "A#3",
+    "G#3",
+    "D#4"
+  ],
+  "instruments": [
+    {
+      "name": "E.PIANO 2",
+      "is_drum": false,
+      "num_notes": 437
+    },
+    {
+      "name": "SYN BASS 2",
+      "is_drum": false,
+      "num_notes": 791
+    },
+    {
+      "name": "CLEAN GTR",
+      "is_drum": false,
+      "num_notes": 72
+    },
+    {
+      "name": "MELODY",
+      "is_drum": false,
+      "num_notes": 541
+    },
+    {
+      "name": "PICCOLO",
+      "is_drum": false,
+      "num_notes": 875
+    },
+    {
+      "name": "SYNTH DRUM",
+      "is_drum": false,
+      "num_notes": 57
+    },
+    {
+      "name": "SYNTH DRUM",
+      "is_drum": false,
+      "num_notes": 37
+    },
+    {
+      "name": "SAW WAVE",
+      "is_drum": false,
+      "num_notes": 102
+    },
+    {
+      "name": "SOPRAN SAX",
+      "is_drum": false,
+      "num_notes": 124
+    },
+    {
+      "name": "DRUMS",
+      "is_drum": true,
+      "num_notes": 3053
+    },
+    {
+      "name": "STRINGS",
+      "is_drum": false,
+      "num_notes": 356
+    },
+    {
+      "name": "TRUMPET",
+      "is_drum": false,
+      "num_notes": 257
+    },
+    {
+      "name": "BRASS 1",
+      "is_drum": false,
+      "num_notes": 251
+    },
+    {
+      "name": "WHISTLE",
+      "is_drum": false,
+      "num_notes": 453
+    },
+    {
+      "name": "MUTED GTR",
+      "is_drum": false,
+      "num_notes": 63
+    }
+  ],
+  "tag_suggestion": "retro_style"
+}

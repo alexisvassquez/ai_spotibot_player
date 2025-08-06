@@ -1,0 +1,28 @@
+{
+  "file_name": "chopin-etude-op10-no4.mid",
+  "duration_seconds": 155.388,
+  "tempo_bpm": 253.5,
+  "note_count": 2208,
+  "note_density_per_sec": 14.21,
+  "avg_velocity": 90.07,
+  "first_10_notes": [
+    "G#5",
+    "F#5",
+    "E5",
+    "D#5",
+    "G#4",
+    "G#2",
+    "G#3",
+    "C#5",
+    "C#6",
+    "C#2"
+  ],
+  "instruments": [
+    {
+      "name": "Piano",
+      "is_drum": false,
+      "num_notes": 2208
+    }
+  ],
+  "tag_suggestion": "classical_virtuoso"
+}
