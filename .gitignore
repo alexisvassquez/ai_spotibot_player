@@ -1,12 +1,24 @@
 # === Python ===
 __pycache__/
 *.pyc
+*.py[cod]
+*.so
 *.pyo
 *.pyd
+*.egg
+*.egg-info/
 .Python
+dist/
+build/
+
+# === Virtual Environments ===
 env/
 myenv/
 venv/
+ENV/
+
+# === dotenv credentials ===
+.env
 
 # === CMake & Build ===
 build/

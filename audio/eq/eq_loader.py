@@ -4,13 +4,13 @@ import json
 import yaml
 
 # Load a single EQ preset file (JSON or YAML)
-def load_eq_preset(filename):
+def load_eq_preset(preset_path, debug=False):
     base_dir = os.path.dirname(os.path.realpath(__file__))
 
     # Build full path to presets/
-    preset_path = os.path.join(base_dir, "presets", filename)
-
-    print(f"[DEBUG] Loading EQ presets from: {preset_path}")
+    preset_path = os.path.join(base_dir, "presets", preset_path)
+    if debug:
+        print(f"[DEBUG] Loading EQ presets from: {preset_path}")
 
     ext = os.path.splitext(preset_path)[1].lower()
 
