@@ -10,17 +10,17 @@
     "mood": "introspective"
   },
   "experimental_genre": {
-    "eq_preset": "bitcrush_wave",
+    "eq_preset": "bitcrush_glitch",
     "lighting_scene": "rgb_glitch_flicker",
     "mood": "chaotic_fun"
   },
   "ambient_minimalism": {
-    "eq_preset": "bass_boost",
+    "eq_preset": "lofi_filter",
     "lighting_scene": "pulse_neon_cyan",
     "mood": "hype"
   },
   "retro_style": {
-    "eq_preset": "lofi_filter",
+    "eq_preset": "synth_nuwave",
     "lighting_scene": "orange_fade_strobe",
     "mood": "nostalgic"
   },
