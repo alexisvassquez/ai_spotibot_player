@@ -5,6 +5,7 @@
 import json
 import os
 import sys
+from audio.eq.eq_commands import eq_preset
 
 def load_tag_map(tag_map_path):
     with open(tag_map_path, 'r') as f:
@@ -26,7 +27,9 @@ def apply_settings(settings):
     print (f"  🎛️  EQ Prest:        {settings['eq_preset']}")
     print (f"  💡 Lighting Scene:  {settings['lighting_scene']}")
     print (f"  🎭 Mood Setting:    {settings['mood']}")
-    # TODO: Hook into engine modules (lighting, EQ, live performance, etc.)
+
+    eq_preset(settings["eq_preset"])    # Calls preset by name
+    trigger_lighting_scene(settings["lighting_scene"])
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
