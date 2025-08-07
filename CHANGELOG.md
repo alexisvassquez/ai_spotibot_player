@@ -217,4 +217,21 @@ Future releases will include:
 - Added `dev_tools/` directory for safe, shell-free developer utilities.
 - Laid groundwork for future MIDI parsing and live waveform visualization in AudioScript shell.
 
+---
+
+## [v0.3.3-dev] – 2025-08-06
+### Added
+- MIDI Feature Extraction Module (`extract_midi_features.py`)
+- Genre Tag Classifier (`midi_tag_classifier.py`) with refined tag logic
+- Tag-to-Behavior Mapper (`tag_to_settings.py`) with EQ and lighting scene automation
+- Integrated EQ preset logic via `eq_preset()` call in `eq_commands.py`
+- Created tag-based lighting and mood map (`tag_map.json`) with artistic preset names
+- Began tagging system that informs Juniper2.0 performance behavior and AudioScript logic
+
+### Updated
+- Expanded tag support to include `modern_pop`, `electronic_dance`, and `classical_expressive`
+- Confirmed system prints intelligent, stylized CLI output for user-facing feedback
+
+### Notes
+- Emotional + creative states now reflected in automated system response
 
