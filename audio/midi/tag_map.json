@@ -1,0 +1,22 @@
+{
+  "classical_virtuoso": {
+    "eq_preset": "bright_piano",
+    "lighting_scene": "glow_white_sweep",
+    "mood": "elevated"
+  },
+  "experimental_genre": {
+    "eq_preset": "bitcrush_wave",
+    "lighting_scene": "rgb_glitch_flicker",
+    "mood": "chaotic_fun"
+  },
+  "ambient_minimalism": {
+    "eq_preset": "bass_boost",
+    "lighting_scene": "pulse_neon_cyan",
+    "mood": "hype"
+  },
+  "retro_style": {
+    "eq_preset": "lofi_filter",
+    "lighting_scene": "orange_fade_strobe",
+    "mood": "nostalgic"
+  }
+}
