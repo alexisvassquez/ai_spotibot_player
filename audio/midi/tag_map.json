@@ -4,6 +4,11 @@
     "lighting_scene": "glow_white_sweep",
     "mood": "elevated"
   },
+  "classical_expressive": {
+    "eq_preset": "warm_chamber",
+    "lighting_scene": "soft_gold_dim",
+    "mood": "introspective"
+  },
   "experimental_genre": {
     "eq_preset": "bitcrush_wave",
     "lighting_scene": "rgb_glitch_flicker",
@@ -18,5 +23,15 @@
     "eq_preset": "lofi_filter",
     "lighting_scene": "orange_fade_strobe",
     "mood": "nostalgic"
+  },
+  "electronic_dance": {
+    "eq_preset": "bass_boost",
+    "lighting_scene": "neon_flash_loop",
+    "mood": "energized"
+  },
+  "modern_pop": {
+    "eq_preset": "bubblegum_bass",
+    "lighting_scene": "rose_gold_glow",
+    "mood": "confident"
   }
 }
