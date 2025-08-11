@@ -1,0 +1,8 @@
+{
+  "note_on:C4": "lights.front_strip.flash('red', duration=0.25)",
+  "note_on:D4": "lights.front_strip.flash('blue', duration=0.25)",
+  "note_on:E4": "lights.front_strip.flash('green', duration=0.25)",
+  "note_on:G3@vel>100": "fx.chorus.enable()",
+  "cc:1": "fx.modwheel(depth=0.5)",
+  "cc:64": "fx.sustain(toggle=True)"
+}
