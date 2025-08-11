@@ -4,7 +4,7 @@
 
 import os
 os.environ.setdefault('MIDO_BACKEND', 'mido.backends.rtmidi')
-os.environ.setdefault('RTMIDI_API', 'ALSA')
+os.environ.setdefault('RTMIDI_API', 'LINUX_ALSA')
 
 import sys, time, json, queue, threading
 from typing import Dict, Any, Optional
