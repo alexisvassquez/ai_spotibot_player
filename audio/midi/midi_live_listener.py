@@ -2,6 +2,10 @@
 # AudioMIX
 # audio/midi/midi_live_listener.py
 
+import os
+os.environ.setdefault('MIDO_BACKEND', 'mido.backends.rtmidi')
+os.environ.setdefault('RTMIDI_API', 'ALSA')
+
 import sys, time, json, queue, threading
 from typing import Dict, Any, Optional
 import mido
@@ -79,10 +83,14 @@ class MidiListener:
         except IOError as e:
             print (f"[ERROR] Could not open MIDI port '{self.port_name}': {e}")
 
-def select_port() -> str:
+def select_port(allow_virtual=True):
     ins = mido.get_input_names()
+    if not ins and allow_virtual:
+        print ("No physical MIDI inputs found; creating virtual input 'AudioMIX-Listener'.")
+        return "VIRTUAL"    # sentinel
     if not ins:
         raise RuntimeError("No MIDI inputs found. Plug a device or start a virtual port.")
+
     print ("Available MIDI inputs:")
     for i, name in enumerate(ins):
         print (f"  [{i}] {name}")
@@ -106,7 +114,12 @@ if __name__ == "__main__":
     # Map JSON path
     mapping_path = sys.argv[1] if len(sys.argv) > 1 else None
     mapping = load_map(mapping_path)
-    port = select_port()
+    port_name = select_port()
+    if port_name == "VIRTUAL":
+        # open virtual port
+        inport = mido.open_input("AudioMIX-Listener", virtual=True)
+    else:
+        inport = mido.open_input(port_name)
 
     q = queue.Queue()
     t_consumer = threading.Thread(target=audioscript_consumer, args=(q,), daemon=True)
