@@ -1,0 +1,38 @@
+{
+  "name": "drums",
+  "credits_required": true,
+  "sounds": {
+    "kick": {
+      "file": "audio/samples/drums/nirvanabfg__kick84.wav",
+      "title": "kick84",
+      "author": "nirvanabfg",
+      "source": "freesound.org",
+      "license": "CC-BY 4.0",
+      "url": "https://freesound.org/s/47558/"
+    },
+    "snare": {
+      "file": "audio/samples/drums/deadrobotmusic__dr-snare-126.wav",
+      "title": "dr-snare-126",
+      "author": "deadrobotmusic",
+      "source": "freesound.org",
+      "license": "CC-BY 4.0",
+      "url": "https://freesound.org/s/577130/"
+    },
+    "hihat": {
+      "file": "audio/samples/drums/datwilightz__open-hihat-5.wav",
+      "title": "open-hihat-5",
+      "author": "datwilightz",
+      "source": "freesound.org",
+      "license": "CC-BY 4.0",
+      "url": "https://freesound.org/s/193521/"
+    },
+    "clap": {
+      "file": "audio/samples/drums/bastianpusch__handclap11.wav",
+      "title": "handclap11",
+      "author": "bastianpusch",
+      "source": "freesound.org",
+      "license": "CC-BY 4.0",
+      "url": "https://freesound.org/s/493715/"
+    }
+  }
+}

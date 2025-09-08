@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "name": "Pad 1 -> kick",
+      "match": "note_on:ch=1:key=36",
+      "action": "play(\"audio/samples/drums/nirvanabfg__kick84.wav\")",
+      "quantize": "off"
+    },
+    {
+      "name": "Pad 2 -> snare",
+      "match": "note_on:ch=1:key=38",
+      "action": "play(\"audio/samples/drums/deadrobotmusic__dr-snare-126.wav\")",
+      "quantize": "off"
+    },
+    {
+      "name": "Pad 3 -> hat",
+      "match": "note_on:ch=1:key=42",
+      "action": "play(\"audio/samples/drums/datwilightz__open-hihat-5.wav\")",
+      "quantize": "off"
+    },
+    {
+      "name": "Pad 4 -> clap",
+      "match": "note_on:ch=1:key=39",
+      "action": "play(\"audio/samples/drums/bastianpusch__handclap11.wav\")",
+      "quantize": "off"
+    },
+    {
+      "name": "Pad 4 -> scene: Drop",
+      "match": "note_on:ch=1:key=40",
+      "action": "scene.launch(\"Drop\")",
+      "quantize": "1/1"
+    },
+    {
+      "name": "Mod Wheel -> purple glow",
+      "match": "control_change:ch=1:cc=1",
+      "action": "glow(\"purple\")",
+      "quantize": "off"
+    },
+    {
+      "name": "CC74 (brightness) -> LED pulse at 128",
+      "match": "control_change:ch=1:cc=74",
+      "action": "pulse(\"hot_pink\", 128)",
+      "quantize": "1/4"
+    },
+    {
+      "name": "Sustain pedal -> sidechain comp on master",
+      "match": "control_change:ch=1:cc=64",
+      "action": "fx.add(\"master\",\"compressor\",{\"ratio\":3,\"attack\":0.01,\"release\":0.2})",
+      "quantize": "off"
+    },
+    {
+      "name": "Pad 5 -> tag macro: build energy",
+      "match": "note_on:ch=1:key=41",
+      "action": "tag:build_energy",
+      "quantize": "1/4"
+    },
+    {
+      "name": "Pad 6 -> tag macro: calm reset",
+      "match": "note_on:ch=1:key=43",
+      "action": "tag:calm_reset",
+      "quantize": "1/4"
+    },
+    {
+      "name": "Start button -> transport start",
+      "match": "start",
+      "action": "play()",
+      "quantize": "off"
+    },
+    {
+      "name": "Stop button -> transport stop",
+      "match": "stop",
+      "action": "stop()",
+      "quantize": "off"
+    },
+    {
+      "name": "Clock (for future follow)",
+      "match": "clock",
+      "action": "noop()",
+      "quantize": "off"
+    }
+  ]
+} 
