@@ -4,25 +4,25 @@
     {
       "name": "Pad 1 -> kick",
       "match": "note_on:ch=1:key=36",
-      "action": "play(\"audio/samples/drums/nirvanabfg__kick84.wav\")",
+      "action": "sampler.play(\"drums\",\"kick\")",
       "quantize": "off"
     },
     {
       "name": "Pad 2 -> snare",
       "match": "note_on:ch=1:key=38",
-      "action": "play(\"audio/samples/drums/deadrobotmusic__dr-snare-126.wav\")",
+      "action": "sampler.play(\"drums\",\"snare\")",
       "quantize": "off"
     },
     {
-      "name": "Pad 3 -> hat",
+      "name": "Pad 3 -> hihat",
       "match": "note_on:ch=1:key=42",
-      "action": "play(\"audio/samples/drums/datwilightz__open-hihat-5.wav\")",
+      "action": "sampler.play(\"drums\",\"hihat\")",
       "quantize": "off"
     },
     {
       "name": "Pad 4 -> clap",
       "match": "note_on:ch=1:key=39",
-      "action": "play(\"audio/samples/drums/bastianpusch__handclap11.wav\")",
+      "action": "sampler.play(\"drums\",\"clap11\")",
       "quantize": "off"
     },
     {
