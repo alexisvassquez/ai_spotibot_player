@@ -1,12 +1,14 @@
 # ai_spotibot_player
 # AudioMIX
 # audioscript_runtime.py
+
 import sys
 import readline
 import os
 import importlib
 import shlex
 import atexit
+import time
 from performance_engine.modules.context import command_registry
 from audio.ai.inference_engine import generate_lighting_profile
 from performance_engine.modules import fade_mod
@@ -150,14 +152,20 @@ def main():
                     parse_and_execute(line.strip())
             return
 
+    midi_tick = command_registry.get("midi_tick")
     # Interactive loop
     while True:
         try:
+            if midi_tick:
+                midi_tick()    # keep processing realtime MIDI events
             line = input("🎛️ > ")
             parse_and_execute(line)
         except KeyboardInterrupt:
             say("Exiting AudioMIX Shell. Goodbye 👋", "🛑")
             break
+        except Exception as e:
+            say(f"[AS Shell Error] {e}", "❌")
+            time.sleep(0.01)
 
 if __name__ == "__main__":
     main()
