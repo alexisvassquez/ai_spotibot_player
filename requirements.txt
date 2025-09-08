@@ -2,9 +2,11 @@ gTTS
 joblib
 librosa
 matplotlib
+mido
 numpy
 PortAudio
 PyAudio
+python-rtmidi
 pyserial
 pyyaml>=6.0
 scikit-learn
