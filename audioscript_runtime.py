@@ -9,11 +9,13 @@ import importlib
 import shlex
 import atexit
 import time
-from performance_engine.modules.context import command_registry
-from audio.ai.inference_engine import generate_lighting_profile
-from performance_engine.modules import fade_mod
-from performance_engine.modules.shell_tools import load_dynamic_commands
-load_dynamic_commands()
+from .performance_engine.modules.context import command_registry
+from .audio.ai.inference_engine import generate_lighting_profile
+from .performance_engine.modules import fade_mod
+from .performance_engine.modules.shell_tools import load_dynamic_commands
+from __future__ import annotations
+from .audio.ai.modules.convert_audio import ensure_internal
+from .audio.utils.codec_sim import roundtrip_lossy, parse_codec
 
 # Enable persistent shell history
 histfile = os.path.expanduser("~/.audioscript_history")
@@ -70,8 +72,63 @@ def say(text, emoji=""):
 def glow(color):
     say(f"[LED] glowing {color}", "💡")
 
-def play(track):
-    say(f"Now playing: {track}", "🔊")
+# Global playback state
+# PLAYBACK_MODE = ("lossless" or "lossy", codec_key)
+PLAYBACK_MODE = ("lossless", "wav")    # default
+
+def set_mode(mode: str, codec: str = "mp3_320"):
+    """
+    mode: 'lossless' or 'lossy'
+    codec: one of codec_sim.CODEC_MAP keys (ignored for lossless)
+    """
+    global PLAYBACK_MODE
+    m = mode.strip().lower()
+    if m not in ("lossless", "lossy"):
+        raise ValueError("set_mode: mode must be 'lossless' or 'lossy'")
+    if m == "lossy":
+        # Validate the codec upfront
+        parse_codec(codec)
+        PLAYBACK_MODE = (m, codec)
+        say(f"Playback mode set to LOSSY ({codec})", "🎚️")
+    else:
+        PLAYBACK_MODE = ("lossless", "wav")
+        say("Playback mode set to LOSSLESS", "🎚️")
+
+def get_mode():
+    mode, codec = PLAYBACK_MODE
+    if mode == "lossy":
+        say(f"Current mode: LOSSY ({codec})", "🎚️")
+    else:
+        say("Current mode: LOSSLESS", "🎚️")
+
+# AS commands ex: set_mode("lossy", codec="mp3_128")
+register_command("set_mode", set_mode)
+register_command("get_mode", get_mode)
+
+def play(path: str, **kwargs):
+    """
+    Load 'path', ensure internal WAV format. If mode is 'lossy', round-trip through codec.
+    Hand off to existing low-latency playback (PortAudio)
+    """
+    mode, codec = PLAYBACK_MODE
+    # normalize input to internal WAV32F
+    internal_wav = ensure_internal(path, target_sr=48000)
+
+    # if lossy, encode/decode to WAV32F
+    if mode == "lossy":
+        sim_wav = roundtrip_lossy(internal_wav, codec_key=codec, target_sr=48000)
+        _do_play(sim_wav, **kwargs)
+        try: os.remove(sim_wav)
+        except OSError: pass
+    else:
+        _do_play(internal_wav, **kwargs)
+
+    # clean up normalized wav if temp
+    try: os.remove(internal_wav)
+    except OSError: pass
+
+def _do_play(wav_pth: str, **kwargs):
+    say(f"Now playing: {os.path.basename(wav_path)}", "🔊")
 
 def pulse(color, bpm):
     say(f"[LED] pulsing {color} @ {bpm} BPM", "💡")
