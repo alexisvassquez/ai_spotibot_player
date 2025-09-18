@@ -2,8 +2,8 @@
 # AudioMIX
 # audio/ai/modules/convert_audio.py
 
-from pydub import AudioSegment
 from __future__ import annotations
+from pydub import AudioSegment
 import os, subprocess, shutil, tempfile
 
 def convert_to_wav(input_path):
@@ -19,13 +19,10 @@ def _ffmpeg() -> str:
         raise RuntimeError("ffmpeg not found. Install it to enable codec.")
     return path
 
+# Convert any input to internal standard: stereo, float32 wav @ target_sr
 # Any input includes mp3, m4a, flac, wav, aif, ogg, etc etc etc.
+# Returns path to converted wav
 def to_internal_wav32f(in_path: str, target_sr: int = 4800) -> str:
-    """
-    Convert any input to internal standard:
-    stereo, float32 WAV @ target_sr.
-    Returns path to converted wav.
-    """
     ff = _ffmpeg()
     fd, out_wav = tempfile.mkstemp(prefix="amx_wav_", suffix=".wav")
     os.close(fd)
@@ -38,8 +35,6 @@ def to_internal_wav32f(in_path: str, target_sr: int = 4800) -> str:
     return out_wav
 
 # Always funnel through ffmpeg bc it is fast enough and robust
+# No-op if already WAV32F@target_sr stereo; else converts.
 def ensure_internal(in_path: str, target_sr: int = 48000) -> str:
-    """
-    No-op if already WAV32F@target_sr stereo; else converts.
-    """
     return to_internal_wav32f(in_path, target_sr)

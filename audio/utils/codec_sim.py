@@ -27,11 +27,9 @@ def parse_codec(codec_key: str) -> Tuple[str, list]:
         raise ValueError(f"Unsupported codec '{codec_key}'. Supported: {', '.join(CODEC_MAP.keys())}")
     return CODEC_MAP[codec_key]
 
+# Transcode input file into the given codec (encode).
+# Returns path to the encoded file.
 def transcode_once(in_path: str, codec_key: str) -> str:
-    """
-    Transcode input file into the given codec (encode).
-    Returns path to the encoded file.
-    """
     ensure_ffmpeg_available()
     container, codec_args = parse_codec(codec_key)
     base = os.path.splitext(os.path.basename(in_path))[0]
@@ -42,11 +40,9 @@ def transcode_once(in_path: str, codec_key: str) -> str:
     return out_path
 
 # Simulates a 'streaming decode' that the listener hears
-def roundtrip_lossy(in_path: str, codec_key: str, target_sr: int = 4800)
-    """
-    Encode + decode back to float32 WAV @ target_sr.
-    Returns path to decoded WAV.
-    """
+# Encode + decode back to float32 WAV @ target_sr.
+# Returns path to decoded WAV.
+def roundtrip_lossy(in_path: str, codec_key: str, target_sr: int = 4800):
     ensure_ffmpeg_available()
     enc_path = transcode_once(in_path, codec_key)
     fd, dec_path = tempfile.mkstemp(prefix="amx_dec_", suffix=".wav")

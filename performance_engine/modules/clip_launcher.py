@@ -2,8 +2,10 @@
 # AudioMIX
 # performance_engine/modules/clip_launcher.py
 
-import os, json, subprocess, shlex, threading
-from typing import Dict, List, Any
+import os, json, subprocess, shlex, threading, tempfile
+from typing import Dict, List, Any, Optional
+import queue, time
+import soundfile as sf
 from performance_engine.utils.shell_output import say
 from performance_engine.modules.context import command_registry
 from performance_engine.modules.sampler import sampler_play
@@ -50,71 +52,108 @@ class ClipPlayer:
         self._thread = threading.Thread(target=self._run, daemon=True)
         self._start_ms = start_ms
         self._end_ms = end_ms
+        self._tmp_path: Optional[str] = None
+        self._proc: Optional[subprocess.Popen] = None
 
     def start(self):
-        self._thread_start()
+        self._thread.start()
 
+    # Allow thread to exit then cleanup temp
     def stop(self):
         self._stop.set()
+        if self._proc and self._proc.poll() is None:
+            try:
+                self._proc.terminate()
+            except Exception:
+                pass
 
-    def _run(self):
+    def _render_region_to_temp(self) -> Optional[str]:
         try:
-            data, sr = sf.read(self.path, dtype='float32', always_2d=True)
+            data, sr = sf.read(self.path, dtype="float32", always_2d=True)
             start_f = _ms_to_frames(self._start_ms, sr) if self._start_ms else 0
-            end_f = _ms_to_frame(self._end_ms, sr) if self._end_ms else len(data)
+            end_f = _ms_to_frames(self._end_ms, sr) if self._end_ms else len(data)
             end_f = min(end_f, len(data))
             if end_f <= start_f:
                 say(f"[clip] Invalid region for {self.name}: start>=end", "⚠️")
+                return None
+            region = data[start_f:end_f] * self.gain
+
+            # writes region to a temp .wav file
+            # play once with aplay (fire-and-wait)
+            tmp = tempfile.NamedTemporaryFile(prefix="clip_", suffix=".wav", delete=False)
+            tmp_path = tmp.name
+            tmp.close()
+            sf.write(tmp_path, region, sr)
+            return tmp_path
+        except Exception as e:
+            say(f"[clip] Render error for '{self.name}': {e}")
+            return None
+
+    # reuse same temp file for loops
+    def _run(self):
+        try:
+            self._start_ms = getattr(self, "_start_ms", None)
+            self._end_ms = getattr(self, "_end_ms", None)
+            if not hasattr(self, "_start_ms"):
+                self._start_ms = None
+            if not hasattr(self, "_end_ms"):
+                self._end_ms = None
+
+            self._tmp_path = self._render_region_to_temp()
+            if not self._tmp_path:
                 return
-            region = data[start_f:end_f]
+
+            # False is stop was requested (default to True)
+            def play_once() -> bool:
+                if self._stop.is_set():
+                    return False
+                try:
+                    # blocks playback to respect stop/loop
+                    self._proc = subprocess.Popen(
+                        ["aplay", self._tmp_path],
+                        stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL,
+                    )
+                    # poll for completion/stop
+                    while proc.poll() is None and not self._stop.is_set():
+                        time.sleep(0.02)    # wait
+                    if self._stop.is_set() and proc.poll() is None:
+                        try:
+                            self._proc.terminate()
+                        except Exception:
+                            pass
+                        return False
+                    return not self._stop.is_set()
+                except FileNotFoundError:
+                    say("[clip] 'aplay' not found. Install 'alsa-utils'.")
+                    return False
+                except Exception as e:
+                    say(f"[clip] Playback error for '{self.name}': {e}")
+                    return False
 
             # playback loop
-            repeats = self.loop
-            def _play_once():
-                if self._stop.is_set():
-                    return
-                # stream via callback for low-latency loop
-                idx_q = queue.Queue(maxsize=1)
-                idx_q.put(0)
-                def cb(outdata, frames, time_info, status):
-                    if self._stop.is_set():
-                        raise sd.CallbackStop()
-                    try:
-                        i = idx_q.get_nowait()
-                    except queue.Empty:
-                        i = 0
-                    end = min(i+frames, len(region))
-                    chunk = region[i:end] * self.gain
-                    # zero-pad tail if needed
-                    if end - i < frames:
-                        pad = frames - (end - i)
-                        outdata[:end-i] = chunk
-                        outdata[end-i:] = 0
-                        idx_q.queue.clear()
-                        idx_q.put(len(region))    # mark finished
-                        raise sd.CallbackStop()
-                    else:
-                        outdata[:] = chunk
-                        idx_q.queue.clear()
-                        idx_q.put(end)
-                with sd.OutputStream(samplerate=sr, channels=region.shape[1], callback=cb, blocksize=1024):
-                    while not self._stop.is_set():
-                        time.sleep(0.01)
-                    # if stop was called mid-chunk, callback will terminate
             # initial playback + repeats
+            repeats = self.loop
             if repeats == -1:    # infinite loop
                 while not self._stop.is_set():
-                    _play_once()
+                    if not play_once():
+                        break
             else:
                 # repeats==0 means play once
-                # N>0 times
+                # N>0 x plays
                 count = max(1, repeats+1)
                 for _ in range(count):
                     if self._stop.is_set():
                         break
-                    _play_once()
-        except Exception as e:
-            say(f"[clip] Player error for {self.name}: {e}", "❌")
+                    if not play_once():
+                        break
+        # Clean temp file
+        finally:
+            if self._tmp_path:
+                try:
+                    os.remove(self._tmp_path)
+                except OSError:
+                    pass
 
 def _resolve_sampler_path(bank: str, alias: str) -> Optional[str]:
     b = _SAMPLER_BANKS.get(bank) or {}
@@ -175,14 +214,14 @@ def clip_add(name: str, kind: str, ref: str, bank: str = "",
     else:
         try:
             loop_n = max(-1, int(lval))
-        except:
+        except Exception:
             loop_n = 0
 
     # region
     try:
         s_ms = float(start_ms) if start_ms else None
         e_ms = float(end_ms) if end_ms else None
-    except:
+    except Exception:
         s_ms, e_ms = None, None
 
     retrig = (retrigger or "mono").lower().strip()
@@ -199,7 +238,7 @@ def clip_add(name: str, kind: str, ref: str, bank: str = "",
     _CLIPS[name] = {
         "type": kind, "ref": ref, "bank": bank, "path": path,
         "loop": loop_n, "start_ms": s_ms, "end_ms": e_ms,
-        "retrigger": retrig, "choke_group": choke_group, "gain": g
+        "retrigger": retrig, "choke_group": choke_group, "gain": g,
     }
     if choke_group:
         _GROUP_INDEX.setdefault(choke_group, set()).add(name)
@@ -258,16 +297,9 @@ def clip_trigger(name: str):
         loop=c.get("loop", 0),
         gain=c.get("gain", 1.0),
     )
-    _PLAYERS[name] - pl
+    _PLAYERS[name] = pl
     pl.start()
     say(f"[clip] Trigger '{name}'", "▶️")
-
-# Uses aplay for fire and forget
-def clip_play(path: str):
-    try:
-        subprocess.Popen(["aplay", path])
-    except Exception as e:
-        say(f"[clip] Error during play: {e}", "❌")
 
 def clip_stop(name: str):
     _clip_stop(name)
@@ -284,7 +316,7 @@ def register():
         "clip.list": clip_list,
         "clip.remove": clip_remove,
         "clip.trigger": clip_trigger,
-        "clip.play": clip_play,
+        "clip.play": clip_trigger,
         "clip.stop": clip_stop,
         "clip.stop_group": clip_stop_group,
     }

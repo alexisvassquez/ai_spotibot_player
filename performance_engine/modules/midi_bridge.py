@@ -4,8 +4,8 @@
 
 import threading, time, json, queue, re, os
 from typing import Dict, Any, Optional, List, Callable
-from .performance_engine.utils.shell_output import say
-from .performance_engine.modules.context import command_registry
+from performance_engine.utils.shell_output import say
+from performance_engine.modules.context import command_registry
 from audio.midi import midi_live_listener as live
 from audio.midi import pretty_midi_parser as pmp
 from audio.midi import midi_tag_classifier as tagclf

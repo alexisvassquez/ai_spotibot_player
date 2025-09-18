@@ -35,7 +35,6 @@ if __name__ == "__main__"
         print ("Usage: python eq_engine.py <audio_file> <preset_name>")
     else:
         main(sys.argv[1], sys.argv[2])
-'''
 
 # Scaffold for eq_presets.json
 eq_presets_json = '''\

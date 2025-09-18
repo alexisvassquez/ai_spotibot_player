@@ -6,8 +6,8 @@ import threading, time, queue, re, os
 from typing import Callable, Dict, Any, Optional, List
 import mido
 from mido import Message
-from .performance_engine.utils.shell_output import say
-from .performance_engine.modules.context import command_registry
+from performance_engine.utils.shell_output import say
+from performance_engine.modules.context import command_registry
 
 _event_q: "queue.Queue[dict]" = queue.Queue(maxsize=4096)
 _listener_thread: Optional[threading.Thread] = None

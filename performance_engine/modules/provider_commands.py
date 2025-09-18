@@ -2,8 +2,8 @@
 # AudioMIX
 # performance_engine/modules/provider_commands.py
 
-from .audio_providers.provider_api import get_provider
-from .performance_engine.utils.shell_output import say
+from audio_providers.provider_api import get_provider
+from performance_engine.utils.shell_output import say
 
 def play_provider(title_or_uri, provider="spotify"):
     p = get_provider(provider)

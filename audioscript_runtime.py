@@ -2,6 +2,7 @@
 # AudioMIX
 # audioscript_runtime.py
 
+from __future__ import annotations
 import sys
 import readline
 import os
@@ -9,13 +10,12 @@ import importlib
 import shlex
 import atexit
 import time
-from .performance_engine.modules.context import command_registry
-from .audio.ai.inference_engine import generate_lighting_profile
-from .performance_engine.modules import fade_mod
-from .performance_engine.modules.shell_tools import load_dynamic_commands
-from __future__ import annotations
-from .audio.ai.modules.convert_audio import ensure_internal
-from .audio.utils.codec_sim import roundtrip_lossy, parse_codec
+from performance_engine.modules.context import command_registry
+from audio.ai.inference_engine import generate_lighting_profile
+from performance_engine.modules import fade_mod
+from performance_engine.modules.shell_tools import load_dynamic_commands
+from audio.ai.modules.convert_audio import ensure_internal
+from audio.utils.codec_sim import roundtrip_lossy, parse_codec
 
 # Enable persistent shell history
 histfile = os.path.expanduser("~/.audioscript_history")
@@ -30,7 +30,11 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 USE_EMOJIS = True
 USE_SYMBOLS = True
 VERBOSE = False # Set to True for debugging logs
- 
+
+# Register commands to registry function
+def register_command(name: str, func):
+    command_registry[name] = func
+
 def load_modules():
     module_dir = "performance_engine/modules"
     for file in os.listdir(module_dir):
@@ -76,11 +80,9 @@ def glow(color):
 # PLAYBACK_MODE = ("lossless" or "lossy", codec_key)
 PLAYBACK_MODE = ("lossless", "wav")    # default
 
+# mode: 'lossless' or 'lossy'
+# codec: one of codec_sim.CODEC_MAP keys (ignored for lossless)
 def set_mode(mode: str, codec: str = "mp3_320"):
-    """
-    mode: 'lossless' or 'lossy'
-    codec: one of codec_sim.CODEC_MAP keys (ignored for lossless)
-    """
     global PLAYBACK_MODE
     m = mode.strip().lower()
     if m not in ("lossless", "lossy"):
@@ -105,11 +107,9 @@ def get_mode():
 register_command("set_mode", set_mode)
 register_command("get_mode", get_mode)
 
+# Load 'path', ensure internal WAV format. If mode is 'lossy', round-trip through codec.
+# Hand off to existing low-latency playback (PortAudio)
 def play(path: str, **kwargs):
-    """
-    Load 'path', ensure internal WAV format. If mode is 'lossy', round-trip through codec.
-    Hand off to existing low-latency playback (PortAudio)
-    """
     mode, codec = PLAYBACK_MODE
     # normalize input to internal WAV32F
     internal_wav = ensure_internal(path, target_sr=48000)
@@ -127,7 +127,7 @@ def play(path: str, **kwargs):
     try: os.remove(internal_wav)
     except OSError: pass
 
-def _do_play(wav_pth: str, **kwargs):
+def _do_play(wav_path: str, **kwargs):
     say(f"Now playing: {os.path.basename(wav_path)}", "🔊")
 
 def pulse(color, bpm):
@@ -161,13 +161,13 @@ def parse_and_execute(line):
 
         if "@" in arg_str:
             parts = shlex.split(arg_str)
-        else: 
+        else:
             parts = shlex.split(arg_str)
 
         func = command_registry.get(command)
         if func:
             try:
-                result = func(parts)
+                result = func(*parts)
                 if isinstance(result, list):
                     for line in result:
                         say(line)
@@ -192,7 +192,7 @@ def main():
     if "--no-symbols" in sys.argv:
         USE_SYMBOLS = False
     if "--debug" in sys.argv:
-        VERBOSE = False
+        VERBOSE = True
 
     # Load command modules after global settings are set
     load_modules()
