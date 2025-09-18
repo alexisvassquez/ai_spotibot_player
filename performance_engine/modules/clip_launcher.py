@@ -283,7 +283,7 @@ def register():
         "clip.add": clip_add,
         "clip.list": clip_list,
         "clip.remove": clip_remove,
-        "clip.trigger": clip.trigger,
+        "clip.trigger": clip_trigger,
         "clip.play": clip_play,
         "clip.stop": clip_stop,
         "clip.stop_group": clip_stop_group,
