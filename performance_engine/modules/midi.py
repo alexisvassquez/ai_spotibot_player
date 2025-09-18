@@ -2,7 +2,7 @@
 # AudioMIX
 # performance_engine/modules/midi.py
 
-import threading, time, queue, re
+import threading, time, queue, re, os
 from typing import Callable, Dict, Any, Optional, List
 import mido
 from mido import Message
@@ -133,7 +133,7 @@ def midi_map(pattern: str, action: str):
         if ch is not None: parts.append(f"ch={ch}")
         if "note" in ev: parts.append(f"key={ev['note']}")
         if "velocity" in ev: parts.append(f"vel={ev['velocity']}")
-        if "control" in ev: parts.appen(f"cc={ev['control']}")
+        if "control" in ev: parts.append(f"cc={ev['control']}")
         s = ":".join(map(str, parts))
         return bool(compiled.match(s))
     def act(ev: Dict[str, Any]):
@@ -141,7 +141,7 @@ def midi_map(pattern: str, action: str):
         from .performance_engine.modules.context import command_registry as cr
         try:
             if "(" in action and action.endswith(")"):
-                cmd = action.strip()    
+                cmd = action.strip()
                 # Evaluate by passing line into runtime parser via registry
                 # Extract function name and args
                 name = cmd.split("(",1)[0]

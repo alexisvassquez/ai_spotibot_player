@@ -97,7 +97,7 @@ def sampler_credits(bank: str):
         title = meta.get("title", os.path.basename(meta.get("file", "?")))
         author = meta.get("author", "?")
         source = meta.get("source", "")
-        license = meta.get("license", "")
+        license_ = meta.get("license", "")
         url = meta.get("url", "")
         line = f"- {alias}: \"{title}\" by {author}"
         if source:    line += f" - {source}"

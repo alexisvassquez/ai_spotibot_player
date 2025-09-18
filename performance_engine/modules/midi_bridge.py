@@ -6,10 +6,10 @@ import threading, time, json, queue, re, os
 from typing import Dict, Any, Optional, List, Callable
 from .performance_engine.utils.shell_output import say
 from .performance_engine.modules.context import command_registry
-from .audio.midi import midi_live_listener as live
-from .audio.midi import pretty_midi_parser as pmp
-from .audio.midi import midi_tag_classifier as tagclf
-from .audio.midi import tag_to_settings as t2s
+from audio.midi import midi_live_listener as live
+from audio.midi import pretty_midi_parser as pmp
+from audio.midi import midi_tag_classifier as tagclf
+from audio.midi import tag_to_settings as t2s
 
 _EVENT_Q: "queue.Queue[dict]" = queue.Queue(maxsize=4096)
 _listener_thread: Optional[threading.Thread] = None
@@ -20,7 +20,7 @@ _last_tags: List[str] = []
 
 def _enqueue(ev: dict):
     try:
-        _EVENT_Q:put_nowait(ev)
+        _EVENT_Q.put_nowait(ev)
     except queue.Full:
         pass
 
@@ -130,7 +130,7 @@ def midi_tick():
         global _last_tags
         _last_tags = tags
 
-    sig = event_signature(ev)
+    sig = _event_signature(ev)
     for m in _mappings:
         if m["re"].match(sig):
             _fire_action(m["action"], ev)
@@ -146,7 +146,7 @@ def register():
         "midi_listen": midi_listen,
         "midi_stop": midi_stop,
         "midi_map_load": midi_map_load,
-        "midi_tick": midi_tack,
+        "midi_tick": midi_tick,
         "midi_tags_last": midi_tags_last,
     }
 
