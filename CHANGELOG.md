@@ -288,5 +288,5 @@ Includes backlog of changes previously unaccounted for.
   - Marked other heavy libs as candidates for optional/deferred use.
 
 ### TODO:
-- **Runtime shell stability:** remove any unnecessary imports at the top-level and spread them out to fix what's causing crashes.
+- **AS Shell stability:** remove any unnecessary imports at the top-level and spread them out to fix what's causing crashes.
 
