@@ -238,7 +238,7 @@ Future releases will include:
 ---
 
 ## [v0.4-dev] - 2025-09-18
-Includes backlog of changes unaccounted for.
+Includes backlog of changes previously unaccounted for.
 ### Added
 - `__init__.py` files in `audio_providers/` and `audio_providers/bandcamp/` to treat directories as Python packages and enable clean imports.
 - **Lossless/lossy playback A/B** 
@@ -259,7 +259,6 @@ Includes backlog of changes unaccounted for.
 
 ### Changed
 - Renamed `spotify/` directory to `audio_providers/` to support Spotify and Bandcamp integrations.
-- Refactored `clip_launcher.py` to remove hardcoded "scene loader" logic — LED scenes are now AI-driven via Juniper2.0 and separate LED modules.
 - Cleaned absolute imports and typos across `sampler.py`, `midi.py`, and `midi_bridge.py`.
 
 ### Fixed
