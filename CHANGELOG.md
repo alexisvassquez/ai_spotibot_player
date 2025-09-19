@@ -235,3 +235,59 @@ Future releases will include:
 ### Notes
 - Emotional + creative states now reflected in automated system response
 
+---
+
+## [v0.4-dev] - 2025-09-18
+Includes backlog of changes unaccounted for.
+### Added
+- `__init__.py` files in `audio_providers/` and `audio_providers/bandcamp/` to treat directories as Python packages and enable clean imports.
+- **Lossless/lossy playback A/B** 
+  - Introduced a runtime playback mode toggle to audition “studio (lossless)” vs “real-world (lossy)” sound.
+  - New AudioScript commands: `set_mode("lossless" | "lossy", codec="mp3_128" | "mp3_320" | "aac_256" | "ogg_320" | "opus_160" | "wav" | "flac")` and `get_mode()`.
+  - Codec simulation implemented with ffmpeg encode -> decode round-trip to float32 WAV (48 kHz), mirroring actual streaming playback.
+- **Codec helpers:** Added `audio/utils/codec_sim.py` with:
+  - `roundtrip_lossy()` for encode/decode
+- Extended converter to normalize any input (WAV/AIFF/FLAC/MP3/AAC/OGG/OPUS) to stereo, 48 kHz, float32 WAV for consistent analysis/playback.
+- Looping support to `clip_launcher.py` for EDM/beat-making workflows.
+- Expanded **Sampler** module:
+  - Sampler bank loading with aliases + attribution (Freesound CC-BY, etc.)
+  - Playback of samples via `sampler.play`
+  - Console/show credits export for attribution.
+- MIDI integration improvements:
+  - `midi.py` — quantized real-time MIDI listener with `midi_map`, `midi_tick`, and clock handling.
+  - `midi_bridge.py` — mapping JSON loader and tag-classification pipeline to AudioScript actions.
+
+### Changed
+- Renamed `spotify/` directory to `audio_providers/` to support Spotify and Bandcamp integrations.
+- Refactored `clip_launcher.py` to remove hardcoded "scene loader" logic — LED scenes are now AI-driven via Juniper2.0 and separate LED modules.
+- Cleaned absolute imports and typos across `sampler.py`, `midi.py`, and `midi_bridge.py`.
+
+### Fixed
+- Safer temp-file lifecycle around transcoding and simulation artifacts
+- Cleanup after playback.
+- Clearer errors when `ffmpeg` is not found (actionable message instead of silent failure).
+
+### Debugging / Refactor
+- Began major debugging phase of the **AudioScript Runtime** (`audioscript_runtime.py`):
+  - Fixed relative import errors across multiple modules.
+  - Added `register_command()` helper to cleanly register runtime commands.
+  - Corrected `command_registry("...")` misuse -> proper registration calls.
+  - Updated command parser to unpack arguments correctly with `*parts`.
+  - Fixed variable typos (e.g., `wav_pth` -> `wav_path`) in playback function.
+- Refactored **Clip Launcher** (`clip_launcher.py`):
+  - Removed `sounddevice` dependency (To keep Chrom-E safe).
+  - Implemented `aplay`-based fallback for audio playback.
+  - Fixed retrigger logic, choke group handling, and typo bugs (`_PLAYERS[name] - pl` → `_PLAYERS[name] = pl`).
+- Cleaned up **provider API** (`provider_api.py`):
+  - Converted abstract method stubs to `...` to avoid indentation errors.
+  - Fixed registry reference typo (`registry` -> `_registry`).
+- Began auditing runtime imports for excessive top-level weight:
+  - Identified heavy AI/audio imports (librosa, transformers, etc.) as a likely source of `Killed` errors on low-memory systems.
+  - Planned lazy-import strategy and safe-mode module loading.
+- Updated `requirements.txt`:
+  - Removed `sounddevice`.
+  - Marked other heavy libs as candidates for optional/deferred use.
+
+### TODO:
+- **Runtime shell stability:** remove any unnecessary imports at the top-level and spread them out to fix what's causing crashes.
+
