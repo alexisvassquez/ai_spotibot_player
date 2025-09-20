@@ -3,19 +3,22 @@
 # audioscript_runtime.py
 
 from __future__ import annotations
-import sys
+import sys, os, importlib, shlex, atexit, time
 import readline
-import os
-import importlib
-import shlex
-import atexit
-import time
 from performance_engine.modules.context import command_registry
-from audio.ai.inference_engine import generate_lighting_profile
-from performance_engine.modules import fade_mod
-from performance_engine.modules.shell_tools import load_dynamic_commands
-from audio.ai.modules.convert_audio import ensure_internal
-from audio.utils.codec_sim import roundtrip_lossy, parse_codec
+
+# Allowlist -> SAFE_MODE (for lighter runtime load)
+# Light modules only
+SAFE_MODE = os.environ.get("AUDIOMIX_SAFE", "0") == "1"
+SAFE_MODULE_ALLOWLIST = {
+    "context.py",
+    "shell_tools.py",
+    "clip_launcher.py",
+    "provider_commands.py",
+    "eq_commands.py",
+    "led_controller.py",
+    "shared.py",
+}
 
 # Enable persistent shell history
 histfile = os.path.expanduser("~/.audioscript_history")
@@ -29,35 +32,11 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 USE_EMOJIS = True
 USE_SYMBOLS = True
-VERBOSE = False # Set to True for debugging logs
+VERBOSE = False # Set to True for debugging logs with --debug flag
 
 # Register commands to registry function
 def register_command(name: str, func):
     command_registry[name] = func
-
-def load_modules():
-    module_dir = "performance_engine/modules"
-    for file in os.listdir(module_dir):
-        if file.endswith(".py") and not file.startswith("__"):
-            mod_path = f"performance_engine.modules.{file[:-3]}" # dot-path
-            mod_path = mod_path.replace("-", "_") # for safety
-            module = importlib.import_module(mod_path)
-            try:
-                module = importlib.import_module(mod_path)
-                if hasattr(module, "register"):
-                    registered = module.register()
-                    if registered:
-                        if VERBOSE:
-                            say(f"Registering from {file}: {list(registered.keys())}", "🧠")
-                        command_registry.update(registered)
-                        command_registry["trigger_zones"] = trigger_zones
-                    elif VERBOSE:
-                        say(f"⚠️ {file} register() returned nothing", "❓")
-                elif VERBOSE:
-                    say(f"⚠️ No register() in {file}", "🚫")
-            except Exception as e:
-                if VERBOSE:
-                    say(f"❌ Failed to import {file}: {e}", "💥")
 
 def say(text, emoji=""):
     from audioscript_runtime import USE_EMOJIS, USE_SYMBOLS
@@ -73,6 +52,38 @@ def say(text, emoji=""):
     else:
         print (text)
 
+# Module loader
+def load_modules():
+    module_dir = "performance_engine/modules"
+    for file in os.listdir(module_dir):
+        if not file.endswith(".py") and not file.startswith("__"):
+             continue
+
+        if SAFE_MODE and file not in SAFE_MODE_ALLOWLIST:
+            if VERBOSE: say(f"Safe mode: skipping {file}")
+            continue
+
+        # dot-path..for safety
+        mod_path = f"performance_engine.modules.{file[:-3]}".replace("-", "_")
+        try:
+            module = importlib.import_module(mod_path)
+            if hasattr(module, "register"):
+                registered = module.register()
+                if registered:
+                    if VERBOSE:
+                        say(f"Registering from {file}: {list(registered.keys())}", "🧠")
+                    command_registry.update(registered)
+                    command_registry["trigger_zones"] = trigger_zones
+                elif VERBOSE:
+                    say(f"⚠️ {file} register() returned nothing", "❓")
+            elif VERBOSE:
+                say(f"⚠️ No register() in {file}", "🚫")
+        except Exception as e:
+            if VERBOSE:
+                say(f"❌ Failed to import {file}: {e}", "💥")
+
+# Built-in AS functions
+# Lazy imports
 def glow(color):
     say(f"[LED] glowing {color}", "💡")
 
@@ -84,11 +95,12 @@ PLAYBACK_MODE = ("lossless", "wav")    # default
 # codec: one of codec_sim.CODEC_MAP keys (ignored for lossless)
 def set_mode(mode: str, codec: str = "mp3_320"):
     global PLAYBACK_MODE
-    m = mode.strip().lower()
+    m = (mode or "").strip().lower()
     if m not in ("lossless", "lossy"):
         raise ValueError("set_mode: mode must be 'lossless' or 'lossy'")
     if m == "lossy":
         # Validate the codec upfront
+        from audio.utils.codec_sim import parse_codec    # lazy
         parse_codec(codec)
         PLAYBACK_MODE = (m, codec)
         say(f"Playback mode set to LOSSY ({codec})", "🎚️")
@@ -110,22 +122,31 @@ register_command("get_mode", get_mode)
 # Load 'path', ensure internal WAV format. If mode is 'lossy', round-trip through codec.
 # Hand off to existing low-latency playback (PortAudio)
 def play(path: str, **kwargs):
+    if SAFE_MODE:
+        say(f"[SAFE] Would play: {path} (no audio processing in safe mode)")
+        return
+
+    #lazy
+    from audio.ai.modules.convert_audio import ensure_internal
+    from audio.utils.codec_sim import roundtrip_lossy
+
     mode, codec = PLAYBACK_MODE
     # normalize input to internal WAV32F
     internal_wav = ensure_internal(path, target_sr=48000)
 
     # if lossy, encode/decode to WAV32F
-    if mode == "lossy":
-        sim_wav = roundtrip_lossy(internal_wav, codec_key=codec, target_sr=48000)
-        _do_play(sim_wav, **kwargs)
-        try: os.remove(sim_wav)
-        except OSError: pass
-    else:
-        _do_play(internal_wav, **kwargs)
-
+    try:
+        if mode == "lossy":
+            sim_wav = roundtrip_lossy(internal_wav, codec_key=codec, target_sr=48000)
+            _do_play(sim_wav, **kwargs)
+            try: os.remove(sim_wav)
+            except OSError: pass
+        else:
+            _do_play(internal_wav, **kwargs)
     # clean up normalized wav if temp
-    try: os.remove(internal_wav)
-    except OSError: pass
+    finally:
+        try: os.remove(internal_wav)
+        except OSError: pass
 
 def _do_play(wav_path: str, **kwargs):
     say(f"Now playing: {os.path.basename(wav_path)}", "🔊")
@@ -137,21 +158,19 @@ def mood_set(mood):
     say(f"[MOOD] context set to: {mood}", "🎼")
 
 def trigger_zones(zones, mood="calm", bpm=120):
+    if SAFE_MODE:
+        say(f"[SAFE] Would trigger zones={zones} mood={mood} bpm={bpm}")
+        return
     try:
+        from audio.ai.inference_engine import generate_lighting_profiles    # lazy
         generate_lighting_profile({mood}, bpm=bpm, zones=zones)
         say(f"[LIGHTING] Triggered zones: {zones} | Mood: {mood} | BPM: {bpm}", "🌈")
     except Exception as e:
         say(f"[ERROR] Lighting trigger failed: {e}", "❌")
 
-# Basic Command Parser
+# Command execution
 def parse_and_execute(line):
-    line = line.strip()
-    if line.strip() == "test_lines":
-        return [
-            print ("[TEST] Line 1"),
-            print ("[TEST] Line 2")
-        ]
-
+    line = (line or "").strip()
     if line.startswith("#") or not line:
         return # ignore comments and blank lines
 
@@ -182,17 +201,19 @@ def parse_and_execute(line):
     else:
         say(f"[ERROR] Invalid syntax: {line}", "❕")
 
-# Interactive Loop
+# AS Shell loop
 def main():
-    global USE_EMOJIS, USE_SYMBOLS
-    import sys
+    global USE_EMOJIS, USE_SYMBOLS, VERBOSE, SAFE_MODE
 
+    # CLI flags
     if "--no-emoji" in sys.argv:
         USE_EMOJIS = False
     if "--no-symbols" in sys.argv:
         USE_SYMBOLS = False
     if "--debug" in sys.argv:
         VERBOSE = True
+    if "--safe" in sys.argv:
+        SAFE_MODE = True
 
     # Load command modules after global settings are set
     load_modules()
@@ -200,7 +221,7 @@ def main():
     say("Welcome to AudioMIX - AudioScript Shell v0.1", "🎚️")
     say("Type AudioScript commands below. Ctrl+C to exit.\\n")
 
-    # Check for script file
+    # Run script file if passed
     for arg in sys.argv[1:]:
         if arg.endswith(".audioscript") or arg.endswith(".as"):
             say(f"Running AudioScript file: {arg}", "▶️")
@@ -209,7 +230,8 @@ def main():
                     parse_and_execute(line.strip())
             return
 
-    midi_tick = command_registry.get("midi_tick")
+    midi_tick = None if SAFE_MODE else command_registry.get("midi_tick")
+
     # Interactive loop
     while True:
         try:
