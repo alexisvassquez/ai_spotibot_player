@@ -290,3 +290,21 @@ Includes backlog of changes previously unaccounted for.
 ### TODO:
 - **AS Shell stability:** remove any unnecessary imports at the top-level and spread them out to fix what's causing crashes.
 
+---
+## [v0.4-dev] - 2025-09-24
+
+### Debugging Milestone
+- Completed module-by-module registration test with **Ultra-Safe Runtime**:
+  - All modules imported cleanly.
+  - No runtime kills when loaded individually.
+  - Confirmed that `context.py` and `shared.py` are utility-only (no commands).
+  - `fade_mod.py` flagged for a future `register()` implementation or conversion to helper-only.
+- Verified that **runtime crashes are caused by system memory limits (Chrom-E/Crostini OOM)**, not by logic errors in the AudioScript runtime or modules.
+- Introduced **safe mode strategy** (`AUDIOMIX_SAFE=1`) and allowlist-based loading for stability on resource-constrained systems.
+- Reassured that overall **project architecture is sound**; AudioMIX shell and modules behave as designed once loaded.
+
+### Notes
+- *Chrom-E,* the stalwart Chromebook dev machine, successfully carried both **AudioMIX** and **Track That Money** through this stage of development. 🖤👑  
+- **All hail Chrom-E, King of the Chromebooks!** 👑 Long may he reign until his teammate mini-PC arrives.  
+- Future work: acquire a dedicated mini-PC teammate for heavier compilation and ML workloads, while Chrom-E continues to serve as a reliable dev/test environment.
+
