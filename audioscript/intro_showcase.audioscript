@@ -1,4 +1,46 @@
-glow("calm")
-pulse("energetic" @ 128)
-led.mood_react("reflective" @ 90)
-list_commands()
+# ai_spotibot_player
+# AudioMIX
+# audioscript/intro_showcase.audioscript
+
+# An intro showcase for a live performance written in AudioScript
+# Created by Alexis Marie Vasquez 2025
+
+# Set initial mood + lighting
+glow("lilac")
+mood.set("uplifted")
+
+# Let AudioScript handle a repeating pattern
+let beat = repeat(["kick", "snare", "kick", "hat"])
+let fx = stutter(2) + reverb
+
+# Play a loop with chained FX
+play(beat) with fx
+
+# Wait 2 seconds then fade into new LED color
+sleep(2000)
+fade("electric_blue", duration=3000)
+
+# Energy rises -> trigger a new section
+mood.set("hype")
+pulse("yellow", bpm=128)
+
+# Reactive LED zones (if audience_listener is active)
+trigger_zones(["ceiling", "back_wall"], mood="hype", bpm=128)
+
+# Loop behavior (3 reps)
+loop(3) {
+  play(["kick", "kick", "snare"])
+  pulse("orange", bpm=132)
+  sleep(1500)
+}
+
+# Mood shift on cue (future reactive hook)
+on mood("sad") {
+  fade("blue", duration=4000)
+  glow("cyan")
+}
+
+# End scene
+stop()
+mood.set("neutral")
+glow("dim_white")
