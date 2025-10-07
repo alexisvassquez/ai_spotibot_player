@@ -1,45 +1,37 @@
-(* AudioScript Grammar Specification v0.1 *)
+# AudioScript EBNF Grammar Spec (v0.2-dev)
 
-script = { statement } ;
+# Updated to support lazy evaluation, FX chaining, `let`, and reactive syntax.
 
-statement = function_call | function_def | control_structure | comment ;
+Script        = { Statement } ;
 
-function_call = identifier "(" [ argument_list ] ")" ;
+Statement     = Comment | Assignment | FunctionCall | Block | EmptyLine ;
+Comment       = "#", { any character except line break } ;
+EmptyLine     = ;
 
-function_def = "@define" identifier "{" { statement } "}" ;
+Assignment    = "let", Identifier, "=", Expression ;
 
-control_structure = wait_statement | if_block | loop_block ;
+Block         = "on", EventHook, "{" , { Statement }, "}" ;
+EventHook     = "mood" , "(", String, ")" 
+              | "track" , "(", String, ")" ;
 
-wait_statement = "@wait" duration ;
+FunctionCall  = Identifier, "(", [ ArgumentList ], ")", [ WithClause ] ;
+ArgumentList  = Argument, { ",", Argument } ;
+Argument      = String | Number | Identifier ;
 
-if_block = "@if" condition "{" { statement } "}" [ "@else" "{" { statement } "}" ] ;
+WithClause    = "with", FXChain ;
+FXChain       = FXName, { "+", FXName } ;
+FXName        = Identifier ;
 
-loop_block = "@loop" number "{" { statement } "}" ;
+Expression    = FunctionCall 
+              | ListLiteral 
+              | Identifier ;
 
-argument_list = argument { "," argument } ;
+ListLiteral   = "[", [ ListElement, { ",", ListElement } ], "]" ;
+ListElement   = String | Number ;
 
-argument = string | number | named_argument | tempo_modifier ;
+Identifier    = letter, { letter | digit | "_" } ;
+String        = '"', { any character except '"' }, '"' ;
+Number        = digit, { digit } ;
 
-named_argument = identifier "=" value ;
-
-tempo_modifier = "@" value ;
-
-value = string | number ;
-
-comment = "#" { any_character_except_newline } ;
-
-identifier = letter { letter | digit | "_" } ;
-
-string = '"' { character } '"' ;
-
-number = digit { digit } ;
-
-duration = number ("s" | "m") ;
-
-condition = identifier "==" string ;
-
-letter = "A" | "B" | ... | "Z" | "a" | "b" | ... | "z" ;
-
-digit = "0" | "1" | ... | "9" ;
-
-character = any printable character except '"' ;
+letter        = "A".."Z" | "a".."z" ;
+digit         = "0".."9" ;

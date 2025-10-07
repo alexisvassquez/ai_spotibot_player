@@ -291,8 +291,8 @@ Includes backlog of changes previously unaccounted for.
 - **AS Shell stability:** remove any unnecessary imports at the top-level and spread them out to fix what's causing crashes.
 
 ---
-## [v0.4-dev] - 2025-09-24
 
+## [v0.4-dev] - 2025-09-24
 ### Debugging Milestone
 - Completed module-by-module registration test with **Ultra-Safe Runtime**:
   - All modules imported cleanly.
@@ -308,3 +308,35 @@ Includes backlog of changes previously unaccounted for.
 - **All hail Chrom-E, King of the Chromebooks!** 👑 Long may he reign until his teammate mini-PC arrives.  
 - Future work: acquire a dedicated mini-PC teammate for heavier compilation and ML workloads, while Chrom-E continues to serve as a reliable dev/test environment.
 
+---
+
+## [v0.4-dev] - 2025-10-06
+### Performance Engine Note
+- Added `audience_listener.py` script (live mic input module)
+- Detects crowd energy, cheering, or silence based on amplitude thresholds
+- Used to influence `mood` and trigger LED zone changes via `trigger_zones()`
+- Forms part of the Juniper2.0 reactive loop for stage-aware performances
+
+### Added
+- **Functional language features to AudioScript v0.2**:
+- `let` expressions for pattern variables and FX chains
+- `repeat()`, `take()`, and lazy evaluation for infinite sequences
+- `with` operator for chaining FX: `play("beat") with stutter + reverb`
+- `dsl_helpers.py` for Haskell-inspired functional utilities
+- `runtime_state.py` to track variables, macros, and event hooks
+- New `core.py` refactor of the interpreter shell
+- CLI-compatible REPL with support for script evaluation and mood-aware shell
+- New keywords added to `AudioScript.ebnf` grammar
+- Functional-reactive design principles aligned with AudioMIX architecture
+
+
+### Changed
+- `audioscript_runtime.py` split and refactored into modular runtime components
+- README updated with new language features and functional DSL architecture
+- `AUDIOSCRIPT_SPEC.md` rewritten to document lazy evaluation, chaining, and reactivity
+
+
+### Fixed
+- Improved REPL handling for nested command input and invalid function chains
+- Robust fallback in `parse_and_execute` for misused commands
+- Emoji-safe REPL output and better formatting of chained outputs
