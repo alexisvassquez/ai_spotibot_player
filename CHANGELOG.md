@@ -328,11 +328,11 @@ Includes backlog of changes previously unaccounted for.
 - CLI-compatible REPL with support for script evaluation and mood-aware shell
 - New keywords added to `AudioScript.ebnf` grammar
 - Functional-reactive design principles aligned with AudioMIX architecture
-
+- `intro_showcase.audioscript`: official v0.2 demo script showcasing `let`, `repeat()`, `with` chaining, LED FX, and mood triggers
 
 ### Changed
 - `audioscript_runtime.py` split and refactored into modular runtime components
-- README updated with new language features and functional DSL architecture
+- AudioScript README updated with new language features and functional DSL architecture
 - `AUDIOSCRIPT_SPEC.md` rewritten to document lazy evaluation, chaining, and reactivity
 
 

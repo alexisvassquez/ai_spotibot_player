@@ -13,6 +13,7 @@ Welcome to the `audioscript/` directory - the official home of the **AudioScript
 | `AUDIOSCRIPT_SPEC.md` | Markdown-based syntax + grammar reference |
 | `audioscript.nanorc` | Syntax highlighting rules for GNU Nano (still being perfected) |
 | `example.as` | Sample AudioScript program demonstrating current supported syntax |
+| `intro_showcase.audioscript` | Showcase of new v0.2 features including `let`, `repeat`, `with` chaining |
 | *Future* `audioscript.tmLanguage.json` | VS Code/TextMate syntax highlighting (in progress) |
 | *Future* `audioscript.vim` | Vim highlighting (in progress) |
 
