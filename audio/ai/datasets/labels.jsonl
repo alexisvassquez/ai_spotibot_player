@@ -1,0 +1,13 @@
+# Each line represents one clip label in JSON format.
+# Remove this comment block and add one JSON object per line when contributing.
+# Example schema:
+
+# {
+#   "file": "example_clip.wav",
+#   "moods": ["hype","uplifted"],
+#   "energy": 0.82,
+#   "valence": 0.61,
+#   "led_profile": {"pattern": "strobe", "color": "neon_cyan", "intensity": 0.7},
+#   "crowd_reactivity": 0.9,
+#   "notes": "Description or context of the performance"
+# }
