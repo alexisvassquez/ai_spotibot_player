@@ -1,17 +1,42 @@
-gTTS
-joblib
+# =====================================================
+# AudioMIX / Juniper2.0 Requirements
+# Modular AI Music Production Framework
+# =====================================================
+
+# --- Core Audio + DSP ---
 librosa
-matplotlib
-mido
+soundfile
+scipy
 numpy
+matplotlib
+
+# --- Audio / MIDI I/O + Drivers ---
 PortAudio
 PyAudio
 python-rtmidi
+mido
 pyserial
-pyyaml>=6.0
+pyalsaaudio          # ALSA mic input (Audience Listener)
+sounddevice          # Optional fallback backend
+
+# --- Machine Learning / AI ---
 scikit-learn
-scipy
-soundfile
-SpeechRecognition
-spotipy
+torch
+torchaudio
 transformers
+joblib
+
+# --- Speech + NLP ---
+SpeechRecognition
+gTTS
+
+# --- Data + Config ---
+pandas
+pyyaml>=6.0
+tqdm
+
+# --- External Services ---
+spotipy              # Spotify API integration
+
+# --- Developer UX + Utilities ---
+rich                 # Colorful logging, pretty tracebacks
