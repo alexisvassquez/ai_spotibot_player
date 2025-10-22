@@ -21,8 +21,10 @@ sounddevice          # Optional fallback backend
 
 # --- Machine Learning / AI ---
 scikit-learn
-torch
+torch==2.4.1+cpu
 torchaudio
+torchvision
+--index-url https://download.pytorch.org/whl/cpu
 transformers
 joblib
 
