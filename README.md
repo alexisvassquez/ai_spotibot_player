@@ -1,15 +1,10 @@
 # 🎧  AudioMIX - AI-Assisted Modular Music Production Software for Independent Artists & Creators 
-
 ---
 
 Meet **AudioMIX** - an open-source and intelligent artist-friendly digital audio workstation. **AudioMIX** features AI-powered audio analysis and mood-aware music interaction.
 Spotibot was its original name.
----
 
-**AudioMIX's** LED light can match its colors and song or playlist suggestions to the user's mood through the phenomenon of mood detection. 
-**Modular, expressive, and built for real-time creative performance.**
-
----
+**Modular, expressive, and built for real-time creative performance.**---
 
 I update this repo continuously via my local terminal. :)
 
@@ -26,7 +21,7 @@ I update this repo continuously via my local terminal. :)
 - **Audience listener** to hype up live performances based on audience input
 - **AudioScript Shell** for live coding features
 - **CLI-parseable JSON output** for mood + BPM classification
-- Built with musicians in mind
+- Built with independent artists in mind
 
 ---
 
