@@ -1,9 +1,9 @@
-# AudioMIX / Spotibot - AI-Powered Modular Music Production Software for Independent Artists & Creators 
+# 🎧  AudioMIX - AI-Assisted Modular Music Production Software for Independent Artists & Creators 
 
 ---
 
-Meet **AudioMIX** and its test use case, **Spotibot** - an open-source and intelligent artist-friendly digital audio workstation. **AudioMIX** features AI-powered audio analysis and mood-aware music interaction.
-
+Meet **AudioMIX** - an open-source and intelligent artist-friendly digital audio workstation. **AudioMIX** features AI-powered audio analysis and mood-aware music interaction.
+Spotibot was its original name.
 ---
 
 **AudioMIX's** LED light can match its colors and song or playlist suggestions to the user's mood through the phenomenon of mood detection. 
@@ -79,16 +79,6 @@ GNU General Public License v3 (open-source and free to use for indie artists, pl
 - Reactive visual patterns
 - BPM-sync lighting
 - Live mode for DJ controller input
-
----
-
-### 4. interface/bot_response.py + pcvoice.mp3
-**Purpose:** Spotibot personality/voice layer for interactivity
-**Current Capabilities:**
-- Early logic for vocalized responses to user mood/input
-- Default TTS voice or interaction prompt
-**Future Expansion:**
-- Integration with a personality engine
 
 ---
 
@@ -179,6 +169,30 @@ A full snapshot of the current project structure can be found in [`AudioMIX_proj
  
 ---
 
+## 🖥️  AudioMIX-Electron — Official Desktop Interface
+**AudioMIX-Electron** is the companion desktop UI for the **AudioMIX Core Engine.**
+It provides a secure, dynamic, and visually reactive front-end built with Electron v39 and Node 22, designed to emulate the clean utility of VS Code while introducing DAW-style elements such as mixers, EQ panels, and LED feedback zones.
+> 💡 Status: Actively in development — currently at the “First Breath” milestone (v0.1-dev).
+
+### Repository
+[AudioMIX-Electron on GitHub](https://github.com/alexisvassquez/audiomix-electron)
+
+### Features
+- Secure sandboxed Electron shell (context isolation, no Node exposure)
+- Real-time backend heartbeat and system status bar
+- Modular UI framework ready for EQ, Mixer, and LED visualization panels
+- Full-screen responsive layout with universal keyboard-friendly controls
+- Preload bridge for safe IPC between renderer and backend (FastAPI / C++)
+
+| Layer           | Repository                                                               | Purpose                                                        |
+| :-------------- | :----------------------------------------------------------------------- | :------------------------------------------------------------- |
+| **Core Engine** | [`AudioMIX`](https://github.com/alexisvassquez/ai_spotibot_player) | Backend DSP, AI, and system logic.                |
+| **Desktop UI**  | [`AudioMIX-Electron`](https://github.com/alexisvassquez/audiomix-electron) | Visual front-end shell for artists, producers, and developers. |
+
+Once the FastAPI bridge is live, the Electron client will automatically surface real-time system info from the AudioMIX backend.
+
+---
+
 ### Requirements
 - Python 3.10+
 - CMake 3.18+
@@ -195,4 +209,12 @@ pip install -r requirements.txt
 mkdir build && cd build
 cmake ..
 make
+```
+
+### UI Preview
+```bash
+git clone https://github.com/alexisvassquez/audiomix-electron
+cd audiomix-electron
+npm install
+npm start
 ```
