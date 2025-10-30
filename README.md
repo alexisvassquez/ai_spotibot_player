@@ -77,7 +77,7 @@ GNU General Public License v3 (open-source and free to use for indie artists, pl
 
 ---
 
-### 5. datasets/
+### 4. datasets/
 **Purpose:** Audio files, metadata, and ML training targets
 **Current Format:**
 - Metadata syncing with Spotify API
@@ -90,7 +90,7 @@ GNU General Public License v3 (open-source and free to use for indie artists, pl
 
 ---
 
-### 6. led-service/
+### 5. led-service/
 **Purpose:** LED control microservice for live color pattern output based on mood/BPM JSON input  
 **Current Capabilities:**
 - CLI-parseable JSON endpoint (e.g. `python main.py '{"mood": "hype", "bpm": 135}'`)
@@ -102,7 +102,7 @@ GNU General Public License v3 (open-source and free to use for indie artists, pl
 
 ---
 
-### 7. spotify/
+### 6. spotify/
 **Purpose:** Ethical API Use
 **No Scraping Data:**
 - This project interacts with Spotify through the **official Spotify Web API**, utilizing authenticated access and approved scopes. 
