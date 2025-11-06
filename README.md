@@ -209,7 +209,7 @@ make
 
 ### UI Preview
 ```bash
-git clone https://github.com/alexisvassquez/audiomix-electron
+git clone https://github.com/alexisvassquez/audiomix-electron.git
 cd audiomix-electron
 npm install
 npm start
