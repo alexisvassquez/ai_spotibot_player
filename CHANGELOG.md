@@ -340,3 +340,25 @@ Includes backlog of changes previously unaccounted for.
 - Improved REPL handling for nested command input and invalid function chains
 - Robust fallback in `parse_and_execute` for misused commands
 - Emoji-safe REPL output and better formatting of chained outputs
+
+---
+## [v0.4-dev] - 2025-11-06
+
+### Added
+- `audio_recorder.py` using PyAudio + ALSA for low-latency microphone capture on Chrom-E
+- `record()`, `record_stop()` AudioScript commands for real-time and timed audio takes
+- `list_inputs()`, `record_set_input()`, `record_set_format()` for device selection + channel/rate config
+- Terminal-based countdown during `oneshot()` recordings
+- Cross-verified `.wav` output using `arecord`, `aplay`, `ffplay` CLI tooling
+- Support for fallback playback via ChromeOS Files app due to null sink limitation in Crostini
+
+### Changed
+- `oneshot()` logic hardened with goblin-proof error handling and CLI feedback
+- Recording now defaults to 48000 Hz / mono (safe for Chromebooks + VirtIO)
+
+### Known Limitations
+- Playback from within Crostini currently blocked by `null-sink` on non-owner accounts (Chrom-E limitation)
+- Recommended workaround: export or play `.wav` files using Chrome browser or host system
+
+---
+
