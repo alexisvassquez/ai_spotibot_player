@@ -36,7 +36,6 @@ def analyze(file_path, sr=22050, duration=None, hop_length=1024, verbose=True):
     spectral = librosa.feature.spectral_contrast(y=y, sr=sr, hop_length=hop_length)
     spectral_bw = librosa.feature.spectral_bandwidth(y=y, sr=sr)
     tempo, _ = librosa.beat.beat_track(y=y, sr=sr)
-    tempo = tempo.item()
 
     result = {
         "filename": file_path,
@@ -85,7 +84,7 @@ if __name__ == "__main__":
         with open(output_path, 'r') as f:
             all_features = json.load(f)
     else:
-        features = {}
+        all_features = {}
 
     # Add or update entry
     all_features[filename] = features
