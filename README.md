@@ -2,7 +2,7 @@
 ---
 
 Meet **AudioMIX** - an open-source and intelligent artist-friendly digital audio workstation. **AudioMIX** features AI-powered audio analysis and mood-aware music interaction.
-Spotibot was its original name.
+Spotibot was its original name..
 
 **Modular, expressive, and built for real-time creative performance.**---
 
