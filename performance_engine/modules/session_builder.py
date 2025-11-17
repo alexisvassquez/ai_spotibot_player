@@ -7,13 +7,14 @@ from pathlib import Path
 
 # Track represents a single audio or MIDI track in a session
 class Track:
-    def __init__(self, file_path, start=0.0, volume=0.0, pan=0.0, track_type='audio'):
+    def __init__(self, file_path, start=0.0, volume=0.0, pan=0.0, name=None):
         # save track metadata
-        self.file_path = Path(file_path)    # path to file (audio or MIDI)
-        self.start = float(start)           # start time on timeline (measured in secs)
-        self.volume = float(volume)         # track volume in dB
-        self.pan = float(pan)               # stereo pan (-1.0 left to +1.0 right)
-        self.type = track_type              # track type (audio file, midi, synth, etc.)
+        self.file_path = Path(file_path)           # path to file (audio or MIDI)
+        self.start = float(start)                  # start time on timeline (measured in secs)
+        self.volume = float(volume)                # track volume in dB
+        self.pan = float(pan)                      # stereo pan (-1.0 left, +1.0 right, 0 center)
+        self.name = name or self.file_path.stem    # use name if given, else fallback to filename
+        self.type = 'audio' if self.file_path.suffix in ['.wav', '.mp3'] else 'midi'    # track type (audio file, midi, synth, etc.)
 
     def to_dict(self):
         # convert to dictionary for json export
@@ -22,8 +23,22 @@ class Track:
             "start": self.start,
             "volume": self.volume,
             "pan": self.pan,
+            "name": self.name,
             "type": self.type
         }
+
+    @staticmethod
+    def from_dict(data):
+        return Track(
+            file_path=data["file"],
+            start=data.get("start", 0.0),
+            volume=data.get("volume", 0.0),
+            pan=data.get("pan", 0.0),
+            name=data.get("name", None)
+        )
+        # use saved type if provided, else fallback to file extension logic
+        track.type = data.get("type", track.type)
+        return track
 
 # AudioSession represents the full multi-track session timeline
 class AudioSession:
