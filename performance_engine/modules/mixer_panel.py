@@ -48,20 +48,22 @@ def mixer_cli():
                 if mute: flags.append("MUTED")
                 if solo: flags.append("SOLO")
                 tag = " | ".join(flags) if flags else ""
-                print (f"{i+1}. {track.file_path.name} ({track.type}) @ {track.start}s vol={track.volume} pan={track.pan} {tag}")
+                print (f"{i+1}. {track.name} ({track.type}) @ {track.start}s vol={track.volume} pan={track.pan} {tag}")
 
         elif choice == "2":
             # add new track w/ user input
             path = input("File path: ")
+            name = input("Track name: ")    # custom track name
             start = get_float("Start time (s): ")
             vol = get_float("Volume (dB): ")
             pan = get_float("Pan (-1.0 left to 1.0 right, 0 = center): ")
-            session.add_track(path, start=start, volume=vol, pan=pan)
 
+            session.add_track(path, start=start, volume=vol, pan=pan)
+            session.tracks[-1].name = name or Path(path).stem
             # apply mute/solo attributes to newly added track
             setattr(session.tracks[-1], "mute", False)
             setattr(session.tracks[-1], "solo", False)
-            print ("✅ Track added.")
+            print (f"✅ Track '{session.tracks[-1].name}' added.")
 
         elif choice == "3":
             # adjust track volume
