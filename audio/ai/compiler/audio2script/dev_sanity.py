@@ -2,7 +2,7 @@
 # AudioMIX
 # audio/ai/audio2script/dev_sanity.py
 
-from audio.ai.audio2script.script_ir import ShowIR, Section, Event
+from audio.ai.compiler.audio2script.script_ir import ShowIR, Section, Event
 
 def main():
     show = ShowIR(audio_path="audio/samples/cvltiv8r_clean.wav", bpm=128.0)

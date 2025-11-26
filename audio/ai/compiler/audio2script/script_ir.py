@@ -1,6 +1,6 @@
 # ai_spotibot_player
 # AudioMIX
-# audio/ai/audio2script/script_ir.py
+# audio/ai/compiler/audio2script/script_ir.py
 
 from __future__ import annotations
 from dataclasses import dataclass, field
