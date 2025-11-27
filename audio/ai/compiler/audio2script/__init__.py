@@ -15,7 +15,7 @@ The AudioScript package will eventually contain:
 For now, I am only exposing the IR data structures
 """
 
-from audio.ai.audio2script.script_ir import FeatureFrame, Section, Event, ShowIR
+from audio.ai.compiler.audio2script.script_ir import FeatureFrame, Section, Event, ShowIR
 
 __all__ = [
     "FeatureFrame",
