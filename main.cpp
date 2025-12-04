@@ -11,6 +11,7 @@
 // DSP Core + Modules
 #include "audio/dsp/core/dsp_chain.h"
 #include "audio/dsp/modules/digital_choir.h"
+#include "audio/dsp/modules/shimmer.h"
 
 using namespace audiomix::dsp;
 
@@ -87,9 +88,17 @@ int main()
     state.chain.setMaxBlockSize(state.maxBlockSize);
 
     // Add DSP modules
+    // Digital Choir
     auto* choir = state.chain.emplaceModule<DigitalChoirModule>(8);
     choir->setParameter("wet", 0.8f);
     choir->setParameter("spread", 1.0f);
+
+    // Shimmer - can process "chorused" audio
+    auto* shimmer = state.chain.emplaceModule<ShimmerModule>();
+    shimmer->setParameter("wet", 0.4f);          // overall mix
+    shimmer->setParameter("feedback", 0.7f);     // tail length
+    shimmer->setParameter("octave_mix", 1.0f);   // full shimmer strength
+    shimmer->setParameter("delay_ms", 550.0f);   // tail pre-delay
 
     state.chain.prepare();
 
