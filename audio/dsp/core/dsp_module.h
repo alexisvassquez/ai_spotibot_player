@@ -2,6 +2,8 @@
 // AudioMIX
 // audio/dsp/core/dsp_module.h
 
+// A base class all effects implement
+
 #pragma once
 
 #include <string>

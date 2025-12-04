@@ -2,6 +2,11 @@
 // AudioMIX
 // audio/dsp/core/lfo.h
 
+// Base sine LFO
+// Definition: Low-freq oscillation (LFO) is an electronic freq that is
+// usually below 20Hz and creates a rhythmic pulse or sweep.
+// LFOs are used to modulate musical equipment (ex; synths) to create audio effects
+
 #pragma once
 
 #include <cmath>

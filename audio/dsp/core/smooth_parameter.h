@@ -1,6 +1,8 @@
 // ai_spotibot_player
 // AudioMIX
-// audio/dsp/core/smoothed_parameter.h
+// audio/dsp/core/smooth_parameter.h
+
+// Simple exponential smoothing (for wet/dry, depth, etc.)
 
 #pragma once
 

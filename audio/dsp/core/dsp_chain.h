@@ -2,6 +2,8 @@
 // AudioMIX
 // audio/dsp/core/dsp_chain.h
 
+// Simple plugin chain that owns modules and runs them in order
+
 #pragma once
 
 #include "audio/dsp/core/dsp_module.h"
