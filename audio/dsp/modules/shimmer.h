@@ -5,37 +5,65 @@
 // SFX: shimmer
 // Texturized sound as ethereal, glassy created by a combo of reverb + pitch-shifting
 // Reverb is processed w/ pitch-shifted harmonics (~octave higher)
-// pass-through at the moment (in development)
 #pragma once
 
-#include "audio/dsp/core/dsp_module.h"
+#include <string>
+#include <vector>
+#include <cmath>
+#include "dsp_module.h"
 
 namespace audiomix::dsp {
 
+// A simple shimmer-style effect:
+// - Feedback delay line
+// - Slightly modulated delay time to approx pitch lift
+// - Soft-saturated feedback tail
 class ShimmerModule : public DspModule {
 public:
+    ShimmerModule();
+
     void prepare(double sampleRate,
-                 unsigned int maxBlockSize) override {
-        (void)sampleRate;
-        (void)maxBlockSize;
-    }
-
-    void reset() override {}
-
+                 unsigned int maxBlockSize) override;
     void process(const float* inL, const float* inR,
                  float* outL, float* outR,
-                 unsigned int numFrames) override
-    {
-        // TODO: for now, just pass-through
-        if (inL && outL) std::copy(inL, inL + numFrames, outL);
-        if (inR && outR) std::copy(inR, inR + numFrames, outR);
-    }
+                 unsigned int numFrames) override;
+    void reset() override;
+    void setParameter(const std::string& name, float value) override;
 
-    void setParameter(const std::string& id, float value) override {
-        (void)id;
-        (void)value;
-        // TODO: implement spectral shimmer taps
-    }
+private:
+    // Internal fractional delay line
+    struct DelayLine {
+        std::vector<float> buffer;
+        std::size_t writeIndex{0};
+        float delaySamples{0.0f};
+
+        void resize(std::size_t maxSamples);
+        void setDelaySamples(float d);
+        float process(float x);    // x = input; returns delayed sample
+        void clear();
+    };
+
+    double mSampleRate{44100.0};
+    unsigned int mMaxBlockSize{512};
+
+    DelayLine mDelayL;
+    DelayLine mDelayR;
+
+    // Parameters
+    float mWet{0.35f};             // 0..1
+    float mFeedback{0.6f};         // 0..0.95
+    float mOctaveMix{1.0f};        // 0..1, how strong the shimmer tail is
+    float mBaseDelayMs{450.0f};    // base delay time in ms
+
+    // Simple LFO for delay modulation (approx pitch shift)
+    float mPhase{0.0f};
+    float mPhaseInc{0.0f};         // radians p/sample
+
+    // Feedback memory
+    float mFbL{0.0f};
+    float mFbR{0.0f};
+
+    static float clamp(float v, float lo, float hi);
 };
 
 } // namespace audiomix::dsp
