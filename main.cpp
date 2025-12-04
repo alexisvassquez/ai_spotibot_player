@@ -1,39 +1,138 @@
+// ai_spotibot_player
+// AudioMIX
+// main.cpp
+
 #include <iostream>
+#include <vector>
 #include <portaudio.h>
-#include "audio_utils.h"
 
-bool initializeAudio() {
-        PaError err = Pa_Initialize();
-        if (err != paNoError) {
-                std::cerr << "PortAudio initialization failed: " << Pa_GetErrorText(err) << std::endl;
-                return false;
+#include "main.h"
+
+// DSP Core + Modules
+#include "audio/dsp/core/dsp_chain.h"
+#include "audio/dsp/modules/digital_choir.h"
+
+using namespace audiomix::dsp;
+
+// AudioState - holds the DSP chain and temporary buffers
+struct AudioState {
+    DspChain chain;
+    double sampleRate = 44100.0;
+    unsigned int maxBlockSize = 512;
+
+    std::vector<float> inL, inR;
+    std::vector<float> outL, outR;
+};
+
+// PortAudio Callback
+static int audioCallback(const void* inputBuffer,
+                         void* outputBuffer,
+                         unsigned long framesPerBuffer,
+                         const PaStreamCallbackTimeInfo*,
+                         PaStreamCallbackFlags,
+                         void* userData)
+{
+    auto* state = static_cast<AudioState*>(userData);
+
+    const float* in = static_cast<const float*>(inputBuffer);
+    float* out      = static_cast<float*>(outputBuffer);
+
+    // Resize temp buffers
+    state->inL.resize(framesPerBuffer);
+    state->inR.resize(framesPerBuffer);
+    state->outL.resize(framesPerBuffer);
+    state->outR.resize(framesPerBuffer);
+
+    // De-interleave input to L/R
+    if (in) {
+        for (unsigned long i = 0; i < framesPerBuffer; ++i) {
+            state->inL[i] = in[2 * i + 0];
+            state->inR[i] = in[2 * i + 1];
         }
-        std::cout << "PortAudio initialized successfully!" << std::endl;
-        return true;
-}
-
-void shutdownAudio() {
-        Pa_Terminate();
-        std::cout << "PortAudio terminated." << std::endl;
-}
-
-extern "C" void list_audio_devices() {
-    Pa_Initialize();
-    int numDevices = Pa_GetDeviceCount();
-    for (int i = 0; i < numDevices; i++) {
-        const PaDeviceInfo* deviceInfo = Pa_GetDeviceInfo(i);
-        std::cout << "Device" << i << ": " << deviceInfo->name << std::endl;
+    } else {
+        std::fill(state->inL.begin(), state->inL.end(), 0.0f);
+        std::fill(state->inR.begin(), state->inR.end(), 0.0f);
     }
-    Pa_Terminate();
+
+    // Process through the DSP chain
+    state->chain.process(state->inL.data(), state->inR.data(),
+                         state->outL.data(), state->outR.data(),
+                         static_cast<unsigned int>(framesPerBuffer));
+
+    // Interleave back to output
+    for (unsigned long i = 0; i < framesPerBuffer; ++i) {
+        out[2 * i + 0] = state->outL[i];
+        out[2 * i + 1] = state->outR[i];
+    }
+
+    return paContinue;
 }
 
-int main() {
-        std::cout << "AI Spotibot is running!" << std::endl;
-        
-	if (!initializeAudio()) return 1;
+// Main
+int main()
+{
+    std::cout << "AudioMIX DSP is running!" << std::endl;
 
-	list_audio_devices();
+    // original audio init calls
+    if (!initializeAudio()) return 1;
 
-	shutdownAudio();
-	return 0;
+    list_audio_devices();
+
+    // Set up AudioState + DSP chain
+    AudioState state;
+    state.sampleRate = 44100.0;
+    state.maxBlockSize = 512;
+
+    state.chain.setSampleRate(state.sampleRate);
+    state.chain.setMaxBlockSize(state.maxBlockSize);
+
+    // Add DSP modules
+    auto* choir = state.chain.emplaceModule<DigitalChoirModule>(8);
+    choir->setParameter("wet", 0.8f);
+    choir->setParameter("spread", 1.0f);
+
+    state.chain.prepare();
+
+    // PortAudio Stream setup
+    PaStream* stream = nullptr;
+
+    PaStreamParameters inputParams{};
+    PaStreamParameters outputParams{};
+
+    inputParams.device = Pa_GetDefaultInputDevice();
+    inputParams.channelCount = 2;
+    inputParams.sampleFormat = paFloat32;
+    inputParams.suggestedLatency =
+        Pa_GetDeviceInfo(inputParams.device)->defaultLowInputLatency;
+
+    outputParams.device = Pa_GetDefaultOutputDevice();
+    outputParams.channelCount = 2;
+    outputParams.sampleFormat = paFloat32;
+    outputParams.suggestedLatency =
+        Pa_GetDeviceInfo(outputParams.device)->defaultLowOutputLatency;
+
+    Pa_OpenStream(&stream,
+                  &inputParams,
+                  &outputParams,
+                  state.sampleRate,
+                  state.maxBlockSize,
+                  paNoFlag,
+                  audioCallback,
+                  &state);
+
+    Pa_StartStream(stream);
+
+    std::cout << "Audio stream running. Press Ctrl+C to exit.\n";
+
+    // Simple run loop (for now)
+    // future AudioMIX loop will go here
+    while (Pa_IsStreamActive(stream) == 1) {
+        Pa_Sleep(50);
+    }
+
+    Pa_StopStream(stream);
+    Pa_CloseStream(stream);
+
+    shutdownAudio();
+    return 0;
 }
