@@ -26,7 +26,7 @@ void ShimmerModule::DelayLine::setDelaySamples(float d) {
 
 float ShimmerModule::DelayLine::process(float x) {
     if (buffer.empty()) {
-        return x;    // defined in shimmer.h
+        return x;    // refer to shimmer.h
     }
 
     const std::size_t n = buffer.size();
