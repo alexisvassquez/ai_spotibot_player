@@ -1,5 +1,5 @@
 # =====================================================
-# AudioMIX / Juniper2.0 Requirements
+# AudioMIX / Juniper2.0 - Python Requirements
 # Modular AI-Assisted Digital Audio Workstation
 # =====================================================
 
@@ -11,12 +11,11 @@ numpy
 matplotlib
 
 # --- Audio / MIDI I/O + Drivers ---
-PortAudio
-PyAudio
+PyAudio              # Requires system PortAudio
 python-rtmidi
 mido
 pyserial
-pyalsaaudio          # ALSA mic input (Audience Listener)
+pyalsaaudio          # Requires ALSA mic input (Linux)
 sounddevice          # Optional fallback backend
 
 # --- Machine Learning / AI ---
