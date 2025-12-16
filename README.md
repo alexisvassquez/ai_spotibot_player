@@ -6,7 +6,7 @@ Spotibot was its original name..
 
 **Modular, expressive, and built for real-time creative performance.**
 
-I update this repo continuously via my local terminal. :)
+I update this repo continuously via my local terminal. :) <3
 
 ---
 
