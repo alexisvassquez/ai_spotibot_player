@@ -188,16 +188,17 @@ It provides a secure, dynamic, and visually reactive front-end built with Electr
 Once the FastAPI bridge is live, the Electron client will automatically surface real-time system info from the AudioMIX backend.
 
 ---
+## Dependencies
+AudioMIX is a hybrid Python + native audio platform. It relies on both Pythob packages and system-level audio/build tools.
 
 ### Requirements
+Python requirements are listed in `requirements.txt` and can be installed via the instructions below:
 - Python 3.10+
 - CMake 3.18+
 - librosa, scikitlearn, sounddevice (please refer to requirements.txt)
 - PortAudio or PulseAudio
 
----
-
-## Getting Started
+### Getting Started
 ```bash
 git clone https://github.com/alexisvassquez/ai_spotibot_player.git
 cd ai_spotibot_player
