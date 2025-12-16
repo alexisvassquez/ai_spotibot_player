@@ -4,7 +4,7 @@
 Meet **AudioMIX** - an open-source and intelligent artist-friendly digital audio workstation. **AudioMIX** features AI-powered audio analysis and mood-aware music interaction.
 Spotibot was its original name..
 
-**Modular, expressive, and built for real-time creative performance.**---
+**Modular, expressive, and built for real-time creative performance.**
 
 I update this repo continuously via my local terminal. :)
 
