@@ -189,7 +189,7 @@ Once the FastAPI bridge is live, the Electron client will automatically surface 
 
 ---
 ## Dependencies
-AudioMIX is a hybrid Python + native audio platform. It relies on both Pythob packages and system-level audio/build tools.
+AudioMIX is a hybrid Python + native audio platform. It relies on both Python packages and system-level audio/build tools.
 
 ### Requirements
 Python requirements are listed in `requirements.txt` and can be installed via the instructions below:
