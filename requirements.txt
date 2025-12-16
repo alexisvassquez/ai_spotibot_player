@@ -1,6 +1,6 @@
 # =====================================================
 # AudioMIX / Juniper2.0 Requirements
-# Modular AI Music Production Framework
+# Modular AI-Assisted Digital Audio Workstation
 # =====================================================
 
 # --- Core Audio + DSP ---
