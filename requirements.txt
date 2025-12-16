@@ -4,7 +4,10 @@
 # =====================================================
 
 # --- Core Audio + DSP ---
+# librosa currently supports Python <= 3.11
+# AudioMIX targets Python 3.11 for audio/ML stability
 librosa
+
 soundfile
 scipy
 numpy
@@ -23,7 +26,7 @@ scikit-learn
 torch==2.7.1+cpu
 torchaudio
 torchvision
---index-url https://download.pytorch.org/whl/cpu
+--extra-index-url https://download.pytorch.org/whl/cpu
 transformers
 joblib
 
