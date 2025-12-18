@@ -29,16 +29,17 @@ void shutdownAudio() {
 extern "C" void list_audio_devices() {
     int numDevices = Pa_GetDeviceCount();
     if (numDevices < 0) {
-        std::cerr << "Pa_GetDeviceCount error: "
-                  << Pa_GetErrorText(numDevices) << std::endl;
+        std::cerr << "Pa_GetDeviceCount error:\n";
         return;
     }
 
-    std::cout << "Available Audio Devices:" << std::endl;
-
     for (int i = 0; i < numDevices; ++i) {
-        const PaDeviceInfo* deviceInfo = Pa_GetDeviceInfo(i);
-        std::cout << "Device " << i << ": "
-                  << deviceInfo->name << std::endl;
+        const PaDeviceInfo* info = Pa_GetDeviceInfo(i);
+        if (!info) {
+            std::cerr << "Device " << i << ": <null>\n";
+            continue;
+        }
+
+        std::cout << "Device " << i << ": " << info->name << "\n";
     }
 }
