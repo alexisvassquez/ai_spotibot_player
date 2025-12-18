@@ -5,6 +5,8 @@
 #include <iostream>
 #include <vector>
 #include <portaudio.h>
+#include <thread>
+#include <chrono>
 
 #include "main.h"
 
@@ -76,11 +78,9 @@ int main(int argc, char* argv[])
     std::cout << "AudioMIX DSP is running!" << std::endl;
 
     bool headlessMode = false;
+    PaStream* stream = nullptr;
+
     // original audio init calls
-    if (!initializeAudio()) return 1;
-
-    list_audio_devices();
-
     for (int i = 1; i < argc; ++i) {
         if (std::string(argv[i]) == "--headless") {
             headlessMode = true;
@@ -115,8 +115,6 @@ int main(int argc, char* argv[])
         state.chain.emplaceModule<audiomix::dsp::NullSink>();
     } else {
         // PortAudio Stream setup
-        PaStream* stream = nullptr;
-
         PaStreamParameters inputParams{};
         PaStreamParameters outputParams{};
 
