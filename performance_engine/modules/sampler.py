@@ -12,17 +12,17 @@ sample_registry: Dict[str, str] = {}
 
 def load_sample(name: str, path: str):
     if not os.path.exists(path):
-        say(f"❌ File not found: {path}", "⚠️")
+        say(f"❌ File not found: {path}")
         return
     sample_registry[name] = path
-    say(f"Sample loaded: {name} -> {path}", "📂")
+    say(f"Sample loaded: {name} -> {path}")
 
 def trigger_sample(name: str):
     path = sample_registry.get(name)
     if not path:
-        say(f"❌ Sample not found: {name}", "🚫")
+        say(f"❌ Sample not found: {name}")
         return
-    say(f"💥 Triggering sample: {name}", "🎧")
+    say(f"Triggering sample: {name}")
     subprocess.Popen(["aplay", path])
     # Pulse LED for feedback
     pulse("yellow", 140)
@@ -44,7 +44,7 @@ def sampler_bank_load(path: str):
             say(f"[sampler] no 'sounds' in bank: {path}", "⚠️")
             return
         _BANKS[name] = data
-        say(f"[sampler] loaded bank '{name}' ({len(sounds)} sounds)", "✅")
+        say(f"[sampler] loaded bank '{name}' ({len(sounds)} sounds)")
     except Exception as e:
         say(f"[sampler] failed to load bank: {e}", "❌")
 
@@ -63,7 +63,7 @@ def sampler_play(bank: str, alias: str):
         say(f"[sampler] file missing {bank}:{alias} -> {path}", "⚠️")
         return
 
-    say(f"💥 {bank}:{alias} -> {os.path.basename(path)}", "🎧")
+    say(f"{bank}:{alias} -> {os.path.basename(path)}")
     subprocess.Popen(["aplay", path])
     # Pulse LED for feedback
     pulse("yellow", 140)
@@ -71,10 +71,10 @@ def sampler_play(bank: str, alias: str):
 def sampler_list(bank: str = ""):
     """List loaded banks + aliases."""
     if not _BANKS:
-        say("[sampler] no banks loaded yet", "ℹ️")
+        say("[sampler] no banks loaded yet")
         return
     if not bank:
-        say("Loaded banks:", "📤")
+        say("Loaded banks:")
         for n, b in _BANKS.items():
             say(f" - {n} ({len(b.get('sounds', {}))} sounds)")
         return
@@ -82,7 +82,7 @@ def sampler_list(bank: str = ""):
     if not b:
         say(f"[sampler] bank not loaded: {bank}", "⚠️")
         return
-    say(f"Bank '{bank}' sounds:", "🎼")
+    say(f"Bank '{bank}' sounds:")
     for alias, meta in b.get("sounds", {}).items():
         say(f" - {alias} -> {meta.get('file', '?')}")
 
@@ -92,7 +92,7 @@ def sampler_credits(bank: str):
     if not b:
         say(f"[sampler] bank not loaded: {bank}", "⚠️")
         return
-    say(f"Credits for bank '{bank}':", "🏷️")
+    say(f"Credits for bank '{bank}': ")
     for alias, meta in b.get("sounds", {}).items():
         title = meta.get("title", os.path.basename(meta.get("file", "?")))
         author = meta.get("author", "?")
@@ -126,7 +126,7 @@ def sampler_export_credits(bank: str, out_path: str = "docs/CREDITS.md"):
         lines.append(entry)
     with open(out_path, "w") as f:
         f.write("\n".join(lines) + "\n")
-    say(f"[sampler] wrote credits -> {out_path}", "📝")
+    say(f"[sampler] wrote credits -> {out_path}")
 
 def register():
     return {

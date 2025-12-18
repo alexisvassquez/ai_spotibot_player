@@ -22,3 +22,17 @@ from performance_engine.event_bus import EventBus
 
 session = SessionState()
 events = EventBus()
+
+# Lifecycle Helpers
+"""
+Reset the AudioMIX runtime to a clean session state.
+Does not tear down hardware or reload modules.
+"""
+from performance_engine.modules.shared import say
+
+def reset_context():
+    session.__dict__.update(SessionState().__dict__)
+    session.last_event = "context_reset"
+
+    say("Context reset: new session ready")
+    events.emit("context_reset")

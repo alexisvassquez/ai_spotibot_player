@@ -6,7 +6,6 @@ import threading
 import time
 from typing import Optional
 import wave
-import pyaudio
 
 try:
     from performance_engine.modules.shared import say
@@ -18,18 +17,27 @@ except ImportError:
 # Singleton-style recorder
 class PyAudioRecorder:
     def __init__(self):
-        self.audio = pyaudio.PyAudio()
+        self.audio = None
+        self.pyaudio = None
         self.stream = None
         self.frames = []
         self.running = False
 
         self.device_index = None    # sys default
-        self.format = pyaudio.paInt16
+        self.format = None
         self.samplerate = 48000     # safe default on Linux
         self.channels = 1           # default start at mono; can be set to 2
         self.chunk = 1024
 
+    def _ensure_audio(self):
+        if self.audio is None:
+            import pyaudio
+            self.pyaudio = pyaudio
+            self.audio = pyaudio.PyAudio()
+            self.format = pyaudio.paInt16
+
     def start(self, filename):
+        self._ensure_audio()
         if self.running:
             say(" [record] already running; stop first", "⚠️")
             return
@@ -81,7 +89,7 @@ class PyAudioRecorder:
         wf.writeframes(b''.join(self.frames))
         wf.close()
 
-        say(f" [record] stopped and saved -> {self.filename}", "⏹️")
+        say(f" [record] stopped and saved -> {self.filename}")
 
     def oneshot(self, filename, seconds):
         try:
@@ -117,17 +125,25 @@ class PyAudioRecorder:
         say(f" [record] format -> {self.rate} Hz / ch={self.channels}", "🎚️")
 
     def list_inputs(self):
+        self._ensure_audio()
         count = self.audio.get_device_count()
-        say("Input devices:", "🎤")
+        say("Input devices: ")
         for i in range(count):
             info = self.audio.get_device_info_by_index(i)
             if info["maxInputChannels"] > 0:
                 say(f" [{i}] {info['name']} (ch={info['maxInputChannels']})")
 
-REC = PyAudioRecorder()
+REC = None
+
+def _rec():
+    global REC
+    if REC is None:
+        REC = PyAudioRecorder()
+    return REC
 
 # AudioScript (AS) Commands
 def record(*args):
+    rec = _rec()
     if not args:
         say(" [record] usage: record(\"out.wav\", seconds=optional)", "⚠️")
         return

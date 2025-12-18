@@ -11,6 +11,13 @@ from audio.midi import pretty_midi_parser as pmp
 from audio.midi import midi_tag_classifier as tagclf
 from audio.midi import tag_to_settings as t2s
 
+# MIDI runtime state (explicit defaults)
+_midi_in = None
+_midi_out = None
+_midi_enabled = False
+_last_event_sig = None
+
+# Events
 _EVENT_Q: "queue.Queue[dict]" = queue.Queue(maxsize=4096)
 _listener_thread: Optional[threading.Thread] = None
 _stop_flag = threading.Event()
@@ -28,7 +35,7 @@ def _enqueue(ev: dict):
 def _listener(port_name: str):
     global _current_port
     _current_port = port_name
-    say(f"[MIDI] opening '{port_name}'", "🎹")
+    say(f"[MIDI] opening '{port_name}'")
     try:
         live.listen(port_name=port_name, on_event=_enqueue, stop_event=_stop_flag)
     except Exception as e:
@@ -42,28 +49,21 @@ def midi_ports():
     if not ports:
         say("No MIDI inputs found.", "⚠️")
     else:
-        say("Available MIDI inputs:", "🎛️")
+        say("Available MIDI inputs:")
         for i, p in enumerate(ports):
             say(f" [{i}] {p}")
 
-def midi_listen(port_substr: str = ""):
-    global _listener_thread
-    if _listener_thread and _listener_thread.is_alive():
-        say("MIDI listener running.", "ℹ️")
-        return
-    ports = live.list_input_ports()
-    if not ports:
-        say("No MIDI inputs found.", "⚠️")
-        return
-    # picks first matching (substring) or fallback to first
-    choice = next((p for p in ports if port_substr.lower() in p.lower()), ports[0])
-    _stop_flag.clear()
-    _listener_thread = threading.Thread(target=_listener, args=(choice,), daemon=True)
-    _listener_thread.start()
-    say(f"Listening on: {choice}", "✅")
+def midi_listen(port=None):
+    global _midi_in, _midi_enabled
+
+    _midi_in = open_midi_port(port)
+    _midi_enabled = True
 
 def midi_stop():
-    _stop_flag.set()
+    global _midi_in, _midi_enabled
+
+    _midi_in = None
+    _midi_enabled = False
 
 def midi_map_load(path: str = "audio/midi/midi_map.json"):
     if not os.path.exists(path):
@@ -84,7 +84,12 @@ def midi_map_load(path: str = "audio/midi/midi_map.json"):
         say(f"Failed to load midi_map: {e}", "❌")
 
 def _fire_action(action: str, ev: dict):
-    # Allows actions like: play("<file_name>.wav"), mood_set("hype"), or eval("<AudioScript>") etc
+    """
+    Allows actions like:
+        - play("<file_name>.wav")
+        - mood_set("hype")
+        - eval("<AudioScript>") etc
+    """
     try:
         if "(" in action and action.endswith(")"):
             name = action.split("(", 1)[0].strip()
@@ -116,29 +121,18 @@ def _event_signature(ev: dict) -> str:
     return ":".join(parts)
 
 def midi_tick():
-    processed = 0
-    while not _EVENT_Q.empty():
-        ev = _EVENT_Q.get()
-        processed += 1
+    global _midi_in, _last_event_sig
 
-    # macro mappings: classify tags on the fly
-    try:
-        tags = tagclf.classify_event(ev) or []
-    except Exception:
-        tags = []
-    if tags:
-        global _last_tags
-        _last_tags = tags
+    if not _midi_enabled or _midi_in is None:
+        return
 
-    sig = _event_signature(ev)
-    for m in _mappings:
-        if m["re"].match(sig):
-            _fire_action(m["action"], ev)
-    if processed:
-        say(f"[MIDI] processed {processed} event(s)", "🕛")
+    for ev in _midi_in.iter_pending():
+        sig = _event_signature(ev)
+        _last_event_sig = sig
+        _handle_midi_event(ev)
 
 def midi_tags_last():
-    say(f"Last tags: {_last_tags}", "📑")
+    say(f"Last tags: {_last_tags}")
 
 def register():
     return {
