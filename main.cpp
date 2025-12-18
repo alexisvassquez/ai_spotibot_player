@@ -12,6 +12,7 @@
 #include "audio/dsp/core/dsp_chain.h"
 #include "audio/dsp/modules/digital_choir.h"
 #include "audio/dsp/modules/shimmer.h"
+#include "audio/dsp/modules/null_sink.h"
 
 using namespace audiomix::dsp;
 
@@ -79,6 +80,13 @@ int main()
 
     list_audio_devices();
 
+    bool headlessMode = false;
+    for (int i = 1; i < argc; ++i) {
+        if (std::string(argv[i]) == "--headless") {
+            headlessMode = true;
+        }
+    }
+
     // Set up AudioState + DSP chain
     AudioState state;
     state.sampleRate = 44100.0;
@@ -102,36 +110,41 @@ int main()
 
     state.chain.prepare();
 
-    // PortAudio Stream setup
-    PaStream* stream = nullptr;
+    // Headless mode (hardware agnostic)
+    if (headlessMode) {
+        state.chain.emplaceModule<audiomix::dsp::NullSink>();
+    } else {
+        // PortAudio Stream setup
+        PaStream* stream = nullptr;
 
-    PaStreamParameters inputParams{};
-    PaStreamParameters outputParams{};
+        PaStreamParameters inputParams{};
+        PaStreamParameters outputParams{};
 
-    inputParams.device = Pa_GetDefaultInputDevice();
-    inputParams.channelCount = 2;
-    inputParams.sampleFormat = paFloat32;
-    inputParams.suggestedLatency =
-        Pa_GetDeviceInfo(inputParams.device)->defaultLowInputLatency;
+        inputParams.device = Pa_GetDefaultInputDevice();
+        inputParams.channelCount = 2;
+        inputParams.sampleFormat = paFloat32;
+        inputParams.suggestedLatency =
+            Pa_GetDeviceInfo(inputParams.device)->defaultLowInputLatency;
 
-    outputParams.device = Pa_GetDefaultOutputDevice();
-    outputParams.channelCount = 2;
-    outputParams.sampleFormat = paFloat32;
-    outputParams.suggestedLatency =
-        Pa_GetDeviceInfo(outputParams.device)->defaultLowOutputLatency;
+        outputParams.device = Pa_GetDefaultOutputDevice();
+        outputParams.channelCount = 2;
+        outputParams.sampleFormat = paFloat32;
+        outputParams.suggestedLatency =
+            Pa_GetDeviceInfo(outputParams.device)->defaultLowOutputLatency;
 
-    Pa_OpenStream(&stream,
-                  &inputParams,
-                  &outputParams,
-                  state.sampleRate,
-                  state.maxBlockSize,
-                  paNoFlag,
-                  audioCallback,
-                  &state);
+        Pa_OpenStream(&stream,
+                      &inputParams,
+                      &outputParams,
+                      state.sampleRate,
+                      state.maxBlockSize,
+                      paNoFlag,
+                      audioCallback,
+                      &state);
 
-    Pa_StartStream(stream);
+        Pa_StartStream(stream);
 
-    std::cout << "Audio stream running. Press Ctrl+C to exit.\n";
+        std::cout << "Audio stream running. Press Ctrl+C to exit.\n";
+    }
 
     // Simple run loop (for now)
     // future AudioMIX loop will go here
