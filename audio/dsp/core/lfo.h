@@ -44,7 +44,7 @@ private:
     double mSampleRate = 44100.0;
     float mFrequency = 0.5f;
     float mPhase = 0.0f;
-    float mPhaseInc = twoPi * 0.5f / 44100.0f
+    float mPhaseInc = twoPi * 0.5f / 44100.0f;
 };
 
 } // namespace audiomix::dsp

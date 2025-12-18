@@ -65,7 +65,7 @@ public:
                                   numFrames);
 
         // Remaining modules ping-pong between tmp buffers
-        for (std::size_t i = 1; i < mModules.size(); ++1) {
+        for (std::size_t i = 1; i < mModules.size(); ++i) {
             currInL = usingBuffer1 ? mTmpL1.data() : mTmpL2.data();
             currInR = usingBuffer1 ? mTmpR1.data() : mTmpR2.data();
             currOutL = usingBuffer1 ? mTmpL2.data() : mTmpL1.data();
