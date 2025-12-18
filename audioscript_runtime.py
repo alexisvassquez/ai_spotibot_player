@@ -59,7 +59,7 @@ def say(text, emoji=""):
 def load_modules():
     module_dir = "performance_engine/modules"
     for file in os.listdir(module_dir):
-        if not file.endswith(".py") and not file.startswith("__") and file != "__pycache__":
+        if not file.endswith(".py") or file.startswith("__"):
              continue
 
         if SAFE_MODE and file not in SAFE_MODE_ALLOWLIST:
