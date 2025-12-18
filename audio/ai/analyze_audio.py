@@ -36,6 +36,7 @@ def analyze(file_path, sr=22050, duration=None, hop_length=1024, verbose=True):
     spectral = librosa.feature.spectral_contrast(y=y, sr=sr, hop_length=hop_length)
     spectral_bw = librosa.feature.spectral_bandwidth(y=y, sr=sr)
     tempo, _ = librosa.beat.beat_track(y=y, sr=sr)
+    tempo = float(tempo)
 
     result = {
         "filename": file_path,
@@ -51,7 +52,7 @@ def analyze(file_path, sr=22050, duration=None, hop_length=1024, verbose=True):
     }
 
     if verbose:
-        print (f"[INFO] Tempo: {tempo:.2f} BPM")
+        print (f"[INFO] Tempo: {float(tempo):.2f} BPM")
         print (f"[INFO] MFCC shape: {mfcc.shape}")
         print (f"[INFO] Spectral Contrast shape: {spectral.shape}")
         print (f"[INFO] Spectral Bandwidth shape: {spectral_bw.shape}")

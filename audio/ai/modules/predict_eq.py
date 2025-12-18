@@ -8,8 +8,8 @@ import librosa
 import sys
 from audio.ai.modules.lightning_module import LightningEQNet
 
-LABELS_PATH = "models/eq_labels.txt"
-MODEL_PATH = "models/eq_model.pt"
+LABELS_PATH = "models/eq/eq_labels.txt"
+MODEL_PATH = "models/eq/eq_model.pt"
 
 def load_labels():
     with open(LABELS_PATH, "r") as f:

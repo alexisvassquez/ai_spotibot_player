@@ -10,7 +10,7 @@ from performance_engine.modules.context import command_registry
 # Allowlist -> SAFE_MODE (for lighter runtime load)
 # Light modules only
 SAFE_MODE = os.environ.get("AUDIOMIX_SAFE", "0") == "1"
-SAFE_MODULE_ALLOWLIST = {
+SAFE_MODE_ALLOWLIST = {
     "context.py",
     "shell_tools.py",
     "clip_launcher.py",
@@ -32,7 +32,10 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 USE_EMOJIS = True
 USE_SYMBOLS = True
-VERBOSE = False # Set to True for debugging logs with --debug flag
+VERBOSE = True # Set to True for debugging logs with --debug flag
+
+def main():
+    print ("main() reached!")
 
 # Register commands to registry function
 def register_command(name: str, func):

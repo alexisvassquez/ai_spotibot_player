@@ -61,3 +61,4 @@ ehthumbs.db
 *.swo
 portaudio/
 *.save
+.ipynb_checkpoints/
