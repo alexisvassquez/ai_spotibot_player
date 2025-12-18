@@ -71,16 +71,16 @@ static int audioCallback(const void* inputBuffer,
 }
 
 // Main
-int main()
+int main(int argc, char* argv[])
 {
     std::cout << "AudioMIX DSP is running!" << std::endl;
 
+    bool headlessMode = false;
     // original audio init calls
     if (!initializeAudio()) return 1;
 
     list_audio_devices();
 
-    bool headlessMode = false;
     for (int i = 1; i < argc; ++i) {
         if (std::string(argv[i]) == "--headless") {
             headlessMode = true;
@@ -148,13 +148,18 @@ int main()
 
     // Simple run loop (for now)
     // future AudioMIX loop will go here
-    while (Pa_IsStreamActive(stream) == 1) {
-        Pa_Sleep(50);
+    if (!headlessMode) {
+        while (Pa_IsStreamActive(stream) == 1) {
+            Pa_Sleep(100);
+        }
+
+        Pa_StopStream(stream);
+        Pa_CloseStream(stream);
+        shutdownAudio();
+    } else {
+        // Headless run loop (no PortAudio)
+        while (true) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
     }
-
-    Pa_StopStream(stream);
-    Pa_CloseStream(stream);
-
-    shutdownAudio();
-    return 0;
 }
