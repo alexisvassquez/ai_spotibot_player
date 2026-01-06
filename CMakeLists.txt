@@ -88,6 +88,35 @@ else()
 endif()
 
 # ------------------------------
+# Core DSP / Engine Targets
+# ------------------------------
+file(GLOB CONFIGURE_DEPENDS DSP_CORE_SOURCES
+    "${CMAKE_SOURCE_DIR}/audio/dsp/core/*.cpp"
+    "${CMAKE_SOURCE_DIR}/audio/dsp/core/*.cc"
+    "${CMAKE_SOURCE_DIR}/audio/dsp/core/*.cxx"
+)
+
+file(GLOB CONFIGURE_DEPENDS DSP_CORE_HEADERS
+    "${CMAKE_SOURCE_DIR}/audio/dsp/core/*.h"
+    "${CMAKE_SOURCE_DIR}/audio/dsp/core/*.hpp"
+)
+
+if (DSP_CORE_SOURCES)
+    add_library(audiomix_dsp_core STATIC ${DSP_CORE_SOURCES} ${DSP_CORE_HEADERS})
+else()
+    add_library(audiomix_dsp_core INTERFACE)
+endif()
+
+target_include_directories(audiomix_dsp_core INTERFACE
+    ${CMAKE_SOURCE_DIR}
+)
+
+# ------------------------------
+# DSP Modules
+# ------------------------------
+add_subdirectory(audio/dsp/modules)
+
+# ------------------------------
 # Build Executable
 # ------------------------------
 add_executable(audiomix ${PROJECT_SOURCES})
@@ -97,6 +126,8 @@ add_executable(audiomix ${PROJECT_SOURCES})
 # ------------------------------
 target_link_libraries(audiomix
     PRIVATE
+        audiomix_dsp_core
+        audiomix_dsp_modules
         ${PORTAUDIO_LIBRARY}
         asound        # ALSA
         jack          # JACK
