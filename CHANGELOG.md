@@ -1,3 +1,4 @@
+
 # 📦 CHANGELOG
 
 All notable changes to this project will be documented in this file.
@@ -361,4 +362,23 @@ Includes backlog of changes previously unaccounted for.
 - Recommended workaround: export or play `.wav` files using Chrome browser or host system
 
 ---
+
+## [v0.5-dev] - 2026-01-06
+
+### Added
+
+* DSP: Introduced a dedicated DSP modules library (`audiomix_dsp_modules`) with its own CMake subdirectory, enabling scalable module development without modifying `main.cpp` or root source lists.
+* DSP: Added `GainModule` with dB-based gain control, linear-domain smoothing via `SmoothedParameter`, and real-time safe per-sample processing.
+* DSP: Established a hardened DSP chain foundation designed to scale toward multichannel setups (default target: 4 channels for live and booth-style configurations).
+
+### Changed
+
+* Build: Refactored CMake architecture to clearly separate DSP core and DSP modules, improving dependency hygiene, incremental build times, and long-term maintainability.
+* DSP: Aligned module implementations with existing core DSP APIs (e.g., `SmoothedParameter`) to avoid abstraction drift and ensure deterministic startup/reset behavior.
+
+### Fixed
+
+* DSP: Corrected issues in `DelayLine` reset logic and related DSP utilities that could cause compilation or runtime instability.
+* Build: Fixed incorrect `file(GLOB ...)` argument ordering in CMake that prevented module `.cpp` files from being discovered.
+* Build: Resolved system clock skew and timestamp-related build warnings that could cause unreliable incremental builds.
 
