@@ -56,7 +56,7 @@ public:
     }
 
     void reset() {
-        std:fill(mBuffer.begin(), mBuffer.end(), 0.0f);
+        std::fill(mBuffer.begin(), mBuffer.end(), 0.0f);
         mWriteIndex = 0;
     }
 
