@@ -14,24 +14,20 @@ void GainModule::prepare(double sampleRate, unsigned int maxBlockSize) {
     mSampleRate = sampleRate;
     mMaxBlockSize = maxBlockSize;
 
-    // prep smoother + set a sensible default smoothing time
-    // "fader smooth", not "slow automation"
-    mGainLin.prepare(sampleRate);
-
-    // 15-30ms mixer fader (will tweak)
-    mGainLin.setTimeMs(20.0f);
-
     // initialize to unity
     mGainDb = 0.0f;
-    mGainLin.setCurrentAndTarget(dbToLinear(mGainDb));
+    mGainLin.setTarget(dbToLinear(mGainDb));
+    mGainLin.prepare(mSampleRate, mSmoothingMs);
 }
 
 void GainModule::reset() {
     // reset smoother back to current gain
-    mGainLin.setCurrentAndTarget(dbToLinear(mGainDb));
+    mGainLin.setTarget(dbToLinear(mGainDb));
+    mGainLin.prepare(mSampleRate, mSmoothingMs);
 }
 
 void GainModule::setSmoothingTimeMs(float ms) {
+    mSmoothingMs = ms;
     mGainLin.setTimeMs(ms);
 }
 
@@ -72,7 +68,7 @@ void GainModule::process(const float* inL, const float* inR,
     // apple smoothed linear gain sample-by-sample
     // cheap (less tech debt/scalable), avoids zipper noise on fader moves
     for (unsigned int i = 0; i < numFrames; ++i) {
-        const float g = mGainLin.getNextValue();
+        const float g = mGainLin.process();
 
         if (inL && outL) outL[i] = inL[i] * g;
         if (inR && outR) outR[i] = inR[i] * g;

@@ -41,6 +41,7 @@ list(APPEND PROJECT_SOURCES ${CMAKE_SOURCE_DIR}/main_utils.cpp)
 list(FILTER PROJECT_SOURCES EXCLUDE REGEX "myenv/")
 list(FILTER PROJECT_SOURCES EXCLUDE REGEX "venv/")
 list(FILTER PROJECT_SOURCES EXCLUDE REGEX "env/")
+list(FILTER PROJECT_SOURCES EXCLUDE REGEX "amenv/")
 list(FILTER PROJECT_SOURCES EXCLUDE REGEX "__pycache__")
 list(FILTER PROJECT_SOURCES EXCLUDE REGEX "site-packages")
 list(FILTER PROJECT_SOURCES EXCLUDE REGEX "dist-packages")
@@ -90,13 +91,13 @@ endif()
 # ------------------------------
 # Core DSP / Engine Targets
 # ------------------------------
-file(GLOB CONFIGURE_DEPENDS DSP_CORE_SOURCES
+file(GLOB DSP_CORE_SOURCES CONFIGURE_DEPENDS
     "${CMAKE_SOURCE_DIR}/audio/dsp/core/*.cpp"
     "${CMAKE_SOURCE_DIR}/audio/dsp/core/*.cc"
     "${CMAKE_SOURCE_DIR}/audio/dsp/core/*.cxx"
 )
 
-file(GLOB CONFIGURE_DEPENDS DSP_CORE_HEADERS
+file(GLOB DSP_CORE_HEADERS CONFIGURE_DEPENDS
     "${CMAKE_SOURCE_DIR}/audio/dsp/core/*.h"
     "${CMAKE_SOURCE_DIR}/audio/dsp/core/*.hpp"
 )

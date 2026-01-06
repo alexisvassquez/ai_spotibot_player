@@ -50,6 +50,7 @@ private:
 
     float mGainDb = 0.0f;
 
+    float mSmoothingMs = 20.0f;    // default
     // smooth in linear space to avoid zipper noise
     SmoothedParameter mGainLin;
 };
