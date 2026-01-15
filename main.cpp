@@ -7,6 +7,10 @@
 #include <portaudio.h>
 #include <thread>
 #include <chrono>
+#include <cstring>
+#include <atomic>
+#include <string>
+#include <mutex>
 
 #include "main.h"
 
@@ -18,11 +22,62 @@
 
 using namespace audiomix::dsp;
 
+// Control Plane (v1) - NDJSON over stdin
+// does not parse full JSON yet (no extra deps)
+// string match for recognized commands and stash raw payload lines for later
+// TODO: replace the string matching with a real JSON parser; deserialize into EQparams
+struct ControlBus {
+    // latest raw EQ command line received
+    // control thread writes under mutex; audio thread copies when signaled
+    std::mutex pendingMutex;
+    std::string pendingEqLine;
+    std::atomic<bool> hasPendingEq{false};
+
+    std::atomic<bool> running{true};
+};
+
+static inline bool containsCmd(const std::string& line, const char* cmd) {
+    // simple match for: "cmd":"<cmd>"
+    const std::string needle = std::string("\"cmd\":\"") + cmd + "\"";
+    return line.find(needle) != std::string::npos;
+}
+
+static void controlLoop(ControlBus* bus) {
+    std::string line;
+    while (bus->running.load(std::memory_order_relaxed) && std::getline(std::cin, line)) {
+        if (line.empty()) continue;
+
+        if (containsCmd(line, "ping")) {
+            std::cout << "{\"cmd\":\"pong\"}" << std::endl;
+            continue;
+        }
+
+        if (containsCmd(line, "eq.set")) {
+            // stash raw line for now
+            {
+                std::lock_guard<std::mutex> lock(bus->pendingMutex);
+                bus->pendingEqLine = line;
+            }
+            bus->hasPendingEq.store(true, std::memory_order_release);
+            std::cout << "{\"cmd\":\"ack\",\"ack\":\"eq.set\"}" << std::endl;
+            continue;
+        }
+
+        // unknown command
+        std::cout << "{\"cmd\":\"error\",\"error\":\"unknown_command\"}" << std::endl;
+    }
+}
+
 // AudioState - holds the DSP chain and temporary buffers
 struct AudioState {
     DspChain chain;
     double sampleRate = 44100.0;
     unsigned int maxBlockSize = 512;
+
+    // control plane hook
+    ControlBus* control = nullptr;
+    // latest EQ command observed by the audio thread
+    std::string lastEqLine{};
 
     std::vector<float> inL, inR;
     std::vector<float> outL, outR;
@@ -37,6 +92,15 @@ static int audioCallback(const void* inputBuffer,
                          void* userData)
 {
     auto* state = static_cast<AudioState*>(userData);
+
+    // control hook: pull any pending EQ message at buffer boundaries
+    // does not parse/apply anything yet - just atomically consumes it
+    if (state->control) {
+        if (state->control->hasPendingEq.exchange(false, std::memory_order_acq_rel)) {
+            std::lock_guard<std::mutex> lock(state->control->pendingMutex);
+            state->lastEqLine = state->control->pendingEqLine;    // stash for later; will deserialize + apply
+        }
+    }
 
     const float* in = static_cast<const float*>(inputBuffer);
     float* out      = static_cast<float*>(outputBuffer);
@@ -77,6 +141,13 @@ int main(int argc, char* argv[])
 {
     std::cout << "AudioMIX DSP is running!" << std::endl;
 
+    // start control-plane listener (NDJSON over stdin)
+    // runs in parallel with audio engine
+    // TODO: message will actually alter DSP
+    ControlBus control;
+    std::thread controlThread(controlLoop, &control);
+    controlThread.detach();
+
     bool headlessMode = false;
     PaStream* stream = nullptr;
 
@@ -91,6 +162,7 @@ int main(int argc, char* argv[])
     AudioState state;
     state.sampleRate = 44100.0;
     state.maxBlockSize = 512;
+    state.control = &control;
 
     state.chain.setSampleRate(state.sampleRate);
     state.chain.setMaxBlockSize(state.maxBlockSize);
