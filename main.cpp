@@ -114,8 +114,8 @@ static int audioCallback(const void* inputBuffer,
     // De-interleave input to L/R
     if (in) {
         for (unsigned long i = 0; i < framesPerBuffer; ++i) {
-            state->inL[i] = in[2 * i + 0];
-            state->inR[i] = in[2 * i + 1];
+            state->inL[i] = in ? in[i * 2 + 0] : 0.0f;
+            state->inR[i] = in ? in[i * 2 + 1] : 0.0f;
         }
     } else {
         std::fill(state->inL.begin(), state->inL.end(), 0.0f);
@@ -186,24 +186,61 @@ int main(int argc, char* argv[])
     if (headlessMode) {
         state.chain.emplaceModule<audiomix::dsp::NullSink>();
     } else {
-        // PortAudio Stream setup
         PaStreamParameters inputParams{};
         PaStreamParameters outputParams{};
 
-        inputParams.device = Pa_GetDefaultInputDevice();
-        inputParams.channelCount = 2;
-        inputParams.sampleFormat = paFloat32;
-        inputParams.suggestedLatency =
-            Pa_GetDeviceInfo(inputParams.device)->defaultLowInputLatency;
+        // initialize PortAudio via main_utils.cpp
+        if (!initializeAudio()) {
+            return 1;
+        }
 
-        outputParams.device = Pa_GetDefaultOutputDevice();
+        // PortAudio Stream setup
+        PaDeviceIndex inDev = Pa_GetDefaultInputDevice();
+        PaDeviceIndex outDev = Pa_GetDefaultOutputDevice();
+
+        if (outDev == paNoDevice) {
+            std::cerr << "No default output device found.\n";
+            std::cerr << "Available devices:\n";
+            list_audio_devices();
+            shutdownAudio();
+            return 1;
+        }
+
+        const PaDeviceInfo* outInfo = Pa_GetDeviceInfo(outDev);
+        if (!outInfo) {
+            std::cerr << "Output device info is null.\n";
+            std::cerr << "Available devices:\n";
+            list_audio_devices();
+            shutdownAudio();
+            return 1;
+        }
+
+        // output is req
+        outputParams.device = outDev;
         outputParams.channelCount = 2;
         outputParams.sampleFormat = paFloat32;
         outputParams.suggestedLatency =
-            Pa_GetDeviceInfo(outputParams.device)->defaultLowOutputLatency;
+            outInfo->defaultLowOutputLatency;
 
-        Pa_OpenStream(&stream,
-                      &inputParams,
+        // input is optional: if missing, pass nullptr and callback will receive
+        PaStreamParameters* inParamsPtr = nullptr;
+        if (inDev != paNoDevice) {
+            const PaDeviceInfo* inInfo = Pa_GetDeviceInfo(inDev);
+            if (inInfo) {
+                inputParams.device = inDev;
+                inputParams.channelCount = 2;
+                inputParams.sampleFormat = paFloat32;
+                inputParams.suggestedLatency = inInfo->defaultLowInputLatency;
+                inParamsPtr = &inputParams;
+            } else {
+                std::cerr << "Warn: input device info is null; continuing output-only.\n";
+            }
+        } else {
+            std::cerr << "Warn: no default input device; continuing output-only.\n";
+        }
+
+        PaError err = Pa_OpenStream(&stream,
+                      inParamsPtr,
                       &outputParams,
                       state.sampleRate,
                       state.maxBlockSize,
@@ -211,7 +248,21 @@ int main(int argc, char* argv[])
                       audioCallback,
                       &state);
 
-        Pa_StartStream(stream);
+        if (err != paNoError) {
+            std::cerr << "Err: Pa_OpenStream failed: " << Pa_GetErrorText(err) << "\n";
+            std::cerr << "Available devices:\n";
+            list_audio_devices();
+            shutdownAudio();
+            return 1;
+        }
+
+        err = Pa_StartStream(stream);
+        if (err != paNoError) {
+            std::cerr << "Err: Pa_StartStream failed: " << Pa_GetErrorText(err) << "\n";
+            Pa_CloseStream(stream);
+            shutdownAudio();
+            return 1;
+        }
 
         std::cout << "Audio stream running. Press Ctrl+C to exit.\n";
     }
