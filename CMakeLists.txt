@@ -125,6 +125,8 @@ add_executable(audiomix ${PROJECT_SOURCES})
 # ------------------------------
 # Link Libraries
 # ------------------------------
+find_package(nlohmann_json REQUIRED)
+
 target_link_libraries(audiomix
     PRIVATE
         audiomix_dsp_core
@@ -134,4 +136,5 @@ target_link_libraries(audiomix
         jack          # JACK
         pthread       # PortAudio requirement
         m             # Math lib
+        nlohmann_json::nlohmann_json    # NDJSON parser
 )

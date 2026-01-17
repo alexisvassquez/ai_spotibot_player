@@ -19,6 +19,8 @@
 #include "audio/dsp/modules/digital_choir.h"
 #include "audio/dsp/modules/shimmer.h"
 #include "audio/dsp/modules/null_sink.h"
+#include "audio/dsp/core/eq_params.h"
+#include "audio/dsp/core/eq_params_parse.h"
 
 using namespace audiomix::dsp;
 
@@ -30,8 +32,8 @@ struct ControlBus {
     // latest raw EQ command line received
     // control thread writes under mutex; audio thread copies when signaled
     std::mutex pendingMutex;
-    std::string pendingEqLine;
-    std::atomic<bool> hasPendingEq{false};
+    audiomix::dsp::EqParams pendingEqParams;
+    std::atomic<bool> hasPendingEqParams{false};
 
     std::atomic<bool> running{true};
 };
@@ -52,16 +54,20 @@ static void controlLoop(ControlBus* bus) {
             continue;
         }
 
-        if (containsCmd(line, "eq.set")) {
-            // stash raw line for now
-            {
-                std::lock_guard<std::mutex> lock(bus->pendingMutex);
-                bus->pendingEqLine = line;
-            }
-            bus->hasPendingEq.store(true, std::memory_order_release);
-            std::cout << "{\"cmd\":\"ack\",\"ack\":\"eq.set\"}" << std::endl;
+        audiomix::dsp::EqParams parsed;
+        if (!audiomix::dsp::parseEqSetLine(line, parsed)) {
+            // parse JSON
+            std::cout << "{\"cmd\":\"error\",\"error\":\"bad_eq_payload\"}" << std::endl;
             continue;
         }
+        {
+            std::lock_guard<std::mutex> lock(bus->pendingMutex);
+            bus->pendingEqParams = parsed;
+        }
+        bus->hasPendingEqParams.store(true, std::memory_order_release);
+        // ack instead of silence (for testing purposes)
+        std::cout << "{\"cmd\":\"ack\",\"ack\":\"eq.set\"}" << std::endl;
+        continue;
 
         // unknown command
         std::cout << "{\"cmd\":\"error\",\"error\":\"unknown_command\"}" << std::endl;
@@ -76,8 +82,9 @@ struct AudioState {
 
     // control plane hook
     ControlBus* control = nullptr;
-    // latest EQ command observed by the audio thread
-    std::string lastEqLine{};
+    // store last params
+    audiomix::dsp::EqParams lastEqParams{};
+    bool hasEqParams = false;
 
     std::vector<float> inL, inR;
     std::vector<float> outL, outR;
@@ -96,9 +103,10 @@ static int audioCallback(const void* inputBuffer,
     // control hook: pull any pending EQ message at buffer boundaries
     // does not parse/apply anything yet - just atomically consumes it
     if (state->control) {
-        if (state->control->hasPendingEq.exchange(false, std::memory_order_acq_rel)) {
+        if (state->control->hasPendingEqParams.exchange(false, std::memory_order_acq_rel)) {
             std::lock_guard<std::mutex> lock(state->control->pendingMutex);
-            state->lastEqLine = state->control->pendingEqLine;    // stash for later; will deserialize + apply
+            state->lastEqParams= state->control->pendingEqParams;
+            state->hasEqParams = true;
         }
     }
 
