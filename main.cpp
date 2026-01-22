@@ -21,6 +21,7 @@
 #include "audio/dsp/modules/null_sink.h"
 #include "audio/dsp/core/eq_params.h"
 #include "audio/dsp/core/eq_params_parse.h"
+#include "audio/dsp/modules/eq_module.h"
 
 using namespace audiomix::dsp;
 
@@ -77,11 +78,15 @@ static void controlLoop(ControlBus* bus) {
 // AudioState - holds the DSP chain and temporary buffers
 struct AudioState {
     DspChain chain;
-    double sampleRate = 44100.0;
-    unsigned int maxBlockSize = 512;
+    double sampleRate = 44100.0;      // 44.1 kHz
+    unsigned int maxBlockSize = 512;  // 512 samples max buffer size
+
+    // reference EQ module ptr
+    audiomix::dsp::EqModule* eq = nullptr;
 
     // control plane hook
     ControlBus* control = nullptr;
+
     // store last params
     audiomix::dsp::EqParams lastEqParams{};
     bool hasEqParams = false;
@@ -110,32 +115,25 @@ static int audioCallback(const void* inputBuffer,
         }
     }
 
+    // apply new EQ params to EQ module
+    // NOTE: setParams() computes coeffs (sin/cos)
+    // acceptable for now - only runs when params change
+    // TODO: change to per-sample
+    if (state->hasEqParams && state->eq) {
+        state->eq->setParams(state->lastEqParams, 10.0f /* smooth ms */);
+        state->hasEqParams = false;
+    }
+
     const float* in = static_cast<const float*>(inputBuffer);
     float* out      = static_cast<float*>(outputBuffer);
 
-    // Resize temp buffers
-    state->inL.resize(framesPerBuffer);
-    state->inR.resize(framesPerBuffer);
-    state->outL.resize(framesPerBuffer);
-    state->outR.resize(framesPerBuffer);
-
-    // De-interleave input to L/R
-    if (in) {
-        for (unsigned long i = 0; i < framesPerBuffer; ++i) {
-            state->inL[i] = in ? in[i * 2 + 0] : 0.0f;
-            state->inR[i] = in ? in[i * 2 + 1] : 0.0f;
-        }
-    } else {
-        std::fill(state->inL.begin(), state->inL.end(), 0.0f);
-        std::fill(state->inR.begin(), state->inR.end(), 0.0f);
-    }
-
     // Process through the DSP chain
+    // stereo wrapper - internally uses processMulti
     state->chain.process(state->inL.data(), state->inR.data(),
                          state->outL.data(), state->outR.data(),
                          static_cast<unsigned int>(framesPerBuffer));
 
-    // Interleave back to output
+    // Interleave stereo output
     for (unsigned long i = 0; i < framesPerBuffer; ++i) {
         out[2 * i + 0] = state->outL[i];
         out[2 * i + 1] = state->outR[i];
@@ -188,12 +186,20 @@ int main(int argc, char* argv[])
     shimmer->setParameter("octave_mix", 1.0f);   // full shimmer strength
     shimmer->setParameter("delay_ms", 550.0f);   // tail pre-delay
 
-    state.chain.prepare();
+    // EQ module
+    auto* eq = state.chain.emplaceModule<audiomix::dsp::EqModule>();
+    state.eq = eq;
 
     // Headless mode (hardware agnostic)
+    state.chain.prepare();
+
     if (headlessMode) {
         state.chain.emplaceModule<audiomix::dsp::NullSink>();
-    } else {
+    }
+
+    state.chain.prepare();
+
+    if (!headlessMode) {
         PaStreamParameters inputParams{};
         PaStreamParameters outputParams{};
 
