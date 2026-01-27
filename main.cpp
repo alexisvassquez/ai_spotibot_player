@@ -25,11 +25,13 @@
 
 using namespace audiomix::dsp;
 
-// Control Plane (v1) - NDJSON over stdin
 // does not parse full JSON yet (no extra deps)
 // string match for recognized commands and stash raw payload lines for later
 // TODO: replace the string matching with a real JSON parser; deserialize into EQparams
 struct ControlBus {
+    // Pointer to the EQ module inside DSP chain
+    audiomix::dsp::EqModule* eq = nullptr;
+
     // latest raw EQ command line received
     // control thread writes under mutex; audio thread copies when signaled
     std::mutex pendingMutex;
@@ -61,6 +63,13 @@ static void controlLoop(ControlBus* bus) {
             std::cout << "{\"cmd\":\"error\",\"error\":\"bad_eq_payload\"}" << std::endl;
             continue;
         }
+
+        // Apply EQ from the control thread (off audio thread)
+        // EQModule is responsible for publishing coeff updates to audio thread (safely)
+        if (bus->eq) {
+            bus->eq->setParams(parsed, 10.0f /* smooth ms */);
+        }
+
         {
             std::lock_guard<std::mutex> lock(bus->pendingMutex);
             bus->pendingEqParams = parsed;
@@ -104,25 +113,6 @@ static int audioCallback(const void* inputBuffer,
                          void* userData)
 {
     auto* state = static_cast<AudioState*>(userData);
-
-    // control hook: pull any pending EQ message at buffer boundaries
-    // does not parse/apply anything yet - just atomically consumes it
-    if (state->control) {
-        if (state->control->hasPendingEqParams.exchange(false, std::memory_order_acq_rel)) {
-            std::lock_guard<std::mutex> lock(state->control->pendingMutex);
-            state->lastEqParams= state->control->pendingEqParams;
-            state->hasEqParams = true;
-        }
-    }
-
-    // apply new EQ params to EQ module
-    // NOTE: setParams() computes coeffs (sin/cos)
-    // acceptable for now - only runs when params change
-    // TODO: change to per-sample
-    if (state->hasEqParams && state->eq) {
-        state->eq->setParams(state->lastEqParams, 10.0f /* smooth ms */);
-        state->hasEqParams = false;
-    }
 
     const float* in = static_cast<const float*>(inputBuffer);
     float* out      = static_cast<float*>(outputBuffer);
@@ -189,11 +179,11 @@ int main(int argc, char* argv[])
     // EQ module
     auto* eq = state.chain.emplaceModule<audiomix::dsp::EqModule>();
     state.eq = eq;
+    control.eq = eq;
 
     // Headless mode (hardware agnostic)
-    state.chain.prepare();
-
     if (headlessMode) {
+        // adds sinks BEFORE prepare() so sinks get prepare/reset correctly
         state.chain.emplaceModule<audiomix::dsp::NullSink>();
     }
 
