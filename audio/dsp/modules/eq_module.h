@@ -6,6 +6,7 @@
 //   - peaking, lowshelf, highshelf
 // Calculates digital biquad filter coeffs (a, b) used in EQ
 // Handles N channels (multichannel signals) - however many DspChain provides
+// Introduces EQ coeff packet - moves coefficient generation off audio thread
 
 #pragma once
 #include <vector>
@@ -13,6 +14,8 @@
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
+#include <atomic>
+#include <mutex>
 
 #include "audio/dsp/core/dsp_module.h"
 #include "audio/dsp/core/biquad.h"
@@ -35,12 +38,15 @@ public:
     }
 
     void prepare(double sr, unsigned int maxBlock) override {
-        mSampleRate = (sr > 0.0) ? sr : 44100.0;    // 44.1 kHz
-        mMaxBlock   = (maxBlock > 0) ? maxBlock : 512;
+        mSampleRate = (sr > 0.0) ? sr : 44100.0;          // 44.1 kHz
+        mMaxBlock   = (maxBlock > 0) ? maxBlock : 512;    // 512 buffer size
 
         // Default: chain is 4ch (Master L/R + Booth L/R)
         // allocate per actual processMulti channel count lazily
         // Coeffs are fixed-size (10 band EQ), states allocated for channels
+        // Starts in a known state (no pending packets)
+        mPacketReadyIndex.store(-1, std::memory_order_relaxed);
+        mPacketWriteIndex.store(0, std::memory_order_relaxed);
         mPrepared = true;
     }
 
@@ -59,38 +65,37 @@ public:
         mPreampDelta = 0.0f;
         mPreampSmoothRemaining = 0;
         mActive = EqParams{};
+        mPacketReadyIndex.store(-1, std::memory_order_relaxed);
     }
 
-    // calls from control thread after parsing EqParams
-    // computes target biquad coeffs off audio thread
+    // Control thread API
+    // Builds target coeffs off audio thread
+    // publishes immutable packet that the audio thread can consume lock-free
     void setParams(const EqParams& p, float smoothMs = 10.0f) {
         EqParams params = p;
         sanitize(params);
 
-        if (params.sample_rate > 0) {
-            mSampleRate = params.sample_rate;
-        }
-        mActive = params;
+        // compute coeffs are normalized
+        CoeffPacket pkt{};
+        pkt.active = params;
 
-        const int smoothSamples = std::max(1, static_cast<int>(smoothMs * 0.001f * mSampleRate));
+        const double sr = (params.sample_rate > 0) ? params.sample_rate : mSampleRate;
+        pkt.sampleRate = sr;
 
-        // preamp smoothing
-        mPreampTarget = db_to_lin(params.preamp_db);
-        mPreampSmoothRemaining = smoothSamples;
-        mPreampDelta = (mPreampTarget - mPreampLinGlobal) / static_cast<float>(smoothSamples);
+        pkt.smoothSamples = std::max(1, static_cast<int>(smoothMs * 0.001f * static_cast<float>(sr)));
 
-        // bands smoothing
+        pkt.preampTarget = db_to_lin(params.preamp_db);
+
         const int n = std::min(params.band_count, EqParams::kMaxBands);
-        for (int i = 0; i < EqParams::kMaxBands; ++i) {
-            mTarget[i] = (i < n && params.bands[i].enabled) ? makeBand(params.bands[i]) : identity();
+        pkt.bandCount = n;
 
-            mSmoothRemaining[i] = smoothSamples;
-            mDelta[i].b0 = (mTarget[i].b0 - mCurrent[i].b0) / smoothSamples;
-            mDelta[i].b1 = (mTarget[i].b1 - mCurrent[i].b1) / smoothSamples;
-            mDelta[i].b2 = (mTarget[i].b2 - mCurrent[i].b2) / smoothSamples;
-            mDelta[i].a1 = (mTarget[i].a1 - mCurrent[i].a1) / smoothSamples;
-            mDelta[i].a2 = (mTarget[i].a2 - mCurrent[i].a2) / smoothSamples;
+        for (int i = 0; i < EqParams::kMaxBands; ++i) {
+            pkt.targets[i] = (i < n && params.bands[i].enabled)
+                ? makeBand(params.bands[i], sr)
+                : identity();
         }
+
+        publishPacket(pkt);
     }
 
     void processMulti(const float* const* input,
@@ -99,6 +104,9 @@ public:
                       unsigned int numFrames) override
     {
         if (!mPrepared || numChannels == 0 || numFrames == 0) return;
+
+        // consume control thread updates
+        consumePendingPacket();
 
         // ensure channel state exists
         // one time allocation if channel count changes
@@ -171,13 +179,13 @@ private:
     }
 
     // RBJ cookbook: normalized a0=1
-    BiquadCoeffs makeBand(const EqBand& band) const {
+    BiquadCoeffs makeBand(const EqBand& band, double sampleRate) const {
         const float f0 = clampf(band.f0, 20.0f, 20000.0f);
         const float q = clampf(band.q, 0.1f, 18.0f);
         const float gainDb = clampf(band.gain_db, -24.0f, 24.0f);
 
         // w0 = normalized cutoff freq
-        const float w0 = 2.0f * static_cast<float>(M_PI) * (f0 / static_cast<float>(mSampleRate));
+        const float w0 = 2.0f * static_cast<float>(M_PI) * (f0 / static_cast<float>(sampleRate));
         const float cosw0 = std::cos(w0);
         const float sinw0 = std::sin(w0);
 
@@ -237,9 +245,67 @@ private:
     }
 
 private:
+    struct CoeffPacket {
+        EqParams active{};
+        double sampleRate = 44100.0;    // 44.1 kHz
+
+        int bandCount = 0;
+        int smoothSamples = 1;
+
+        float preampTarget = 1.0f;
+        std::array<BiquadCoeffs, EqParams::kMaxBands> targets{};
+    };
+
+    // control thread publishes fully-computed packet into dbl buffer
+    // audio thread consumes packet w/o locks via an atomic index
+    void publishPacket(const CoeffPacket& pkt) {
+        const int next = 1 - mPacketWriteIndex.load(std::memory_order_relaxed);
+        mPackets[next] = pkt;
+        mPacketWriteIndex.store(next, std::memory_order_relaxed);
+        mPacketReadyIndex.store(next, std::memory_order_release);
+    }
+
+    void consumePendingPacket() {
+        const int idx = mPacketReadyIndex.exchange(-1, std::memory_order_acq_rel);
+        if (idx < 0) return;
+
+        const CoeffPacket& pkt = mPackets[idx];
+
+        // update runtime state atomically at boundary (1x p/pkt)
+        mActive = pkt.active;
+        mSampleRate = (pkt.sampleRate > 0.0) ? pkt.sampleRate : mSampleRate;
+
+        const int smoothSamples = std::max(1, pkt.smoothSamples);
+
+        // preamp smoothing targets (deltas)
+        // audio thread only writes smoothing state
+        mPreampTarget = pkt.preampTarget;
+        mPreampSmoothRemaining = smoothSamples;
+        mPreampDelta = (mPreampTarget - mPreampLinGlobal) / static_cast<float>(smoothSamples);
+
+        // band smoothing
+        // audio thread only writes smoothing state
+        for (int i = 0; i < EqParams::kMaxBands; ++i) {
+            mTarget[i] = pkt.targets[i];
+
+            mSmoothRemaining[i] = smoothSamples;
+            mDelta[i].b0 = (mTarget[i].b0 - mCurrent[i].b0) / smoothSamples;
+            mDelta[i].b1 = (mTarget[i].b1 - mCurrent[i].b1) / smoothSamples;
+            mDelta[i].b2 = (mTarget[i].b2 - mCurrent[i].b2) / smoothSamples;
+            mDelta[i].a1 = (mTarget[i].a1 - mCurrent[i].a1) / smoothSamples;
+            mDelta[i].a2 = (mTarget[i].a2 - mCurrent[i].a2) / smoothSamples;
+        }
+    }
+
+private:
     double mSampleRate = 44100.0;    // 44.1 kHz
     unsigned int mMaxBlock = 512;    // max buffer size 512 samples
     bool mPrepared = false;
+
+    // dbl-buffered param pkts (control -> audio)
+    std::array<CoeffPacket, 2> mPackets{};
+    std::atomic<int> mPacketReadyIndex{-1};
+    std::atomic<int> mPacketWriteIndex{0};
 
     EqParams mActive{};
 
