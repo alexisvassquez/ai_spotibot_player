@@ -13,7 +13,7 @@ Instructions:
     python3 eq_send_preset.py --preset bass_boost > /tmp/audiomix_ctl
 
 - AudioMIX DSP system will send an acknowledgment back:
-    {"cmd":"ack":"eq.set"}
+    {"cmd":"ack", "ack":"eq.set"}
 """
 
 import argparse
