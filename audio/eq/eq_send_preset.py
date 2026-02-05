@@ -2,6 +2,20 @@
 # AudioMIX
 # audio/eq/eq_send_preset.py
 
+"""
+Instructions:
+
+- Run using commands:
+    mkfifo /tmp/audiomix_ctl
+    ./build/audiomix --headless < /tmp/audiomix_ctl
+
+- In a separate terminal, run:
+    python3 eq_send_preset.py --preset bass_boost > /tmp/audiomix_ctl
+
+- AudioMIX DSP system will send an acknowledgment back:
+    {"cmd":"ack":"eq.set"}
+"""
+
 import argparse
 import json
 import os
