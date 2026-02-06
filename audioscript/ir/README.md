@@ -74,7 +74,7 @@ track "cvltiv8r_clean" {
 ```
 
 `cvltiv8r_clean.as` is a snippet of a generated `.as` file using the AudioScript compiler from a demo track.
-The AudioScript compiler can be viewed in directory `ai/compiler/` of this project.
+The AudioScript compiler can be viewed in directory `audio/ai/compiler/` of this project.
 
 - **Track:**
   - Defines the playable unit
