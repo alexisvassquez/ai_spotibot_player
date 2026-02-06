@@ -1,5 +1,17 @@
 # AudioScript Live EBNF Grammar Spec (v0.2-dev)
 #
+# ARRANGEMENT SUBSET (Live → IR)
+# -----------------------------
+# AudioScript Live can optionally include a minimal arrangement surface:
+#   track/section/at/bpm/from/to
+#
+# This allows human-authored Live code to compile into AudioScript IR
+# deterministically, using the same structural model as generated IR:
+#   - track "name" { bpm 128 section "intro" from 0.0 to 8.0 { at 0.0 { ... } } }
+#
+# Reactive hooks (on mood/track) still compile to trigger-style runtime logic,
+# while arrangement blocks compile directly into IR scheduled events.
+#
 # WHAT THIS IS
 # ------------
 # AudioScript Live is the *human-first* language used for live coding
@@ -101,7 +113,7 @@
 
 Script        = { Statement } ;
 
-Statement     = Comment | Assignment | FunctionCall | Block | EmptyLine ;
+Statement     = Comment | Assignment | FunctionCall | Block | TrackDecl | EmptyLine ;
 Comment       = "#", { any character except line break } ;
 EmptyLine     = ;
 
@@ -111,9 +123,18 @@ Block         = "on", EventHook, "{" , { Statement }, "}" ;
 EventHook     = "mood" , "(", String, ")" 
               | "track" , "(", String, ")" ;
 
-FunctionCall  = Identifier, "(", [ ArgumentList ], ")", [ WithClause ] ;
+# Function calls are the primary "action" primitive in Live.
+# We allow qualified identifiers so subsystems can be namespaced:
+#   eq.preset(...)
+#   led.ambient(...)
+FunctionCall  = QualifiedIdent, "(", [ ArgumentList ], ")", [ WithClause ] ;
 ArgumentList  = Argument, { ",", Argument } ;
-Argument      = String | Number | Identifier ;
+
+# Arguments may be positional or named:
+#    led.ambient(front_strip, intensity: 0.30)
+Argument      = NamedArg | Value ; 
+NamedArg      = Identifier, ":", Value ;
+Value         = String | Number | QualifiedIdent;
 
 WithClause    = "with", FXChain ;
 FXChain       = FXName, { "+", FXName } ;
@@ -124,10 +145,36 @@ Expression    = FunctionCall
               | Identifier ;
 
 ListLiteral   = "[", [ ListElement, { ",", ListElement } ], "]" ;
-ListElement   = String | Number ;
+ListElement   = Value ;
 
+# Arrangement subset (optional):
+# When used, this compiles directly into AudioScript IR structures.
+TrackDecl     = "track", String, "{",
+                  BPMDecl,
+                  { SectionDecl },
+                "}" ;
+
+BPMDecl       = "bpm", Number ;
+
+SectionDecl   = "section", String, "from", Number, "to", Number, "{",
+                  { AtBlock },
+                "}" ;
+
+AtBlock       = "at", Number, "{",
+                  { Statement },
+                "}" ;
+
+# Identifiers and literals
+QualifiedIdent = Identifier, { ".", Identifier } ;
 Identifier    = letter, { letter | digit | "_" } ;
 String        = '"', { any character except '"' }, '"' ;
+
+# Live currently uses integers only.
+# Will allow:
+#    - floats: 0.30, 8.000
+#    - negatives: -3.0
+# Format:
+#   Number        = [ "-" ], digit, { digit }, [ ".", digit, { digit } ] ;
 Number        = digit, { digit } ;
 
 letter        = "A".."Z" | "a".."z" ;
