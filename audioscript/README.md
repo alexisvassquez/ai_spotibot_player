@@ -9,13 +9,17 @@ Welcome to the `audioscript/` directory - the official home of the **AudioScript
 ## Included Files
 | File | Purpose |
 | ------ | ---------|
-| `AudioScript.ebnf` | Official EBNF grammar definition for AudioScript |
+| `AudioScriptLive.ebnf` | Official EBNF grammar definition for AudioScript Live. Located in `live/` |
+| `AudioScriptIR.ebnf` | Official EBNF grammar definition for AudioScript IR. Located in `ir`/ |
 | `AUDIOSCRIPT_SPEC.md` | Markdown-based syntax + grammar reference |
 | `audioscript.nanorc` | Syntax highlighting rules for GNU Nano (still being perfected) |
-| `example.as` | Sample AudioScript program demonstrating current supported syntax |
-| `intro_showcase.audioscript` | Showcase of new v0.2 features including `let`, `repeat`, `with` chaining |
-| *Future* `audioscript.tmLanguage.json` | VS Code/TextMate syntax highlighting (in progress) |
-| *Future* `audioscript.vim` | Vim highlighting (in progress) |
+| `live/` | Directory for AudioScript Live with supported documents and examples |
+| `intro_showcase.audioscript` | Showcase of new v0.2 features including `let`, `repeat`, `with` chaining. Located in `live/` directory. |
+| `ir/` | Directory for AudioScript IR with supported documents and examples |
+| `cvltiv8r_clean.as` | Example of a compiler-generated AudioScript IR file analyzed from a demo track. Located in `ir/` directory. |
+| `scripts/` | Various example scripts |
+| *Future* `audioscript.tmLanguage.json` | VS Code/TextMate syntax highlighting (in development) |
+| *Future* `audioscript.vim` | Vim highlighting (in development) |
 
 ---
 
@@ -69,6 +73,25 @@ Core design influences:
 Declared file extensions:
 - `.audioscript`
 - `.as`
+
+---
+
+## AudioScript: Live vs IR
+
+AudioScript is intentionally split into two layers:
+
+- **AudioScript Live**
+  - Human-authored
+  - Used for live coding, performance logic, and creative control
+  - Expressive, readable, and reactive
+
+- **AudioScript IR (Intermediate Representation)**
+  - Machine-generated
+  - Engine-executable and deterministic
+  - Used for playback, scheduling, and automation
+
+AudioScript Live code is compiled or lowered into AudioScript IR before execution.
+The AudioMIX engine primarily consumes IR, not Live syntax.
 
 ---
 
