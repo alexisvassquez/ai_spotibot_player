@@ -1,7 +1,7 @@
 // ai_spotibot_player
 // AudioMIX
 // audio/dsp/modules/gain_module.h
-
+//
 // Exposes gain in dB
 // Converts dB -> linear once p/block
 // Uses smoothed parameter module to smooth linear gain
@@ -30,13 +30,22 @@ public:
                  float* outL, float* outR,
                  unsigned int numFrames) override;
 
+    // Legacy convenience API (not RT-safe)
     void setParameter(const std::string& id, float value) override;
 
-    // convenience API (for C++ callers/tests)
+    // Control-plane hooks (non-RT)
+    void registerParameters(control::ParamRegistry& registry) override;
+    void bindParameters(control::ParamBindingTable& bindings) override;
+
+    // Convenience API (for C++ callers/tests)
     void setGainDb(float db);
     float getGainDb() const { return mGainDb; }
 
     void setSmoothingTimeMs(float ms);
+
+    // RT-safe target setter
+    // intended to be called via bindings on the audio thread
+    void setGainDbTarget(float dB, float rampTimeMs) noexcept;
 
 private:
     static float dbToLinear(float db) {
@@ -45,7 +54,7 @@ private:
     }
 
 private:
-    double mSampleRate = 44100.0;
+    double mSampleRate = 44100.0;    // 44.1 kHz
     unsigned int mMaxBlockSize = 0;
 
     float mGainDb = 0.0f;
@@ -53,6 +62,10 @@ private:
     float mSmoothingMs = 20.0f;    // default
     // smooth in linear space to avoid zipper noise
     SmoothedParameter mGainLin;
+
+    // ParamKey for control plane
+    // assigned during registerParameters
+    control::ParamKey mGainDbKey = 0;
 };
 
 } // namespace audiomix::dsp

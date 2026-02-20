@@ -1,7 +1,7 @@
 // ai_spotibot_player
 // AudioMIX
 // audio/dsp/modules/gain_module.cpp
-
+//
 // Refer to gain_module.h
 
 #include "audio/dsp/modules/gain_module.h"
@@ -39,6 +39,18 @@ void GainModule::setGainDb(float db) {
     mGainLin.setTarget(targetLin);
 }
 
+void GainModule::setGainDbTarget(float db, float rampTimeMs) noexcept {
+    // safe to call from audio thread
+    mGainDb = db;
+
+    if (rampTimeMs > 0.0f) {
+        mGainLin.setTimeMs(rampTimeMs);
+    }
+
+    const float targetLin = dbToLinear(db);
+    mGainLin.setTarget(targetLin);
+}
+
 void GainModule::setParameter(const std::string& id, float value) {
     // string IDs kept here (AS-friendly)
     // function called from a control thread, not audio callback
@@ -65,7 +77,7 @@ void GainModule::process(const float* inL, const float* inR,
     if (!inL && outL) std::fill(outL, outL + numFrames, 0.0f);
     if (!inR && outR) std::fill(outR, outR + numFrames, 0.0f);
 
-    // apple smoothed linear gain sample-by-sample
+    // smoothed linear gain sample-by-sample
     // cheap (less tech debt/scalable), avoids zipper noise on fader moves
     for (unsigned int i = 0; i < numFrames; ++i) {
         const float g = mGainLin.process();
@@ -74,5 +86,9 @@ void GainModule::process(const float* inL, const float* inR,
         if (inR && outR) outR[i] = inR[i] * g;
     }
 }
+
+void GainModule::registerParameters(control::ParamRegistry& /*registry*/) {}
+
+void GainModule::bindParameters(control::ParamBindingTable& /*bindings*/) {}
 
 } // namespace audiomix::dsp
