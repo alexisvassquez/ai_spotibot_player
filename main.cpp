@@ -67,7 +67,7 @@ static void controlLoop(ControlBus* bus) {
         // Apply EQ from the control thread (off audio thread)
         // EQModule is responsible for publishing coeff updates to audio thread (safely)
         if (bus->eq) {
-            bus->eq->setParams(parsed, 10.0f /* smooth ms */);
+            bus->eq->setParams(parsed, 10.0f);    // smooth ms
         }
 
         {
