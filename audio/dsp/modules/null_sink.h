@@ -1,10 +1,7 @@
 // ai_spotibot_player
 // AudioMIX
 // audio/dsp/modules/null_sink.h
-
-#pragma once
-#include "audio/dsp/core/dsp_module.h"
-
+//
 /**
   * A headless / dummy DSP sink.
   * This module consumes audio buffers and intentionally produces silence.
@@ -16,6 +13,10 @@
   * NullSink guarantees that the DSP chain remains valid even when
   * no physical audio output device is avail
   */
+
+#pragma once
+#include "audio/dsp/core/dsp_module.h"
+
 namespace audiomix::dsp {
 
 class NullSink final : public DspModule {
