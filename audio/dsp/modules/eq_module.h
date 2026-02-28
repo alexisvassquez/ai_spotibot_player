@@ -1,12 +1,13 @@
 // ai_spotibot_player
 // AudioMIX
 // audio/dsp/modules/eq_module.h
-
-// RBJ Cookbook coefficient builders
-//   - peaking, lowshelf, highshelf
-// Calculates digital biquad filter coeffs (a, b) used in EQ
-// Handles N channels (multichannel signals) - however many DspChain provides
-// Introduces EQ coeff packet - moves coefficient generation off audio thread
+/*
+   RBJ Cookbook coefficient builders
+    - peaking, lowshelf, highshelf
+   Calculates digital biquad filter coeffs (a, b) used in EQ
+   Handles N channels (multichannel signals) - however many DspChain provides
+   Introduces EQ coeff packet - moves coefficient generation off audio thread
+*/
 
 #pragma once
 #include <vector>
@@ -41,10 +42,12 @@ public:
         mSampleRate = (sr > 0.0) ? sr : 44100.0;          // 44.1 kHz
         mMaxBlock   = (maxBlock > 0) ? maxBlock : 512;    // 512 buffer size
 
-        // Default: chain is 4ch (Master L/R + Booth L/R)
-        // allocate per actual processMulti channel count lazily
-        // Coeffs are fixed-size (10 band EQ), states allocated for channels
-        // Starts in a known state (no pending packets)
+        /*
+           Default: chain is 4ch (Master L/R + Booth L/R)
+           allocate per actual processMulti channel count lazily
+           Coeffs are fixed-size (10 band EQ), states allocated for channels
+           Starts in a known state (no pending packets)
+        */
         mPacketReadyIndex.store(-1, std::memory_order_relaxed);
         mPacketWriteIndex.store(0, std::memory_order_relaxed);
         mPrepared = true;

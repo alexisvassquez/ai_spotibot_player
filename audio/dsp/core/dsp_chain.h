@@ -1,12 +1,14 @@
 // ai_spotibot_player
 // AudioMIX
 // audio/dsp/core/dsp_chain.h
-
-// Simple plugin chain that owns modules and runs them in order
-// Defaults to 4 channels
-// Adds zero buffer for missing inputs
-// Safe passthrough behavior for null output channels
-// Lazily prepares buffers if needed
+//
+/*
+   Simple plugin chain that owns modules and runs them in order
+   Defaults to 4 channels
+   Adds zero buffer for missing inputs
+   Safe passthrough behavior for null output channels
+   Lazily prepares buffers if needed
+*/
 
 #pragma once
 
