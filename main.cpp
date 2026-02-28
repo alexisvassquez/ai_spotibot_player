@@ -117,13 +117,25 @@ static int audioCallback(const void* inputBuffer,
     const float* in = static_cast<const float*>(inputBuffer);
     float* out      = static_cast<float*>(outputBuffer);
 
+    // Deinterleave input into planar buffers (if present)
+    if (in) {
+        for (unsigned long i = 0; i < framesPerBuffer; ++i) {
+            state->inL[i] = in[2 * i + 0];
+            state->inR[i] = in[2 * i + 1];
+        }
+    } else {
+        // input missing => silence
+        std::fill(state->inL.begin(), state->inL.begin() + framesPerBuffer, 0.0f);
+        std::fill(state->inR.begin(), state->inR.begin() + framesPerBuffer, 0.0f);
+    }
+
     // Process through the DSP chain
     // stereo wrapper - internally uses processMulti
     state->chain.process(state->inL.data(), state->inR.data(),
                          state->outL.data(), state->outR.data(),
                          static_cast<unsigned int>(framesPerBuffer));
 
-    // Interleave stereo output
+    // Interleave planar output back to PortAudio output buffer
     for (unsigned long i = 0; i < framesPerBuffer; ++i) {
         out[2 * i + 0] = state->outL[i];
         out[2 * i + 1] = state->outR[i];
