@@ -22,6 +22,8 @@
 #include "audio/dsp/core/eq_params.h"
 #include "audio/dsp/core/eq_params_parse.h"
 #include "audio/dsp/modules/eq_module.h"
+#include "audio/dsp/modules/gain_module.h"
+#include "audio/dsp/modules/clipper_module.h"
 
 using namespace audiomix::dsp;
 
@@ -90,8 +92,10 @@ struct AudioState {
     double sampleRate = 44100.0;      // 44.1 kHz
     unsigned int maxBlockSize = 512;  // 512 samples max buffer size
 
-    // reference EQ module ptr
+    // reference module ptrs
     audiomix::dsp::EqModule* eq = nullptr;
+    audiomix::dsp::GainModule* gain = nullptr;
+    audiomix::dsp::ClipperModule* clipper = nullptr;
 
     // control plane hook
     ControlBus* control = nullptr;
@@ -116,6 +120,16 @@ static int audioCallback(const void* inputBuffer,
 
     const float* in = static_cast<const float*>(inputBuffer);
     float* out      = static_cast<float*>(outputBuffer);
+
+    if (!state || !out) {
+        return paContinue;
+    }
+
+    // guard if PortAudio gives larger block
+    if (framesPerBuffer > state->maxBlockSize) {
+        std::fill(out, out + (2 * framesPerBuffer), 0.0f);
+        return paContinue;
+    }
 
     // Deinterleave input into planar buffers (if present)
     if (in) {
@@ -172,6 +186,11 @@ int main(int argc, char* argv[])
     state.maxBlockSize = 512;
     state.control = &control;
 
+    state.inL.resize(state.maxBlockSize, 0.0f);
+    state.inR.resize(state.maxBlockSize, 0.0f);
+    state.outL.resize(state.maxBlockSize, 0.0f);
+    state.outR.resize(state.maxBlockSize, 0.0f);
+
     state.chain.setSampleRate(state.sampleRate);
     state.chain.setMaxBlockSize(state.maxBlockSize);
 
@@ -192,6 +211,19 @@ int main(int argc, char* argv[])
     auto* eq = state.chain.emplaceModule<audiomix::dsp::EqModule>();
     state.eq = eq;
     control.eq = eq;
+
+    // Gain module
+    auto* gain = state.chain.emplaceModule<audiomix::dsp::GainModule>();
+    gain->setGainDb(0.0f);
+    state.gain = gain;
+
+    // Clipper module
+    auto* clipper = state.chain.emplaceModule<audiomix::dsp::ClipperModule>();
+    clipper->setDriveDb(0.0f);
+    clipper->setCeilingDb(-0.1f);
+    clipper->setMix(1.0f);
+    clipper->setMode(audiomix::dsp::ClipperModule::Mode::Soft);
+    state.clipper = clipper;
 
     // Headless mode (hardware agnostic)
     if (headlessMode) {
