@@ -18,8 +18,8 @@ void ClipperModule::prepare(double sampleRate, unsigned int maxBlockSize) {
     mMixSmoothed.prepare(mSampleRate, std::max(5.0f, mSmoothingMs * 0.5f));
 
     // set initial targets based on current UI-domain state
-    mDriveLin.setTarget(dbToLinear(mDriveDb));
-    mCeilingLin.setTarget(dbToLinear(mCeilingDb));
+    mDriveLin.setTarget(dBToLinear(mDriveDb));
+    mCeilingLin.setTarget(dBToLinear(mCeilingDb));
     mMixSmoothed.setTarget(clampf(mMix, 0.0f, 1.0f));
 
     // force current toward target immediately by doing one process step if needed
@@ -37,8 +37,8 @@ void ClipperModule::reset() {
     mCeilingLin.prepare(mSampleRate, mSmoothingMs);
     mMixSmoothed.prepare(mSampleRate, std::max(5.0f, mSmoothingMs * 0.5f));
 
-    mDriveLin.setTarget(dbToLinear(mDriveDb));
-    mCeilingLin.setTarget(dbToLinear(mCeilingDb));
+    mDriveLin.setTarget(dBToLinear(mDriveDb));
+    mCeilingLin.setTarget(dBToLinear(mCeilingDb));
     mMixSmoothed.setTarget(clampf(mMix, 0.0f, 1.0f));
 }
 
@@ -53,13 +53,13 @@ void ClipperModule::setSmoothingTimeMs(float ms) {
 
 void ClipperModule::setDriveDb(float db) {
     mDriveDb = clampf(db, -60.0f, 24.0f);
-    mDriveLin.setTarget(dbToLinear(mDriveDb));
+    mDriveLin.setTarget(dBToLinear(mDriveDb));
 }
 
 void ClipperModule::setCeilingDb(float db) {
     // ceiling should not exceed 0 dBFS
     mCeilingDb = clampf(db, -60.0f, 0.0f);
-    mCeilingLin.setTarget(dbToLinear(mCeilingDb));
+    mCeilingLin.setTarget(dBToLinear(mCeilingDb));
 }
 
 void ClipperModule::setMix(float mix01) {

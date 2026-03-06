@@ -65,7 +65,7 @@ public:
 
 private:
     static float dBToLinear(float dB) {
-        return std::pow(10.0f, db / 20.0f);
+        return std::pow(10.0f, dB / 20.0f);
     }
 
     static float clampf(float v, float lo, float hi) {
