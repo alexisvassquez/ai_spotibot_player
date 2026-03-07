@@ -13,6 +13,8 @@
 #pragma once
 
 #include "audio/dsp/core/dsp_module.h"
+#include "audio/dsp/core/process_spec.h"
+#include "audio/dsp/core/process_context.h"
 
 #include <memory>
 #include <vector>
@@ -37,6 +39,14 @@ public:
         return raw;
     }
 
+    // ProcessSpec
+    void prepare(const ProcessSpec& spec) {
+        mSampleRate = spec.sampleRate;
+        mMaxBlockSize = spec.maxBlockSize;
+        mNumChannels = (spec.numChannels == 0 ? 1u : spec.numChannels);
+        prepare();
+    }
+
     void prepare() {
         if (mSampleRate <= 0.0 || mMaxBlockSize == 0 || mNumChannels == 0) return;
 
@@ -57,6 +67,12 @@ public:
         }
 
         mPrepared = true;
+    }
+
+    // ProcessContext
+    // small wrapper enough to est architecture
+    void process(ProcessContext& ctx) {
+        processMulti(ctx.inputs, ctx.outputs, ctx.numChannels, ctx.numFrames);
     }
 
     // Multichannel process entry pt
