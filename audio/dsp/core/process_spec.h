@@ -21,6 +21,7 @@
 
 namespace audiomix::dsp {
 
+// ProcessSpec -> setup time config (prep phase)
 struct ProcessSpec {
     double sampleRate = 44100.0;    // 44.1 kHz
     unsigned int maxBlockSize = 0;

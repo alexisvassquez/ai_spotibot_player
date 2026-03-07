@@ -40,6 +40,7 @@ public:
     }
 
     // ProcessSpec
+    // setup-time config (prepare phase)
     void prepare(const ProcessSpec& spec) {
         mSampleRate = spec.sampleRate;
         mMaxBlockSize = spec.maxBlockSize;
@@ -70,6 +71,7 @@ public:
     }
 
     // ProcessContext
+    // runtime block data (process phase)
     // small wrapper enough to est architecture
     void process(ProcessContext& ctx) {
         processMulti(ctx.inputs, ctx.outputs, ctx.numChannels, ctx.numFrames);
