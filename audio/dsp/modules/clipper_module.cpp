@@ -8,38 +8,32 @@
 
 namespace audiomix::dsp {
 
-void ClipperModule::prepare(double sampleRate, unsigned int maxBlockSize) {
-    mSampleRate = (sampleRate > 1.0) ? sampleRate : 44100.0;    // 44.1 kHz
-    mMaxBlockSize = maxBlockSize;
-
-    // prep smoothers w/ current smoothing time
+void ClipperModule::syncTargetsImmediate_() noexcept {
+    // Re-prepare and set targets so reset/prepare land in a deterministic state
     mDriveLin.prepare(mSampleRate, mSmoothingMs);
     mCeilingLin.prepare(mSampleRate, mSmoothingMs);
-    mMixSmoothed.prepare(mSampleRate, std::max(5.0f, mSmoothingMs * 0.5f));
+    mMixSmoothed.prepare(mSampleRate, mSmoothingMs);
 
     // set initial targets based on current UI-domain state
     mDriveLin.setTarget(dBToLinear(mDriveDb));
     mCeilingLin.setTarget(dBToLinear(mCeilingDb));
     mMixSmoothed.setTarget(clampf(mMix, 0.0f, 1.0f));
 
-    // force current toward target immediately by doing one process step if needed
-    // SmoothedParameter snaps current to target when ms<=0
+    // if smoother snaps at 0 ms, these become immediate
+    // otherwise this still establishes fresh target state after prep/reset
     (void)mDriveLin.process();
     (void)mCeilingLin.process();
     (void)mMixSmoothed.process();
 }
 
-void ClipperModule::reset() {
-    // "Reset" means clear state
-    // for stateless module, we re-init smoothing
-    // prepare() aligns current to target - reset() maintains consistency
-    mDriveLin.prepare(mSampleRate, mSmoothingMs);
-    mCeilingLin.prepare(mSampleRate, mSmoothingMs);
-    mMixSmoothed.prepare(mSampleRate, std::max(5.0f, mSmoothingMs * 0.5f));
+void ClipperModule::prepare(double sampleRate, unsigned int maxBlockSize) {
+    mSampleRate = (sampleRate > 1.0) ? sampleRate : 44100.0f;    // 44.1 kHz
+    mMaxBlockSize = maxBlockSize;
+    syncTargetsImmediate_();
+}
 
-    mDriveLin.setTarget(dBToLinear(mDriveDb));
-    mCeilingLin.setTarget(dBToLinear(mCeilingDb));
-    mMixSmoothed.setTarget(clampf(mMix, 0.0f, 1.0f));
+void ClipperModule::reset() {
+    syncTargetsImmediate_();
 }
 
 void ClipperModule::setSmoothingTimeMs(float ms) {
@@ -48,7 +42,7 @@ void ClipperModule::setSmoothingTimeMs(float ms) {
     // SmoothedParameter snaps if ms==0
     mDriveLin.setTimeMs(mSmoothingMs);
     mCeilingLin.setTimeMs(mSmoothingMs);
-    mMixSmoothed.setTimeMs(std::max(5.0f, mSmoothingMs * 0.5f));
+    mMixSmoothed.setTimeMs(mSmoothingMs);
 }
 
 void ClipperModule::setDriveDb(float db) {
@@ -64,6 +58,24 @@ void ClipperModule::setCeilingDb(float db) {
 
 void ClipperModule::setMix(float mix01) {
     mMix = clampf(mix01, 0.0f, 1.0f);
+    mMixSmoothed.setTarget(mMix);
+}
+
+void ClipperModule::setDriveDbTarget(float dB, float rampTimeMs) noexcept {
+    mDriveDb = clampf(dB, -60.0f, 24.0f);
+    mDriveLin.setTimeMs(clampf(rampTimeMs, 0.0f, 200.0f));
+    mDriveLin.setTarget(dBToLinear(mDriveDb));
+}
+
+void ClipperModule::setCeilingDbTarget(float dB, float rampTimeMs) noexcept {
+    mCeilingDb = clampf(dB, -60.0f, 0.0f);
+    mCeilingLin.setTimeMs(clampf(rampTimeMs, 0.0f, 200.0f));
+    mCeilingLin.setTarget(dBToLinear(mCeilingDb));
+}
+
+void ClipperModule::setMixTarget(float mix01, float rampTimeMs) noexcept {
+    mMix = clampf(mix01, 0.0f, 1.0f);
+    mMixSmoothed.setTimeMs(clampf(rampTimeMs, 0.0f, 200.0f));
     mMixSmoothed.setTarget(mMix);
 }
 
@@ -89,6 +101,8 @@ void ClipperModule::process(const float* inL, const float* inR,
     const bool hasOutR = (outR != nullptr);
     if (!hasOutL && !hasOutR) return;
 
+    const Mode mode = mMode.load(std::memory_order_relaxed);
+
     // process per-sample to get smooth parameter changes w/o stepping artifacts
     // cheap (light tech debt - few mulitplies + tanh/clamp)
     for (unsigned int i = 0; i < numFrames; ++i) {
@@ -96,7 +110,7 @@ void ClipperModule::process(const float* inL, const float* inR,
         const float dryR = (inR ? inR[i] : 0.0f);
 
         const float drive   = mDriveLin.process();
-        const float ceiling = mCeilingLin.process();
+        const float ceiling = std::max(mCeilingLin.process(), 1e-6f);
         const float mix     = mMixSmoothed.process();
 
         const float xL = dryL * drive;
@@ -113,19 +127,28 @@ void ClipperModule::process(const float* inL, const float* inR,
             wetR = softClipTanh(xR, ceiling);
         }
 
-        const float yL = dryL + (wetL - dryL) * mix;
-        const float yR = dryR + (wetR - dryR) * mix;
+        float yL = dryL + (wetL - dryL) * mix;
+        float yR = dryR + (wetR - dryR) * mix;
+
+        // final output ceiling enforcement
+        // makes "ceiling" behave as a true module output ceiling
+        // not just a ceiling on the wet path
+        if (mode == Mode::Hard) {
+            yL = hardClip(yL, ceiling);
+            yR = hardClip(yR, ceiling);
+        } else {
+            yL = softClipTanh(yL, ceiling);
+            yR = softClipTanh(yR, ceiling);
+        }
 
         if (hasOutL) outL[i] = yL;
         if (hasOutR) outR[i] = yR;
     }
 }
 
-// Placeholders
+// Placeholders for now
 // reflects GainModule
 void ClipperModule::registerParameters(control::ParamRegistry& /*registry*/) {}
 void ClipperModule::bindParameters(control::ParamBindingTable& /*bindings*/) {}
 
 } // namespace audiomix::dsp
-
-

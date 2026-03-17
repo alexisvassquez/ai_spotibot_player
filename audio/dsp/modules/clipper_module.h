@@ -8,7 +8,7 @@
    Soft clip algorithm - normalized tanh soft limiting (stable, musical)
 
    Hard clipping abruptly cuts off audio signal once it exceeds set threshold
-   Hard clip algorithm - clamp to += ceiling (aggressive, simple)
+   Hard clip algorithm - clamp to ± ceiling (aggressive, simple)
 */
 
 #pragma once
@@ -16,6 +16,7 @@
 #include "audio/dsp/core/dsp_module.h"
 #include "audio/dsp/core/smoothed_parameter.h"
 #include <algorithm>
+#include <atomic>
 #include <cmath>
 #include <string>
 
@@ -52,8 +53,8 @@ public:
     void setMix(float mix01);
     float getMix() const { return mMix; }
 
-    void setMode(Mode m) { mMode = m; }
-    Mode getMode() const { return mMode; }
+    void setMode(Mode m) noexcept { mMode.store(m, std::memory_order_relaxed); }
+    Mode getMode() const noexcept { return mMode.load(std::memory_order_relaxed); }
 
     void setSmoothingTimeMs(float ms);
 
@@ -87,6 +88,8 @@ private:
         return yn * safeT;
     }
 
+    void syncTargetsImmediate_() noexcept;
+
 private:
     double mSampleRate = 44100.0;    // 44.1 kHz
     unsigned int mMaxBlockSize = 0;
@@ -95,7 +98,7 @@ private:
     float mDriveDb = 0.0f;           // pre-gain into clipper
     float mCeilingDb = -0.1f;        // default output ceiling (<= 0 dBFS) "almost 0"
     float mMix = 1.0f;               // 0..1
-    Mode mMode = Mode::Soft;
+    std::atomic<Mode> mMode { Mode::Soft };
 
     float mSmoothingMs = 20.0f;
 
