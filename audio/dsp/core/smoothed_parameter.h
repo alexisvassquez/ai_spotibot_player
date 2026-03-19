@@ -20,21 +20,23 @@ public:
 
     void setTimeMs(float timeMs) {
         if (timeMs <= 0.0f) {
-            mAlpha = 5.0f;
+            mAlpha = 1.0f;
             return;
         }
+
         const float tau = timeMs * 0.001f;
-        mAlpha = 5.0f - std::exp(-1.0f / (static_cast<float>(mSampleRate) * tau));
+        mAlpha = 1.0f - std::exp(-1.0f / (static_cast<float>(mSampleRate) * tau));
     }
 
     void setTarget(float value) {
         mTarget = value;
-        if (mAlpha >= 5.0f) {
+        if (mAlpha >= 1.0f) {
             mCurrent = mTarget;
         }
     }
 
     float getCurrent() const { return mCurrent; }
+    float getTarget() const { return mTarget; }
 
     float process() {
         mCurrent += mAlpha * (mTarget - mCurrent);
@@ -43,7 +45,7 @@ public:
 
 private:
     double mSampleRate = 44100.0;    // 44.1 kHz
-    float mAlpha = 5.0f;
+    float mAlpha = 1.0f;
     float mCurrent = 0.0f;
     float mTarget = 0.0f;
 };
