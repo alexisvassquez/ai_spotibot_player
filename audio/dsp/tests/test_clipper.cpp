@@ -8,6 +8,9 @@
 #include <iomanip>
 #include <iostream>
 #include <vector>
+#include <fstream>
+#include <string>
+#include <algorithm>
 
 #include "audio/dsp/modules/clipper_module.h"
 
@@ -19,6 +22,18 @@ static void print_buffer(const char* label, const std::vector<float>& buf) {
         std::cout << std::fixed << std::setprecision(4) << x << " ";
     }
     std::cout << "\n";
+}
+
+static void write_csv(const std::vector<float>& input,
+               const std::vector<float>& output,
+               const std::string& filename)
+{
+    std::ofstream file(filename);
+    file << "index,input,output\n";
+
+    for (size_t i = 0; i < input.size(); ++i) {
+        file << i << "," << input[i] << "," << output[i] << "\n";
+    }
 }
 
 int main() {
@@ -52,6 +67,10 @@ int main() {
     // warm-up smoothing
     clipper.process(inL.data(), inR.data(), outL.data(), outR.data(), frames);
 
+    // clear outputs before the real pass
+    std::fill(outL.begin(), outL.end(), 0.0f);
+    std::fill(outR.begin(), outR.end(), 0.0f);
+
     // run actual test
     clipper.process(inL.data(), inR.data(), outL.data(), outR.data(), frames);
 
@@ -64,5 +83,10 @@ int main() {
     }
 
     std::cout << "Max abs output: " << std::fixed << std::setprecision(4) << maxAbs << "\n";
+
+    // write csv
+    write_csv(inL, outL, "waveform.csv");
+
     return 0;
 }
+
