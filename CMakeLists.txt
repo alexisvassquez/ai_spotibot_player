@@ -68,6 +68,9 @@ foreach(src ${PROJECT_SOURCES})
     message(STATUS " ${src}")
 endforeach()
 
+# DSP tests should not be compiled into the main audiomix executable
+list(FILTER PROJECT_SOURCES EXCLUDE REGEX "/audio/dsp/tests/")
+
 # ------------------------------
 # PortAudio Detection
 # ------------------------------
@@ -118,6 +121,7 @@ target_include_directories(audiomix_dsp_core INTERFACE
 add_subdirectory(audio/dsp/modules)
 
 # ------------------------------
+# Main Application Libraries
 # Build Executable
 # ------------------------------
 add_executable(audiomix ${PROJECT_SOURCES})
@@ -137,4 +141,18 @@ target_link_libraries(audiomix
         pthread       # PortAudio requirement
         m             # Math lib
         nlohmann_json::nlohmann_json    # NDJSON parser
+)
+
+# ------------------------------
+# DSP Test Executables
+# ------------------------------
+add_executable(test_clipper
+    ${CMAKE_SOURCE_DIR}/audio/dsp/tests/test_clipper.cpp
+)
+
+target_link_libraries(test_clipper
+    PRIVATE
+        audiomix_dsp_core
+        audiomix_dsp_modules
+        m
 )
