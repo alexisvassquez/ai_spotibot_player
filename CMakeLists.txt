@@ -58,37 +58,55 @@ list(FILTER PROJECT_SOURCES EXCLUDE REGEX "ipynb_checkpoints")
 # build/ directory (where build artifacts live)
 list(FILTER PROJECT_SOURCES EXCLUDE REGEX "/build/")
 
-# PortAudio examples
+# PortAudio examples / vendored source copies
 list(FILTER PROJECT_SOURCES EXCLUDE REGEX "portaudio/")
 list(FILTER PROJECT_SOURCES EXCLUDE REGEX "portaudio/src")
 list(FILTER PROJECT_SOURCES EXCLUDE REGEX "portaudio/examples")
 
-message(STATUS "Filtered project source files:")
+# DSP tests should not be compiled into the main audiomix executable
+list(FILTER PROJECT_SOURCES EXCLUDE REGEX "/audio/dsp/tests/")
+
+message(STATUS "Filtered project source files: ")
 foreach(src ${PROJECT_SOURCES})
     message(STATUS " ${src}")
 endforeach()
 
-# DSP tests should not be compiled into the main audiomix executable
-list(FILTER PROJECT_SOURCES EXCLUDE REGEX "/audio/dsp/tests/")
-
 # ------------------------------
 # PortAudio Detection
 # ------------------------------
-find_path(PORTAUDIO_INCLUDE_DIR portaudio.h
-    PATHS "/usr/include" "/usr/local/include" "${CMAKE_SOURCE_DIR}/portaudio/include"
+# Optional override:
+#    cmake -S . -B build -DPORTAUDIO="C:\path\to\portaudio"
+set(PORTAUDIO_ROOT "" CACHE PATH "Optional root directory for PortAudio")
+
+find_path(PORTAUDIO_INCLUDE_DIR
+    NAMES portaudio.h
+    HINTS
+        ${PORTAUDIO_ROOT}/include
+    PATHS
+        /usr/include
+        /usr/local/include
 )
 
-find_library(PORTAUDIO_LIBRARY portaudio
-    PATHS "/usr/lib/x86_64-linux-gnu" "/usr/local/lib" "${CMAKE_SOURCE_DIR}/portaudio/build/libportaudio.a"
+find_library(PORTAUDIO_LIBRARY
+    NAMES portaudio portaudio_static
+    HINTS
+        ${PORTAUDIO_ROOT}/lib
+        ${PORTAUDIO_ROOT}/lib64
+    PATHS
+        /usr/lib
+        /usr/lib/x86_64-linux-gnu
+        /usr/local/lib
 )
 
 if(PORTAUDIO_INCLUDE_DIR AND PORTAUDIO_LIBRARY)
     message(STATUS "PortAudio found!")
     message(STATUS " Includes: ${PORTAUDIO_INCLUDE_DIR}")
     message(STATUS " Library: ${PORTAUDIO_LIBRARY}")
-    include_directories(${PORTAUDIO_INCLUDE_DIR})
 else()
-    message(FATAL_ERROR "PortAudio not found! Did you install libportaudio-dev?")
+    message(FATAL_ERROR
+        "PortAudio not found! Install it with your package manager, vcpkg, "
+        "or configure CMake with -DPORTAUDIO_ROOT=/path/to/portaudio"
+    )
 endif()
 
 # ------------------------------
@@ -126,6 +144,10 @@ add_subdirectory(audio/dsp/modules)
 # ------------------------------
 add_executable(audiomix ${PROJECT_SOURCES})
 
+target_include_directories(audiomix PRIVATE
+    ${PORTAUDIO_INCLUDE_DIR}
+)
+
 # ------------------------------
 # Link Libraries
 # ------------------------------
@@ -136,12 +158,14 @@ target_link_libraries(audiomix
         audiomix_dsp_core
         audiomix_dsp_modules
         ${PORTAUDIO_LIBRARY}
-        asound        # ALSA
-        jack          # JACK
-        pthread       # PortAudio requirement
-        m             # Math lib
         nlohmann_json::nlohmann_json    # NDJSON parser
 )
+
+if(WIN32)
+    target_link_libraries(audiomix PRIVATE winmm)
+elseif(UNIX AND NOT APPLE)
+    target_link_libraries(audiomix PRIVATE asound jack pthread m)
+endif()
 
 # ------------------------------
 # DSP Test Executables
@@ -154,5 +178,8 @@ target_link_libraries(test_clipper
     PRIVATE
         audiomix_dsp_core
         audiomix_dsp_modules
-        m
 )
+
+if(UNIX AND NOT APPLE)
+    target_link_libraries(test_clipper PRIVATE m)
+endif()
