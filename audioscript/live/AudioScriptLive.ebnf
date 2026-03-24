@@ -1,4 +1,4 @@
-# AudioScript Live EBNF Grammar Spec (v0.2-dev)
+# AudioScript Live EBNF Grammar Spec (v0.3-dev)
 #
 # ARRANGEMENT SUBSET (Live → IR)
 # -----------------------------
@@ -77,21 +77,23 @@
 # - `with` describes a post-processing chain or modifier pipeline.
 # - The compiler typically lowers a `with` chain into a sequence of IR/COL
 #   commands (or attaches metadata to a command group).
-# - FXName is currently Identifier-only (no args in v0.2-dev).
+# - FXName supports both plain Identifiers and parameterized
+#   FunctionCalls (v0.3-dev).
 #
 # LET + EXPRESSIONS
 # -----------------
 # Assignment syntax:
 #   let name = Expression
 #
-# Expression options (v0.2-dev):
+# Expression options (v0.3-dev):
+#   - BinaryExpr (e.g., stutter(2) + reverb; eq.preset("warm") + compressor)
 #   - FunctionCall
 #   - ListLiteral
 #   - Identifier
 #
 # Note:
-# - Numbers in this grammar are currently integers only (no decimals).
-#   IR supports floats; Live to be expanded later. TODO
+# - Numbers now support floats and negatives (v0.3-dev).
+#   Both Live and IR sue the same Number production.
 # - ListLiterals are intended for simple collections like:
 #     let bands = ["bass_boost", "treble_cut"]
 #
@@ -104,11 +106,14 @@
 #
 # VERSIONING / FUTURE EXPANSION
 # -----------------------------
-# v0.2-dev is intentionally minimal.
-# Expected future expansions include:
-#   - float numbers in Live (e.g., 0.30, -3.0)
-#   - named arguments (e.g., intensity: 0.30)
-#   - richer FX nodes with parameters (fx.reverb(room=0.8))
+# v0.3-dev changes from v0.2-dev:
+#   - float + negative numbers now supported (e.g., 0.30, -3.0)
+#   - BinaryExpr introduced: + is a generic composition operator
+#   - ExprAtom introduced: FunctionCall | Identifier
+#   - WithClause now accepts full Expression (inline FX chaining)
+#   - FXName now supports parameterized FunctionCalls (e.g., reverb(room=0.8))
+#
+# Still expected in future ecxpansions:
 #   - additional EventHooks (beat/bar cues, transport state, audience input)
 
 Script        = { Statement } ;
@@ -136,13 +141,27 @@ Argument      = NamedArg | Value ;
 NamedArg      = Identifier, ":", Value ;
 Value         = String | Number | QualifiedIdent;
 
-WithClause    = "with", FXChain ;
-FXChain       = FXName, { "+", FXName } ;
-FXName        = Identifier ;
+WithClause    = "with", Expression ;
 
-Expression    = FunctionCall 
+# FXChain retained for IR compatibility.
+# In Live, FX composition is handled by BinaryExpr via Expression.
+FXChain       = FXName, { "+", FXName } ;
+FXName        = FunctionCall | Identifier ;
+
+# Expression is the general value production.
+# BinaryExpr makes + a generic composition operator
+#  - semantics (FX chain, arthmetic, etc.) are resolved by the type/semantic layer,
+#    not the grammar. 
+#  - This mirrors Haskell-style typeclass dispatch
+Expression    = BinaryExpr
+              | FunctionCall 
               | ListLiteral 
               | Identifier ;
+
+# BinaryExpr: left-associative composition via + (operator)
+# ExprAtom: smallest unit that can participate in a binary expression
+BinaryExpr    = ExprAtom, { "+", ExprAtom } ;
+ExprAtom      = FunctionCall | Identifier ;
 
 ListLiteral   = "[", [ ListElement, { ",", ListElement } ], "]" ;
 ListElement   = Value ;
@@ -166,16 +185,12 @@ AtBlock       = "at", Number, "{",
 
 # Identifiers and literals
 QualifiedIdent = Identifier, { ".", Identifier } ;
-Identifier    = letter, { letter | digit | "_" } ;
-String        = '"', { any character except '"' }, '"' ;
+Identifier     = letter, { letter | digit | "_" } ;
+String         = '"', { any character except '"' }, '"' ;
 
-# Live currently uses integers only.
-# Will allow:
-#    - floats: 0.30, 8.000
-#    - negatives: -3.0
-# Format:
-#   Number        = [ "-" ], digit, { digit }, [ ".", digit, { digit } ] ;
-Number        = digit, { digit } ;
+# Number supports integers, floats, and negatives (v0.3-dev).
+# Matches IR float format: 0.000, 8.000, -3.0, 128
+Number        = [ "-" ], digit, { digit }, [ ".", digit, { digit } ] ;
 
 letter        = "A".."Z" | "a".."z" ;
 digit         = "0".."9" ;
