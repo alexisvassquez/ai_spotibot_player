@@ -1,4 +1,4 @@
-# AudioScript IR (Intermediate Representation) EBNF Grammar Spec (v0.1-dev)
+# AudioScript IR (Intermediate Representation) EBNF Grammar Spec (v0.2-dev)
 #
 # Purpose
 # -------
@@ -36,9 +36,32 @@
 # - Names and identifiers are case-sensitive.
 # - Commands are forwarded to the Creative Operating Layer (COL)
 #   dispatcher; schema validation happens there.
-# COL is AudioMIX DSP system
+# - COL is AudioMIX DSP system
+#
+# VERSIONING / FUTURE EXPANSION
+# -----------------------------
+# v0.2-dev changes from v0.1-dev:
+#  - Comment production added (machine-generated IR can embed
+#    traceability notes)
+#  - Script changed from single Track to { Comment | Track } for
+#    multi-track support
+#  - Number aligned w/ Live spec: negatives supported, trailing dot (.)
+#    ambiguity fixed
+#
+# Still expected in future expansions:
+#  - BeatNumber production for beat-relative scheduling (bar/beat syntax)
+#  - Section becomes optional when at-blocks are sufficient
+#  - Versioning header field in Track for backward compatibility
 
-Script        = Track ;
+# Script = one or more tracks, optionally preceded by comments.
+# Multi-track support allows stems, LED zones, and audio tracks
+# to coexist in a single IR file (e.g., full Juniper2.0 scene export).
+Script        = { Comment | Track } ;
+
+# Comment = human or machine-readable annotation, ignored by runtime.
+# Useful for traceability: generated IR can embed source file, tool version,
+# and generation timestamp for debugging and version control.
+Comment       = "#", { any character except line break } ;
 
 # Track = one playable unit exported from an analysis or authoring tool.
 # Track name is usually derived from a source file (e.g., wav stem name).
@@ -54,15 +77,17 @@ BPMDecl       = "bpm", Number ;
 
 # Section = labeled range of the track timeline.
 # Sections help readability and navigation, but are not required for
-# deterministic playback—events are scheduled solely by `at` timestamps.
+# deterministic playback
+#  - events are scheduled solely by `at` timestamps.
 Section       = "section", String, "from", Number, "to", Number, "{",
                   { AtBlock },
                 "}" ;
 
 # AtBlock = one or more commands that occur at an absolute timestamp.
 # Timestamp is in seconds; fractional values allowed.
+# Comments permitted inside AtBlock for inline command annotation.
 AtBlock       = "at", Number, "{",
-                  { Command },
+                  { Comment | Command },
                 "}" ;
 
 # Command = qualified subsystem call that maps to COL commands.
@@ -76,7 +101,7 @@ ArgList       = Arg, { ",", Arg } ;
 Arg           = NamedArg | Value ;
 NamedArg      = Identifier, ":", Value ;
 
-# Values: IR v1 keeps this simple.
+# Values: IR keeps this simple.
 # - Strings for names/labels
 # - Numbers for times/intensity/gains/etc
 # - Qualified identifiers for enums/constants/targets (e.g., front_strip)
@@ -84,13 +109,15 @@ Value         = String | Number | QualifiedIdent ;
 
 # Identifiers
 QualifiedIdent = Identifier, { ".", Identifier } ;
-Identifier    = letter, { letter | digit | "_" } ;
+Identifier     = letter, { letter | digit | "_" } ;
 
 # Literals
 # String uses double quotes only.
-# Number supports integers and floats (e.g., 0.000, 128, 1.00).
+# Number aligned with Live spec (v0.2-dev):
+#  - supports integers, negatives, and floats (e.g., 0.000, 128, -6.5, -3.0)
+#  - requires at least one digit after decimal pt (trailing dot not allowed)
 String        = '"', { any character except '"' }, '"' ;
-Number        = digit, { digit }, [ ".", { digit } ] ;
+Number        = [ "-" ], digit, { digit }, [ ".", digit, { digit } ] ;
 
 # Character classes
 letter        = "A".."Z" | "a".."z" ;
