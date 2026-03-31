@@ -95,7 +95,7 @@ class ShowIR:
     """
     audio_path: str
     bpm: float
-    sections: List[section] = field(default_factory=list)
+    sections: List[Section] = field(default_factory=list)
     events: List[Event] = field(default_factory=list)
     profile_name: str = "default"
     metadata: Dict[str, str] = field(default_factory=dict)
