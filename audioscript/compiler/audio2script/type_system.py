@@ -113,3 +113,57 @@ TYPE_SIGNATURES: Dict[str, Tuple[List[str], str]] = {
     # wraps a pattern in a repeating loop structure
     "repeat":           ([ASType.PATTERN], ASType.PATTERN),
 }
+
+# Layer 3 - Type Environment
+# Tracks the types of let bindings as the compiler walks a script
+# Grows incrementally; each resolved binding is stored immediately
+# Currently flat (no nested scopes) - TODO: add scope support
+class TypeEnvironment:
+    # holds the type of every let binding seen so far in a script
+    # memory management
+    def __init__(self):
+        # mapes identifier name -> ASType str
+        self._bindings: Dict[str, str] = {}
+
+        # tracks identifiers whose types could not be resolved
+        # used for deferred resolution + error reporting
+        self._unresolved: List[str] = []
+
+    # record identifier 'name' has type 'resolved_type'
+    # called after a let binding is successfully type-checked
+    def bind(self, name: str, resolved_type: str) -> None:
+        self._bindings[name] = resolved type
+        # if prev unresolved, clear that flag
+        if name in self._unresolved:
+            self._unresolved.remove(name)
+
+    # return type of identifier 'name' or None if not found
+    def lookup(self, name: str) -> Optional[str]:
+        return self._bindings.get(name, None)
+
+    # flags 'name' as a binding that the type checker could not resolve
+    # stores ASType.UNKNOWN so later passes know to revisit
+    def mark_unresolved(self, name: str) -> None:
+        self._bindings[name] = ASType.UNKNOWN
+        if name not in self._unresolved:
+            self._unresolved.append(name)
+
+    # returns True is any bindings could not be resolved
+    # designed to be useful for a final validation pass after type checking completes
+    def has_unresolved(self) -> bool:
+        return len(self._unresolved) > 0
+
+    # returns the list of identifier names that remain unresolved
+    # for generating meaningful/verbose error logs
+    def unresolved_names(self) -> List[str]:
+        return list(self._unresolved)
+
+    # human-readable snapshot of environ (Live)
+    # designed to be used for debugging type checker for development
+    def __repr__(self) -> str:
+        lines = ["TypeEnvironment {"]
+        for name, t in self._bindings.items():
+            flag = " ⚠️  unresolved" if name in self._unresolved else ""
+            lines.append(f"  {name}: {t}{flag}")
+        lines.append("}")
+        return "\n".join(lines)
