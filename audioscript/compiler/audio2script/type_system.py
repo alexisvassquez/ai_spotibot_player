@@ -167,3 +167,100 @@ class TypeEnvironment:
             lines.append(f"  {name}: {t}{flag}")
         lines.append("}")
         return "\n".join(lines)
+
+# Layer 4 - Composition Rules
+# Defines what the + operator means for every valid combo of types
+# Single source of truth for the binary expr type resolution
+# Only valid combos listed
+COMPOSITION_RULES: Dict[Tuple[str, str], str] = {
+    # FXChain + FXChain -> FXChain
+    # single processors compose into a longer chain
+    # ex: stutter(2) + reverb; eq.preset("warm") + compressor(-6.5)
+    (ASType.FXCHAIN, ASType.FXCHAIN): ASType.FXCHAIN,
+
+    # Number + Number -> Number
+    # standard arithmetic addition
+    # ex: base_level + boost_amount
+    (ASType.NUMBER, ASType.NUMBER):   ASType.NUMBER,
+
+    # Pattern + Pattern -> Pattern
+    # concatenates two rhythmic sequences into one
+    # ex: ["kick", "snare"] + ["kick", "hat"]
+    (ASType.PATTERN, ASType.PATTERN): ASType.PATTERN,
+}
+
+# Composition Resolver
+# Public interfae for type-checking a binary expr
+# Takes two resolved types and returns the result type, or
+# raises a TypeError w/ a clear message if the combo is invalid
+
+# Raised when a binary expr uses + on an imcompatible type.
+# Carries enough context for the compiler to produce a useful error message
+class CompositionError(Exception):
+    pass
+
+# Resolve the result type of a binary expr: left + right
+# Returns the result type str if the combo is valid
+# Raises CompositionError if the combo is not in COMPOSITION_RULES
+# TODO: expand
+def resolve_composition(left_type: str, right_type: str) -> str:
+    # unkown types cannot be composed
+    if left_type == ASType.UNKNOWN or right_type == ASType.UNKNOWN:
+        raise CompositionError(
+            f"Cannot compose unknown types: {left_type} + {right_type}."
+            f"Ensure both operands are fully resolved before composition."
+        )
+
+    # void is never composable; it has not value to combine
+    # void commands produce no value and cannot participate in + expressions
+    if left_type == ASType.VOID or right_type == ASType.VOID:
+        raise CompositionError(f"Cannot compose Void type: {left_type} + {right_type}.")
+
+    # look up the rule
+    result = COMPOSITION_RULES.get((left_type, right_type), None)
+    if result is None:
+        raise CompositionError(
+            f"Type error: {left_type} + {right_type} is not a valid composition. "
+            f"Valid combinations are: "
+            f"{', '.join(f'{l} + {r}' for l, r in COMPOSITION_RULES.keys())}."
+        )
+
+    return result
+
+# Main function
+# Demo (TODO: move to tests/)
+if __name__ == "__main__":
+    # set up fresh type environment
+    env = TypeEnvironment()
+
+    # simulate: let fx = stutter(2) + reverb
+    # resolve stutter(2) via TYPE_SIGNATURES
+    stutter_sig = TYPE_SIGNATURES.get("stutter")
+    stutter_return = stutter_sig[1]                  # FXChain
+
+    # resolve reverb via TYPE_SIGNATURES
+    reverb_sig = TYPE_SIGNATURES.get("reverb")
+    reverb_return = reverb_sig[1]                    # FXChain
+
+    # resolve the composition
+    fx_type = resolve_composition(stutter_return, reverb_return)
+    print(f"stutter(2) + reverb -> {fx_type}")       # FXChain
+
+    # bind the result to the environment
+    env.bind("beat", ASType.PATTERN)
+
+    # simulate: play(beat) with fx
+    # look up beat and fx from environment
+    beat_type = env.lookup("beat")                   # Pattern
+    fx_type   = env.lookup("fx")                     # FXChain
+    print (f"beat -> {beat_type}")
+    print (f"fx   -> {fx_type}")
+
+    # simulate a type error: glow("lilac") + reverb
+    try:
+        resolve_composition(ASType.VOID, ASType.FXCHAIN)
+    except CompositionError as e:
+        print (f"\nExpected error caught:\n{e}")
+
+    # print full environment snapshot
+    print (f"\n{env}")
