@@ -2,16 +2,9 @@
 # AudioMIX
 # audio/ai/core/decision_engine.py
 
-"""
-Combines outputs from existing AudioMIX AI modules into one structured recommendation
-It consumes structured predictions, build recommendations, and generates
-inspectable AudioScript (AS)
-
-Does NOT:
-  - extract feats
-  - train models
-  - directly execute runtime commands
-"""
+# Combines outputs from existing AudioMIX AI modules into one structured recommendation
+# It consumes structured predictions, build recommendations, and generates
+# inspectable AudioScript (AS)
 
 from __future__ import annotations
 from typing import List, Optional
@@ -66,17 +59,15 @@ def _derive_effect_hint(
 
     if mood in {"energetic", "euphoria", "hype"}:
         return "pulse"
-
     if mood in {"dark", "tense", "angry"}:
         return "sweep"
-
     if mood in {"calm", "relaxed", "ambient"}:
         return "fade"
 
     return "blend"
 
 # optional abstract color suggestion
-# can be mapped to HAL later
+# mapped to HAL later
 def _derive_color_hint(mood_label: str) -> Optional[str]:
     mood = (mood_label or "unknown").lower()
 
@@ -157,8 +148,9 @@ def build_performance_suggestion(
     reason_parts: List[str] = [f"performance profile derived from mood '{mood_label}'"]
 
     if bpm is not None:
+        reason_parts.append(f"tempo context {bpm:.2f} BPM")
+    if eq_label:
         reason_parts.append(f"EQ hint '{eq_label}'")
-
     if audience_state:
         reason_parts.append(f"audience energy '{audience_state.energy_level}'")
 
@@ -173,6 +165,7 @@ def build_performance_suggestion(
 
 # emit a small inspectable AudioScript snippet from recommendations
 # generic/conservative right now until I expand
+# only emits current AS commands in runtime
 def build_audioscript_suggestion(
     performance_suggestion: Optional[PerformanceSuggestion],
     mood_prediction: Optional[MoodPrediction],
@@ -190,21 +183,20 @@ def build_audioscript_suggestion(
         lines.append(f'eq.preset("{eq_label}")')
         summary_parts.append(f"EQ preset '{eq_label}'")
 
-    if performance_suggestion:
-        if performance_suggestion.effect_hint:
-            lines.append(
-                f'performance.set_effect("{performance_suggestion.effect_hint}")'
-            )
-            summary_parts.append(
-                f"effect '{performance_suggestion.effect_hint}'"
-            )
+    if performance_suggestion and performance_suggestion.color_hint:
+        lines.append(f'glow("{performance_suggestion.color_hint}")')
+        summary_parts.append(f"color '{performance_suggest.color_hint}'")
 
-        lines.append(
-            f"performance.set_intensity({performance_suggestion.intensity:.2f})"
-        )
-        summary_parts.append(
-            f"intensity {performance_suggestion.intensity:.2f}"
-        )
+    if (
+        performance_suggestion
+        and performance_suggestion.effect_hint == "pulse"
+        and audio_features
+        and audio_features.bpm is not None
+    ):
+        bpm_value = int(round(audio_features.bpm))
+        pulse_color = performance_suggestion.color_hint or "blue"
+        lines.append(f'pulse("{pulse_color}", bpm={bpm_value})')
+        summary_parts.append(f"pulse @{bpm_value} BPM")
 
     if not lines:
         return None
@@ -254,6 +246,7 @@ def build_ai_recommendation(
         performance_suggestion=performance_suggestion,
         mood_prediction=mood_prediction,
         eq_prediction=eq_prediction,
+        audio_features=audio_features,
     )
 
     if audio_features and audio_features.bpm is not None:
