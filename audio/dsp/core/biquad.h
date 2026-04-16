@@ -1,9 +1,9 @@
 // ai_spotibot_player
 // AudioMIX
 // audio/dsp/core/biquad.h
+
 /*
-   Real-time EQ engine up to 10 bands
-   Per-channel biquad state
+   RBJ Cookbook biquad processing
    Per-channel biquad state refers to the independent storage of delay variables
    for each audio channel in a digital biquad filter
    allowing a single set of filter coefficients to process multiple channels independently
@@ -14,20 +14,26 @@
 #pragma once
 #include <cmath>
 
-namespace audiomix::dsp {
+#include "audio/dsp/core/rbj_coeffs.h"
 
-struct BiquadCoeffs {
-    float b0 = 1, b1 = 0, b2 = 0;
-    float a1 = 0, a2 = 0;    // a0 normalized to 1
-};
+namespace audiomix::dsp {
 
 struct BiquadState {
     float z1 = 0.0f;
     float z2 = 0.0f;
 };
 
-static inline float db_to_lin(float db) {
-    return std::pow(10.0f, db / 20.0f);
+inline void biquad_reset(BiquadState& s) noexcept{
+    s.z1 = 0.0f;
+    s.z2 = 0.0f;
+}
+
+inline void biquad_reset_all(BiquadState* states, unsigned int count) noexcept {
+    if (!states) return;
+
+    for (unsigned int i = 0; i < count; ++i) {
+        biquad_reset(states[i]);
+    }
 }
 
 /*
@@ -38,11 +44,15 @@ static inline float db_to_lin(float db) {
    read more: https://ccrma.stanford.edu/~jos/fp/Transposed_Direct_Forms.html
 */
 
-static inline float biquad_process_sample(const BiquadCoeffs& c, BiquadState& s, float x) {
-    float y = c.b0 * x + s.z1;
+inline float biquad_process_sample(const BiquadCoeffs& c, BiquadState& s, float x) noexcept {
+    const float y = c.b0 * x + s.z1;
     s.z1 = c.b1 * x - c.a1 * y + s.z2;
     s.z2 = c.b2 * x - c.a2 * y;
     return y;
+}
+
+inline void biquad_set_identity(BiquadCoeffs& c) noexcept {
+    c = BiquadCoeffs::identity();
 }
 
 }    // namespace audiomix::dsp
