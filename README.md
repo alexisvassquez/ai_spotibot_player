@@ -122,7 +122,7 @@ GNU General Public License v3 (open-source and free to use for independent artis
 
 ## AudioScript - The Language of AudioMIX
 
-**AudioScript** is a custom domain-specific language (DSL) created for **AudioMIX.** It allows users to control audio playback, LED behaviors, and mood transitions using expressive, scriptable commands in high-level syntax.
+**AudioScript** is a custom musical programming domain-specific language (DSL) created for **AudioMIX.** It allows users to control audio playback, LED behaviors, and mood transitions using expressive, scriptable commands in high-level syntax.
 
 ---
 
