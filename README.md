@@ -1,5 +1,5 @@
 
-# 🎧  AudioMIX - AI-Assisted Modular Music Production & Live Performance Software
+# 🎧  AudioMIX - AI-Assisted Music Production & Live Performance Software
 
 ![License](https://img.shields.io/badge/license-GPLv3-blue)
 ![Stack](https://img.shields.io/badge/stack-Python%20%7C%20C%2B%2B%20%7C%20CMake%20%7C%20AudioScript-purple)
