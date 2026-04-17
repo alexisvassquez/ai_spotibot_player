@@ -1,7 +1,13 @@
 
 # 🎧  AudioMIX - AI-Assisted Modular Music Production & Live Performance Software
 
----
+![License](https://img.shields.io/badge/license-GPLv3-blue)
+![Stack](https://img.shields.io/badge/stack-Python%20%7C%20C%2B%2B%20%7C%20AudioScript-purple)
+![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20Windows-blue)
+![Status](https://img.shields.io/badge/status-active%20development-brightgreen)
+![AI](https://img.shields.io/badge/AI-powered-orange)
+![DSP](https://img.shields.io/badge/audio-DSP-critical)
+![Built For](https://img.shields.io/badge/built%20for-artists%20%26%20developers-ff69b4)
 
 **AudioMIX** is an open-source artist-friendly audio platform designed for independent artists, producers, and developers. **AudioMIX** combines AI-driven audio analysis, real-time audio processing and live performance control into a unified creative system.
 Spotibot was its original name..
