@@ -16,6 +16,10 @@ Spotibot was its original name..
 
 I update this repo continuously via my local terminal. :) <3
 
+Current Stars ✨: 0 :(
+
+*A moment of silence for the stars and fork lost during the "Great Private Repo Panic" of 2026. If you like what you see, help me rebuild the count! I promise to not touch the 'Private' button again.*
+
 ---
 
 ## AudioMIX Core Features
