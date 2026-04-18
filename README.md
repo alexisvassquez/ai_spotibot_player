@@ -249,4 +249,4 @@ npm start
 
 ---
 
-© Alexis M Vasquez 2026, Software Engineer / AMV Digital Studios
+© 2026  Alexis M Vasquez, Software Engineer / AMV Digital Studios
