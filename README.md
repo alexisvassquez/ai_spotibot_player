@@ -60,7 +60,7 @@ GNU General Public License v3 (open-source and free to use for independent artis
 **Purpose:** real-time DSP audio engine and feature extraction from audio files
 **Current Capabilities:**
 
-- Mel-frequency cepstal coefficients (MFCC)
+- Mel-frequency cepstral coefficients (MFCC)
 - Spectral contrast
 - Tempo + beat tracking
 - Dynamic range + loudness modeling
@@ -246,3 +246,7 @@ cd audiomix-electron
 npm install
 npm start
 ```
+
+---
+
+© Alexis M Vasquez 2026, Software Engineer / AMV Digital Studios
