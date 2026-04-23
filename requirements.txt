@@ -20,6 +20,7 @@ mido
 pyserial
 pyalsaaudio          # Requires ALSA mic input (Linux)
 sounddevice          # Optional fallback backend
+pydub
 
 # --- Machine Learning / AI ---
 scikit-learn
