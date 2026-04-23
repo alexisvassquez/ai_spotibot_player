@@ -2,10 +2,13 @@
 # AudioMIX
 # audio/ai/core/decision_engine.py
 
-# Combines outputs from existing AudioMIX AI modules into one structured recommendation
-# It consumes structured predictions, build recommendations, and generates
-# inspectable AudioScript (AS)
-# The logic is designed to be refined over time with more data and insights.
+# Combines outputs from existing AudioMIX AI modules
+#  into one structured recommendation
+# It consumes structured predictions, build
+#  recommendations, and generates
+#  inspectable AudioScript (AS)
+# The logic is designed to be refined over time with
+#  more data and insights.
 
 from __future__ import annotations
 from typing import List, Optional
@@ -27,7 +30,8 @@ from audio.ai.core.confidence import (
 )
 
 # pick best EQ label from prediction output
-# prefers confidences if present, otherwise falls back to first label
+# prefers confidences if present, 
+# otherwise falls back to first label
 def _choose_primary_eq_label(eq_prediction: Optional[EQPrediction]) -> Optional[str]:
     """
     Returns the most relevant EQ label based on the prediction output.
@@ -43,8 +47,10 @@ def _choose_primary_eq_label(eq_prediction: Optional[EQPrediction]) -> Optional[
         return eq_prediction.labels[0]
     return None
 
-# lightweight policy layer for translating predictions into a generic effect hint.
-# hardware agnostic until I can get the hardware abstraction layer up and running
+# lightweight policy layer for translating predictions
+#  into a generic effect hint.
+# hardware agnostic until I can get the hardware
+#  abstraction layer up and running
 def _derive_effect_hint(
     mood_label: str,
     bpm: Optional[float],
@@ -61,13 +67,16 @@ def _derive_effect_hint(
         else "unknown"
     )
 
-    # prioritize audience energy for effect suggestions, as it's more dynamic and performance-relevant
+    # prioritize audience energy for effect
+    #  suggestions, as it's more dynamic and
+    #  performance-relevant
     if audience_energy in {"hype", "high", "rising"}:
         if bpm is not None and bpm >= 120:
             return "pulse"
         return "build"
 
-    # fallback to mood-based suggestions if audience energy is not strongly indicative
+    # fallback to mood-based suggestions if audience
+    #  energy is not strongly indicative
     if mood in {"energetic", "euphoria", "hype"}:
         return "pulse"
     if mood in {"dark", "tense", "angry"}:
@@ -100,14 +109,16 @@ def _derive_color_hint(mood_label: str) -> Optional[str]:
 
     return None
 
-# convert prediction context into a generic performance intensity [0.0, 1.0]
+# convert prediction context into a generic
+#  performance intensity [0.0, 1.0]
 def _derive_intensity(
     mood_prediction: Optional[MoodPrediction],
     audience_state: Optional[AudienceState],
     audio_features: Optional[AudioFeatures],
 ) -> float:
     """
-    Derives a performance intensity value between 0.0 and 1.0 based on mood, audience energy, and tempo. 
+    Derives a performance intensity value between 0.0 
+    and 1.0 based on mood, audience energy, and tempo. 
     This function uses a simple heuristic approach to combine different aspects of the prediction context into a single intensity metric that can guide performance decisions. 
     """
     intensity = 0.45
@@ -140,7 +151,8 @@ def _derive_intensity(
 
     return max(0.0, min(1.0, round(intensity, 3)))
 
-# create a hardware agnostic performance suggestion from current prediction context
+# create a hardware agnostic performance suggestion
+#  from current prediction context
 def build_performance_suggestion(
     mood_prediction: Optional[MoodPrediction],
     eq_prediction: Optional[EQPrediction],
@@ -180,7 +192,9 @@ def build_performance_suggestion(
     if audience_state:
         reason_parts.append(f"audience energy '{audience_state.energy_level}'")
 
-    # the reason is a concatenation of all the factors that contributed to the suggestion, for transparency and debugging
+    # the reason is a concatenation of all the factors
+    #  that contributed to the suggestion, 
+    #  for transparency and debugging
     return PerformanceSuggestion(
         mood=mood_label,
         intensity=intensity,
@@ -272,14 +286,17 @@ def build_ai_recommendation(
         if mood_prediction.model_name:
             notes.append(f"Mood model: {mood_prediction.model_name}")
 
-    # EQ confidence is less directly tied to a single label, but we can still extract the top confidence score to include in our overall confidence calculation
+    # EQ confidence is less directly tied to a single label, 
+    # but we can still extract the top confidence score
+    # to include in our overall confidence calculation
     if eq_prediction:
         eq_conf = top_confidence(eq_prediction.confidences)
         confidence_inputs.append(eq_conf)
         if eq_prediction.model_name:
             notes.append(f"EQ model: {eq_prediction.model_name}")
 
-    # audience state is more volatile and less directly tied to a confidence score, but we can still include it as a factor in the overall confidence calculation
+    # audience state is more volatile and less directly tied to a confidence score,
+    # but we can still include it as a factor in the overall confidence calculation
     if audience_state:
         confidence_inputs.append(audience_state.confidence)
         notes.append(f"Audience state: {audience_state.energy_level}")
@@ -287,7 +304,9 @@ def build_ai_recommendation(
     overall_conf = combine_confidences(confidence_inputs)
     tier = confidence_tier(overall_conf)
 
-    # the performance suggestion is the core actionable insight that combines all the prediction context into a structured recommendation for how to adjust the performance
+    # the performance suggestion is the core actionable insight that combines 
+    # all the prediction context into a structured
+    #  recommendation for how to adjust the performance
     performance_suggestion = build_performance_suggestion(
         mood_prediction=mood_prediction,
         eq_prediction=eq_prediction,
@@ -295,7 +314,11 @@ def build_ai_recommendation(
         audio_features=audio_features,
     )
 
-    # the AudioScript suggestion translates the performance suggestion and relevant predictions into a concrete set of commands that can be executed by the performance engine, along with a human-readable summary for inspection and debugging
+    # the AudioScript suggestion translates the
+    #  performance suggestion and relevant predictions
+    #  into a concrete set of commands that can be
+    #  executed by the performance engine, along with a
+    #  human-readable summary for inspection and debugging
     audioscript_suggestion = build_audioscript_suggestion(
         performance_suggestion=performance_suggestion,
         mood_prediction=mood_prediction,
@@ -308,7 +331,11 @@ def build_ai_recommendation(
 
     notes.append(f"Overall confidence tier: {tier}")
 
-    # the final recommendation object includes all the inputs, the derived performance suggestion, the generated AudioScript suggestion, and a set of notes that explain the basis for the recommendations and provide context for debugging and refinement
+    # the final recommendation object includes all the
+    #  inputs, the derived performance suggestion, the
+    #  generated AudioScript suggestion, and a set of
+    #  notes that explain the basis for the
+    #  recommendations and provide context for debugging and refinement
     return AIRecommendation(
         audio_features=audio_features,
         mood_prediction=mood_prediction,

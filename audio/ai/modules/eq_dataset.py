@@ -3,7 +3,8 @@
 # audio/ai/modules/eq_dataset.py
 
 # Dataset for training EQ preset classification based on audio features extracted from labeled samples.
-# Expects audio files in the format: label_description.wav (e.g. "rock_guitar.wav") and a corresponding presets_combined.json mapping labels to EQ presets.
+# Expects audio files in the format: label_description.wav (e.g. "rock_guitar.wav") 
+# and a corresponding presets_combined.json mapping labels to EQ presets.
 
 import os
 import json
@@ -21,7 +22,8 @@ class EQPresetDataset(Dataset):
         """
         Initialize the dataset by loading audio files, extracting features, and mapping labels to presets.
         :param sample_dir: Directory containing the audio samples.
-        :param preset_path: Path to the JSON file containing label-to-preset mappings."""
+        :param preset_path: Path to the JSON file containing label-to-preset mappings.
+        """
         self.sample_dir = sample_dir
         self.preset_path = preset_path
         self.filenames = []
@@ -44,7 +46,11 @@ class EQPresetDataset(Dataset):
             return filename.split("__")[0]
         return None
     
-    # Loads presets from the specified JSON file and builds mappings for labels and presets. Then processes each audio file in the sample directory, extracting features and associating them with the correct label index.
+    # Loads presets from the specified JSON file and
+    #  builds mappings for labels and presets. Then
+    #  processes each audio file in the sample
+    #  directory, extracting features and associating
+    #  them with the correct label index.
     def _load_presets(self):
         if os.path.exists(self.preset_path):
             with open(self.preset_path, "r") as f:
@@ -60,7 +66,8 @@ class EQPresetDataset(Dataset):
                 if label and label in self.presets:
                     label_set.add(label)
 
-        # Build label-to-index and index-to-label mappings, and associate labels with their corresponding presets.
+        # Build label-to-index and index-to-label mappings,
+        # and associate labels with their corresponding presets.
         self.label_to_index = {label: idx for idx, label in enumerate(sorted(label_set))}
         self.index_to_label = {idx: label for label, idx in self.label_to_index.items()}
         self.label_to_preset = {label: self.presets[label] for label in label_set}
@@ -80,7 +87,9 @@ class EQPresetDataset(Dataset):
                     except Exception as e:
                         print (f"[!] Failed to process {fname}: {e}")
 
-# Standard Dataset methods for length and item retrieval, along with helper methods to get label mappings and presets by index.
+# Standard Dataset methods for length and item
+#  retrieval, along with helper methods to get label
+#  mappings and presets by index.
     def __len__(self):
         return len(self.features)
 

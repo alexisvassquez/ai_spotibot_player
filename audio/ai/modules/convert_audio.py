@@ -2,7 +2,9 @@
 # AudioMIX
 # audio/ai/modules/convert_audio.py
 
-# Converts any input audio file to a standard internal format: stereo, float32 WAV at a target sample rate (default 48000 Hz).
+# Converts any input audio file to a standard internal
+#  format: stereo, float32 WAV at a target sample rate
+#  (default 48000 Hz).
 
 from __future__ import annotations
 from pydub import AudioSegment
