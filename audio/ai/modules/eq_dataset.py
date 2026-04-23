@@ -1,15 +1,27 @@
 # ai_spotibot_player
 # AudioMIX
 # audio/ai/modules/eq_dataset.py
+
+# Dataset for training EQ preset classification based on audio features extracted from labeled samples.
+# Expects audio files in the format: label_description.wav (e.g. "rock_guitar.wav") and a corresponding presets_combined.json mapping labels to EQ presets.
+
 import os
 import json
 import numpy as np
 import torch
-from torch.utils.data import DataSet
-from audio.ai.analyze_audio import analyze
+from torch.utils.data import Dataset
+from audio.ai.analysis.analyze_audio import analyze
 
 class EQPresetDataset(Dataset):
+    """
+    Dataset for EQ preset classification based on audio features extracted from labeled samples.
+    Expects audio files in the format: label_description.wav (e.g. "rock_guitar.wav") and a corresponding presets_combined.json mapping labels to EQ presets.
+    """
     def __init__(self, sample_dir="audio/samples", preset_path="audio/eq/presets/presets_combined.json"):
+        """
+        Initialize the dataset by loading audio files, extracting features, and mapping labels to presets.
+        :param sample_dir: Directory containing the audio samples.
+        :param preset_path: Path to the JSON file containing label-to-preset mappings."""
         self.sample_dir = sample_dir
         self.preset_path = preset_path
         self.filenames = []
@@ -23,11 +35,16 @@ class EQPresetDataset(Dataset):
         self._load_data()
 
     def _extract_label(self, filename):
-        # expects format: label_description.wav
+        """
+        Expects format: label_description.wav
+        Extract the label from the filename by splitting on '__' and taking the first part.
+        For example, 'rock_guitar.wav' would yield the label 'rock'.
+        """
         if "__" in filename:
             return filename.split("__")[0]
         return None
-
+    
+    # Loads presets from the specified JSON file and builds mappings for labels and presets. Then processes each audio file in the sample directory, extracting features and associating them with the correct label index.
     def _load_presets(self):
         if os.path.exists(self.preset_path):
             with open(self.preset_path, "r") as f:
@@ -39,14 +56,16 @@ class EQPresetDataset(Dataset):
         label_set = set()
         for fname in os.listdir(self.sample_dir):
             if fname.endswith((".wav", ".mp3")) and "__" in fname:
-                label = set._extract_label(fname)
+                label = self._extract_label(fname)
                 if label and label in self.presets:
                     label_set.add(label)
 
+        # Build label-to-index and index-to-label mappings, and associate labels with their corresponding presets.
         self.label_to_index = {label: idx for idx, label in enumerate(sorted(label_set))}
         self.index_to_label = {idx: label for label, idx in self.label_to_index.items()}
         self.label_to_preset = {label: self.presets[label] for label in label_set}
 
+        # Process each audio file, extract features, and store them along with their labels.
         for fname in os.listdir(self.sample_dir):
             if fname.endswith((".wav", ".mp3")) and "__" in fname:
                 label = self._extract_label(fname)
@@ -61,6 +80,7 @@ class EQPresetDataset(Dataset):
                     except Exception as e:
                         print (f"[!] Failed to process {fname}: {e}")
 
+# Standard Dataset methods for length and item retrieval, along with helper methods to get label mappings and presets by index.
     def __len__(self):
         return len(self.features)
 
