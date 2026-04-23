@@ -268,10 +268,10 @@ It provides a secure, dynamic, and visually reactive front-end built with Electr
 - Full-screen responsive layout with universal keyboard-friendly controls
 - Preload bridge for safe IPC between renderer and backend (FastAPI / C++)
 
-| Layer           | Repository                                                               | Purpose                                                        |
-| :-------------- | :----------------------------------------------------------------------- | :------------------------------------------------------------- |
-| **Core Engine** | [`AudioMIX`](https://github.com/alexisvassquez/ai_spotibot_player) | Backend DSP, AI, and system logic.                |
-| **Desktop UI**  | [`AudioMIX-Electron`](https://github.com/alexisvassquez/audiomix-electron) | Visual front-end shell for artists, producers, and developers. |
+| Layer | Repository | Purpose |
+| :--- | :--- | :--- |
+| **Core Engine** | [`AudioMIX`](https://github.com/alexisvassquez/ai_spotibot_player) | Backend DSP, AI, and system logic. |
+| **Desktop UI** | [`AudioMIX-Electron`](https://github.com/alexisvassquez/audiomix-electron) | Visual front-end shell for artists, producers, and developers. |
 
 Once the FastAPI bridge is live, the Electron client will automatically surface real-time system info from the AudioMIX backend.
 
