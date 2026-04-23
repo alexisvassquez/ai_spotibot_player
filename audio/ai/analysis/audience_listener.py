@@ -2,7 +2,11 @@
 # AudioMIX
 # audio/ai/analysis/audience_listener.py
 
-# This script listens to the microphone input for a specified duration and calculates the average loudness in decibels (dB). If the average loudness exceeds a defined threshold, it indicates that the audience is hyped or cheering.
+# This script listens to the microphone input 
+# for a specified duration and calculates 
+# the average loudness in decibels (dB). 
+# If the average loudness exceeds a defined threshold,
+# it indicates that the audience is hyped or cheering.
 
 import pyaudio
 import numpy as np
@@ -36,7 +40,7 @@ def detect_hype(threshold_db=65, listen_time=3, chunk=1024, rate=44100):
     stream.close()
     p.terminate()
 
-    avg_db = np.mean([d for d in loudness if not np.isnan(d)])
+    avg_db = np.mean([d for d in loudness_readings if not np.isnan(d)])
     print (f"[Juniper2.0] Average Loudness: {avg_db:.2f} dB")
 
     return avg_db >= threshold_db
