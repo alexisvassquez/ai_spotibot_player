@@ -1,11 +1,49 @@
+# ai_spotibot_player
+# AudioMIX
+# audio/ai/analysis/inference_engine.py
+
+# Inference Engine for AudioMIX
+# This module takes extracted audio features and infers high-level events, moods, and lighting profiles.
+# It generates an AudioScript with inferred commands and a lighting profile based on detected emotions, BPM, and audience engagement.
+
 import os
 import json
+from audio.ai.planners.lighting_orchestrator import apply_dynamic_zoning
 from audio.led.color_profiles import get_color_for_mood, get_pattern_for_mood
 from audio.led.audio_reactive import react_to_audio
 from audio.ai.modules.tempo_analysis import get_bpm_from_audio
-from audio.ai.audience_listener import detect_hype
+from audio.ai.analysis.audience_listener import detect_hype
+
+# Mood-to-Zone Mapping Matrix
+# This mapping defines which zones to activate based on the inferred mood and BPM range.
+ZONE_MAP = {
+    "calm": {
+        "zones": ["ceiling"],
+        "bpm_range": (0, 100)
+    },
+    "melancholy": {
+        "zones": ["back_wall"],
+        "bpm_range": (0, 110)
+    },
+    "excited": {
+        "zones": ["front_strip"],
+        "bpm_range": (120, 140)
+    },
+    "intense": {
+        "zones": ["front_strip", "ceiling"],
+        "bpm_range": (140, 160)
+    },
+    "euphoric": {
+        "zones": ["front_strip", "ceiling", "back_wall"],
+        "bpm_range": (160, 200)
+    }
+}
 
 def interpret_from_features(features, output_path="audio/analysis_output/inferred_script.audioscript"):
+    """
+    Takes extracted audio features and infers high-level events and moods.
+    Generates an AudioScript with inferred commands and a lighting profile based on detected emotions.
+    """
     events = []
     times = features.get("times", [])
     rms = features.get("rms", [])
@@ -37,7 +75,7 @@ def interpret_from_features(features, output_path="audio/analysis_output/inferre
         for line in sorted(set(events)):
             f.write(line + "\n")
 
-    print (f"✅ Inference complete. {len(events)} AudioScript commands written to inferred_script.audioscript.")
+    print (f"Inference complete. {len(events)} AudioScript commands written to inferred_script.audioscript.")
 
     # Emotion Inference
     emotion_tags = set()
@@ -48,6 +86,12 @@ def interpret_from_features(features, output_path="audio/analysis_output/inferre
     avg_rms = sum(rms) / len(rms)
     avg_centroid = sum(spectral_centroid) / len(spectral_centroid) if spectral_centroid else 0
 
+    """
+    Simple heuristic-based emotion inference:
+    - Low RMS + low centroid = "calm", "warm"
+    - High RMS + high centroid = "intense", "bright"
+    - Cross-analysis can yield "excited" or "melancholy"
+    """
     if avg_rms < 0.05:
         emotion_tags.add("calm")
     elif avg_rms > 0.2:
@@ -68,35 +112,14 @@ def interpret_from_features(features, output_path="audio/analysis_output/inferre
     if emotion_tags:
         events.insert(0, f"# emotion: {', '.join(sorted(emotion_tags))}")
 
-    # Dyamic zone-based lighting activation
-    # Mood-to-Zone Mapping Matrix
-    ZONE_MAP = {
-        "calm": {
-            "zones": ["ceiling"],
-            "bpm_range": (0, 100)
-        },
-        "melancholy": {
-            "zones": ["back_wall"],
-            "bpm_range": (0, 110)
-        },
-        "excited": {
-            "zones": ["front_strip"],
-            "bpm_range": (120, 140)
-        },
-        "intense": {
-            "zones": ["front_strip", "ceiling"],
-            "bpm_range": (140, 160)
-        },
-        "euphoric": {
-            "zones": ["front_strip", "ceiling", "back_wall"],
-            "bpm_range": (160, 200)
-        }
-    }
-
+    # Dyamic zone-based lighting activation based on BPM and audience hype
     bpm = get_bpm_from_audio(features)
     zone = ["main"]
 
     if detect_hype(threshold_db=70):
+        """
+        Hype detection: If the audience is hyped (e.g., loud cheering), we can override the mood to "excited" and activate all zones for maximum impact.
+        This is a real-time reactive feature that adds an extra layer of interactivity based on audience engagement."""
         print ("[🔥] Hype detected - overring mood to 'excited' in 'stage_front'")
         emotion_tags.add("excited")
         zone = ["front_strip", "ceiling", "back_wall"]
@@ -107,6 +130,10 @@ def interpret_from_features(features, output_path="audio/analysis_output/inferre
 
 # Mood-to-Zone Resolver
 def get_zones_for_mood_bpm(mood, bpm):
+    """
+    This function takes a mood and BPM value and returns the appropriate zones to activate based on the ZONE_MAP configuration.
+    If the mood is not found or the BPM is out of range, it returns a default zone.
+    """
     default = ["main"]
     config = ZONE_MAP.get(mood)
     if not config:
@@ -118,6 +145,9 @@ def get_zones_for_mood_bpm(mood, bpm):
 
 # LED Mapping
 def generate_lighting_profile(emotion_tags, bpm=128, zone=["main"], output_path="audio/analysis_output/lighting_profile.json"):
+    """
+    Generates a lighting profile JSON based on the inferred emotion tags, BPM, and zones. This profile can be used by the lighting orchestrator to create dynamic light shows that match the music's mood and energy.
+    """
     profile = []
 
     for mood in emotion_tags:
