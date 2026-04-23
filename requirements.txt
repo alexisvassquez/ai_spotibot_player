@@ -31,10 +31,6 @@ torchvision
 transformers
 joblib
 
-# --- Speech + NLP ---
-SpeechRecognition
-gTTS
-
 # --- Data + Config ---
 pandas
 pyyaml>=6.0
