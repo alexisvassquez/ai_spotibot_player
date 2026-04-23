@@ -9,16 +9,27 @@
 ![DSP](https://img.shields.io/badge/audio-DSP-critical)
 ![Built For](https://img.shields.io/badge/built%20for-artists%20%26%20developers-ff69b4)
 
-**AudioMIX** is an open-source artist-friendly audio platform designed for independent artists, producers, and developers. **AudioMIX** combines AI-driven audio analysis, real-time audio processing and live performance control into a unified creative system.
-Spotibot was its original name..
+> **AudioMIX is where music production meets live performance engineering.**  
+> Write a script. Make a beat. Light up a room. All from one platform.
 
-> Modular, expressive, and built for real-time creative performance.
+**AudioMIX** is an open-source, AI-assisted digital audio workstation built for independent artists, producers, and developer-musicians who want more than a traditional DAW. It combines a real-time C++ DSP engine, an AI creative assistant (Juniper2.0), and ***AudioScript*** — a custom musical programming language — into a single unified system designed for both the studio and the stage.
 
-I update this repo continuously via my local terminal. :) <3
+Whether you're producing a track, coding a live set, or synchronizing LED lighting to a crowd's energy in real time, **AudioMIX** gives you the tools to do it expressively and programmatically.
 
-**✨If AudioMIX resonates, consider starring the repo**
+> This is not just a DAW. It's a creative operating system for performers.
 
-*Thanks for taking a look!*
+✨ If AudioMIX resonates, consider starring the repo and sharing it with your network.
+
+---
+
+## Why AudioMIX?
+
+Most DAWs are built for the studio. Most live coding tools aren't built for artists.
+**AudioMIX** bridges that gap — giving musicians the power of code without losing the feeling of performance.
+
+- 🎛️ **Producer?** Use the DSP engine and AI mood analysis to build and refine your sound
+- 🎤 **Live performer?** Script your entire show — audio, lighting, and transitions — in AudioScript
+- 💻 **Developer-musician?** Extend the platform, contribute to AudioScript, or plug in your own modules
 
 ---
 
@@ -55,9 +66,9 @@ GNU General Public License v3 (open-source and free to use for independent artis
 
 **AudioMIX** is modular by design, allowing for rapid extension into a full-scale music AI and production framework. The system will be organized into the following key components:
 
-### 1. `audio/`
+### 1. `audio/dsp` and `audio/ai`
 
-**Purpose:** real-time DSP audio engine and feature extraction from audio files
+**Purpose:** real-time DSP audio engine and feature extraction from audio files using AI/ML models for mood and BPM classification.
 **Current Capabilities:**
 
 - Mel-frequency cepstral coefficients (MFCC)
@@ -132,7 +143,9 @@ GNU General Public License v3 (open-source and free to use for independent artis
 
 ## AudioScript - The Language of AudioMIX
 
-**AudioScript** is a custom musical programming domain-specific language (DSL) created for **AudioMIX.** It allows users to control audio playback, LED behaviors, and mood transitions using expressive, scriptable commands in high-level syntax.
+***AudioScript (AS)*** is a custom musical programming language built from the ground up for **AudioMIX.** It gives artists and developers a human-readable, expressive way to control audio playback, LED behaviors, mood transitions, and live performance scenes — all in code.
+
+Think of it as sheet music for the digital age. Instead of clicking through menus, you write a script. AudioScript handles the rest.
 
 ---
 
@@ -144,6 +157,29 @@ GNU General Public License v3 (open-source and free to use for independent artis
 - Designed for live performance, emotional scripting, and AI augmentation
 - Influences of Python, C++, and Haskell
 
+---
+
+### Two Branches. One Language
+
+AudioScript is designed with two distinct execution modes, each built for a different creative context:
+
+**🔧 IR (Intermediate Representation)**  
+The machine-readable layer of AudioScript. IR is auto-generated from its own compiler and designed for precision — ideal for compiled performance pipelines, AI-assisted generation, and programmatic show control. If Juniper2.0 is writing your set, she's writing in IR.
+
+**🎛️ Live**  
+The human-facing layer. Live mode is optimized for real-time coding performances — expressive, forgiving, and designed to be written on stage. Change a mood, trigger a light pattern, drop a beat. All without stopping the show.
+
+---
+
+### AudioScript Features
+
+- Human-readable, whitespace-sensitive syntax
+- Modular commands: `play()`, `glow()`, `pulse()`, `mood.set()`, and more
+- CLI interpreter with real-time execution
+- Two execution modes: IR (machine-generated) and Live (performance-optimized)
+- Influenced by Python, C++, and Haskell
+- Designed for AI augmentation via Juniper2.0
+
 ### Sample Script
 
 ```python
@@ -153,30 +189,57 @@ play("intro.wav")
 pulse("yellow", bpm=120)
 ```
 
-> More can be found in the `audioscript/` directory
-**AudioScript** is still evolving. View the full language spec here: [AUDIOSCRIPT_SPEC.md](./AUDIOSCRIPT_SPEC.md)
+**AudioScript** is actively evolving alongside AudioMIX.
+
+View the full language spec here: [AUDIOSCRIPT_SPEC.md](./AUDIOSCRIPT_SPEC.md)
+
+Explore the `audioscript/` directory to see it in action, including the compiler, CLI interpreter, and test scripts.
 
 ---
 
 ## Juniper2.0 – The AudioMIX AI Core
 
-**Juniper2.0** is the intelligent assistant inside AudioMIX, designed to:
+Most AI tools are general purpose. Juniper2.0 is not.
 
-- Assist with **AudioScript** generation and debugging
-- Suggest mood-optimized track flows and EQ settings
-- Recommend LED and emotional mappings
-- Guide live creative workflows in real time
+Juniper2.0 is the intelligent creative assistant built specifically for AudioMIX. She understands your sound, your mood mappings, your LED configurations, and your AudioScript syntax — and she uses that context to collaborate with you in real time, not just respond to prompts.
 
+> She is not here to replace the artist. She is here to make the artist unstoppable.
+
+---
+
+### What Juniper2.0 Does
+
+**🎵 AudioScript Generation & Debugging**  
+Juniper2.0 can write, suggest, and debug AudioScript in both IR and Live modes.
+Describe what you want your show to feel like — she'll script it.
+
+**🎛️ Mood-Optimized Production Assistance**  
+From EQ suggestions to track flow recommendations, Juniper2.0 analyzes the emotional arc of your set and helps you shape it intentionally.
+
+**💡 LED & Emotional Mapping**  
+Tell her the mood. She'll map the light. Juniper2.0 connects your audio's emotional fingerprint to your LED configurations automatically.
+
+**🎤 Live Performance Guidance**  
+During a live set, Juniper2.0 can respond to audience energy, suggest transitions, and keep your performance moving — all in real time.
 **Juniper2.0** will be integrated into the CLI and future UI to provide intelligent inline suggestions and personalized creative support for musicians and coders alike.
 
-> Juniper doesn’t replace the artist—she collaborates with them.
+---
+
+### Design Philosophy
+
+Juniper2.0 is built on an artist-first principle: **she amplifies creative intent, she does not override it.**
+
+Every suggestion she makes is traceable, adjustable, and ultimately in service of your vision.
+
+> "Juniper doesn't replace the artist — she collaborates with them."
+
+Juniper2.0 will be integrated into the CLI and the AudioMIX-Electron desktop UI, providing intelligent inline suggestions and personalized creative support whether you're in the studio, in your bedroom, or on the stage.
 
 ---
 
 ## System Architecture Map
 
 Below is the current system-level architecture of **AudioMIX,** including modules written in *Python*, *C++,* and *AudioScript:*
-**AudioMIX will rave. Thank you :)**
 
 ![AudioMIX System Map](docs/system_map.png)
 
