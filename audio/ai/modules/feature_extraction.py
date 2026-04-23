@@ -9,7 +9,9 @@ It includes features such as MFCCs, spectral
 contrast, spectral bandwidth, and tempo. 
 The extracted features are returned in a structured
 format for use in machine learning models or other
-applications. The module also includes verbose logging to provide insights into the feature extraction process and the time taken for each step.
+applications. 
+The module also includes verbose logging to provide insights 
+into the feature extraction process and the time taken for each step.
 """
 
 import librosa
