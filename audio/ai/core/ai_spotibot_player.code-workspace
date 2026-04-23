@@ -1,0 +1,46 @@
+{
+	"folders": [
+		{
+			"path": "../../.."
+		},
+		{
+			"name": "audiomix-electron",
+			"path": "../../../../../audiomix-electron"
+		},
+		{
+			"name": "alexisvassquez",
+			"path": "../../../../../alexisvassquez"
+		},
+		{
+			"name": "fintrust_cobol",
+			"path": "../../../../../fintrust_cobol"
+		},
+		{
+			"name": "music-commons",
+			"path": "../../../../../music-commons"
+		}
+	],
+	"settings": {
+		"workbench.editor.wrapTabs": true,
+		"window.density.editorTabHeight": "compact",
+		"workbench.editor.tabSizing": "shrink",
+		"workbench.editor.preferHistoryBasedLanguageDetection": true,
+		"workbench.editor.defaultBinaryEditor": "default",
+		"java.compile.nullAnalysis.mode": "automatic",
+		"coboleditor.metadata_symbols": [
+			"acctmgmt,account_management.cbl,1",
+			"hello-world,hello.cbl,1",
+			"ledgersm,ledger_summary.cbl,1",
+			"viewtrans,view_transactions.cbl,1"
+		],
+		"coboleditor.metadata_entrypoints": [],
+		"coboleditor.metadata_types": [],
+		"coboleditor.metadata_files": [
+			"1776480493773,programs/account_management.cbl",
+			"1776480493773,programs/hello.cbl",
+			"1776480493773,programs/ledger_summary.cbl",
+			"1776480493773,programs/view_transactions.cbl"
+		],
+		"coboleditor.metadata_knowncopybooks": []
+	}
+}
