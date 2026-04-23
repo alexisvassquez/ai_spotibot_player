@@ -24,9 +24,14 @@ def convert_to_wav(input_path):
     Convert an audio file to WAV format using pydub.
     This ensures compatibility with librosa and consistent sample rates.
     """
-    audio = AudioSegment.from_file(input_path)    # Load original file (mp3, flac, etc.)
-    audio = audio.set_frame_rate(44100).set_channels(2).normalize()    # Normalize + ensure consistent sample rate/channel format
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as temp_wav:    # Export to temp .wav file
+    # Load original file (mp3, flac, etc.)
+    audio = AudioSegment.from_file(input_path)
+
+    # Normalize + ensure consistent sample rate/channel format
+    audio = audio.set_frame_rate(44100).set_channels(2).normalize()
+    
+    # Export to temp .wav file
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as temp_wav:
         audio.export(temp_wav.name, format="wav")
         return temp_wav.name
 
