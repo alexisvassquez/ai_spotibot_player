@@ -1,3 +1,7 @@
+# ai_spotibot_player
+# AudioMIX
+# audio/ai/datasets/labels.jsonl
+
 # Each line represents one clip label in JSON format.
 # Remove this comment block and add one JSON object per line when contributing.
 # Example schema:
