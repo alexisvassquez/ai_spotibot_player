@@ -2,7 +2,11 @@
 # AudioMIX
 # audio/ai/analysis/features_summary.py
 
-# This script loads the extracted audio features from a JSON file and provides a summary of each feature, including mean, variance, and other statistics. It also includes an optional plotting function to visualize specific features over time.
+# This script loads the extracted audio features from
+# a JSON file and provides a summary of each feature,
+# including mean, variance, and other statistics. 
+# It also includes an optional plotting function to
+# visualize specific features over time.
 
 import json
 import numpy as np
@@ -72,6 +76,7 @@ def plot_feature(data, key):
     plt.tight_layout()
     plt.show()
 
+# Main execution
 if __name__ == "__main__":
     # Set path to JSON file
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
