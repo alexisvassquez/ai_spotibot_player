@@ -2,6 +2,8 @@
 # AudioMIX
 # audio/ai/analyze_audio.py
 
+# This script analyzes an audio file using librosa to extract features like MFCCs, spectral contrast, spectral bandwidth, and tempo.
+
 import librosa
 import json
 import sys
@@ -16,6 +18,10 @@ import soundfile as sf
 SAMPLE_DIR = "audio/samples/"
 
 def convert_to_wav(input_path):
+    """
+    Convert an audio file to WAV format using pydub.
+    This ensures compatibility with librosa and consistent sample rates.
+    """
     audio = AudioSegment.from_file(input_path)    # Load original file (mp3, flac, etc.)
     audio = audio.set_frame_rate(44100).set_channels(2).normalize()    # Normalize + ensure consistent sample rate/channel format
     with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as temp_wav:    # Export to temp .wav file
@@ -23,6 +29,14 @@ def convert_to_wav(input_path):
         return temp_wav.name
 
 def analyze(file_path, sr=22050, duration=None, hop_length=1024, verbose=True):
+    """
+    Analyze an audio file and extract features using librosa.
+     - file_path: Path to the input audio file (mp3, flac, wav, etc.)
+     - sr: Sample rate for loading audio (default 22050 Hz)
+     - duration: Duration to load in seconds (default None = full length)
+     - hop_length: Hop length for feature extraction (default 1024)
+     - verbose: Whether to print detailed info during processing
+    """
     wav_path = convert_to_wav(file_path)
     y, sr = librosa.load(wav_path, sr=sr, duration=duration)
 
@@ -62,6 +76,9 @@ def analyze(file_path, sr=22050, duration=None, hop_length=1024, verbose=True):
 
 # After loading audio with librosa (optional)
 def fallback_play(path):
+    """
+    Fallback method to play audio using ffplay if sounddevice fails.
+    """
     try:
         print (f"[INFO] Playing audio using ffplay...")
         os.system(f"ffplay -nodisp -autoexit \"{path}\"")
