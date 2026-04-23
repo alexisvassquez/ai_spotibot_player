@@ -1,8 +1,26 @@
+# ai_spotibot_player
+# AudioMIX
+# audio/ai/modules/feature_extraction.py
+
+# This module provides functions to extract audio features from music files using the librosa library.
+# It includes features such as MFCCs, spectral contrast, spectral bandwidth, and tempo. The extracted features are returned in a structured format for use in machine learning models or other applications. The module also includes verbose logging to provide insights into the feature extraction process and the time taken for each step.
+
 import librosa
 import numpy as np
 import time
 
 def extract_features(file_path, sr=22050, duration=None, hop_length=1024, verbose=True):
+    """
+    Extracts audio features from a given audio file.
+    Args:
+        file_path (str): Path to the audio file.
+        sr (int): Sample rate for loading the audio. Default is 22050 Hz.
+        duration (float): Duration of the audio to load in seconds. Default is None (load full audio).
+        hop_length (int): Number of samples between successive frames. Default is 1024.
+        verbose (bool): If True, prints information about the loaded audio and feature extraction process. Default is True.
+    Returns:
+        dict: A dictionary containing the extracted audio features.
+    """
     y, sr = librosa.load(file_path, sr=sr, duration=duration)
     features = {}
     if verbose:
@@ -33,4 +51,7 @@ def extract_features(file_path, sr=22050, duration=None, hop_length=1024, verbos
 
     elapsed_time = time.time() - start_time
 
+# Verbose logging of feature extraction time
+    if verbose:
+        print(f"[INFO] Extracted features from {file_path} in {elapsed_time:.2f} seconds")
     return features
