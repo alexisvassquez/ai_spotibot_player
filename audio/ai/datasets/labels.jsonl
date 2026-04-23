@@ -4,6 +4,17 @@
 
 # Each line represents one clip label in JSON format.
 # Remove this comment block and add one JSON object per line when contributing.
+# The JSON object should include the following fields:
+# - "file": (string) The filename of the audio clip (e.g., "clip1.wav").
+# - "moods": (array of strings) A list of mood tags (e.g., ["hype", "uplifted"]).
+# - "energy": (number) A value between 0 and 1 representing the energy level of the clip.
+# - "valence": (number) A value between 0 and 1 representing the valence (positiveness) of the clip.
+# - "led_profile": (object) An object defining the LED profile with fields:
+#   - "pattern": (string) The LED pattern (e.g., "strobe", "pulse", "wave").
+#   - "color": (string) The LED color (e.g., "neon_cyan", "magenta", "yellow"). 
+#   - "intensity": (number) A value between 0 and 1 representing the LED intensity.
+# - "crowd_reactivity": (number) A value between 0 and 1 representing how reactive the crowd is expected to be to the clip.
+# - "notes": (string) Optional field for any additional notes or context about the clip.
 # Example schema:
 
 # {
