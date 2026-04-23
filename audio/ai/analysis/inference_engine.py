@@ -45,7 +45,8 @@ ZONE_MAP = {
 def interpret_from_features(features, output_path="audio/analysis_output/inferred_script.audioscript"):
     """
     Takes extracted audio features and infers high-level events and moods.
-    Generates an AudioScript with inferred commands and a lighting profile based on detected emotions.
+    Generates an AudioScript with inferred commands
+      and a lighting profile based on detected emotions.
     """
     events = []
     times = features.get("times", [])
