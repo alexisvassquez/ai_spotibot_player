@@ -2,6 +2,13 @@
 # AudioMIX
 # audio/analysis_output/generate_audio_features.py
 
+# Generates audio features for a set of sample tracks and saves them to JSON files.
+# This modules uses librosa to extract features such as 
+#  MFCCs, spectral contrast, and tempo from a predefined set of audio samples.
+# The extracted features are saved in a structured format 
+#  to "data/audio_features.json", and the corresponding EQ labels are saved to 
+#  "data/eq_labels.json".
+
 import os
 import json
 import librosa

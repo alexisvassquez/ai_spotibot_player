@@ -105,4 +105,4 @@ if __name__ == "__main__":
     print (f"[+] Extracted features from {file_path}")
     tags = predict_labels(features)
 
-    print ("\🎧 Final EQ Tags Selected:", tags)
+    print ("\Final EQ Tags Selected:", tags)
