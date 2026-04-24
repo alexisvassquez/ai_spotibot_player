@@ -2,6 +2,11 @@
 # AudioMIX
 # audio/ai/modules/merge_dataset.py
 
+# Merges metadata from AudioMIX_metadata.csv with labels 
+# from labels.jsonl into a single dataframe for training.
+# This module is designed to be run after both datasets have been generated, 
+# and will handle cases where one or both datasets are empty.
+
 import pandas as pd
 import json
 from pathlib import Path
@@ -14,11 +19,11 @@ def load_and_merge_datasets(meta_path="audio/ai/datasets/AudioMIX_metadata.csv",
         labels = [json.loads(line) for line in f if line.strip() and not line.startswith("#")]
 
     if meta.empty:
-        print ("⚠️  AudioMIX_metadata.csv is empty - nothing to merge yet.")
+        print ("[!] AudioMIX_metadata.csv is empty - nothing to merge yet.")
         return pd.DataFrame()
 
     if not labels:
-        print ("⚠️  labels.jsonl is empty - creating placeholder merge.")
+        print ("[!] labels.jsonl is empty - creating placeholder merge.")
         df_labels = pd.DataFrame(columns=["file"])
     else:
         df_labels = pd.DataFrame(labels)

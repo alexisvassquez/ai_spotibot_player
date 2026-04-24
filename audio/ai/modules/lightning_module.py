@@ -13,14 +13,20 @@
 
 import torch
 import torch.nn as nn
-import pytorch_lightning as pl
+from lightning import LightningModule as pl.LightningModule
 
 # Example usage:
 # model = LightningEQNet(input_dim=100, num_classes=10)
+# trainer = pl.Trainer(max_epochs=10)
+# trainer.fit(model, train_dataloader, val_dataloader)
 class LightningEQNet(pl.LightningModule):
     def __init__(self, input_dim, num_classes, lr=1e-3):
         """
         A simple feedforward neural network for audio label prediction.
+        Args:
+            input_dim: The number of input features.
+            num_classes: The number of output classes (labels).
+            lr: Learning rate for the optimizer.
         """
         super().__init__()
         self.save_hyperparameters()
@@ -36,10 +42,13 @@ class LightningEQNet(pl.LightningModule):
         self.loss_fn = nn.BCELoss()
 
     # Forward pass through the model.
+    # Takes input features and returns predicted
+    #  probabilities for each class.
     def forward(self, x):
         return self.model(x)
 
     # Training step for a batch of data.
+    # Computes the training loss and logs it.
     def training_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
@@ -48,6 +57,7 @@ class LightningEQNet(pl.LightningModule):
         return loss
 
     # Validation step for a batch of data.
+    # Computes the validation loss and logs it.
     def validation_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
@@ -55,5 +65,6 @@ class LightningEQNet(pl.LightningModule):
         self.log("val_loss", loss)
 
     # Optimizer configuration for training
+    # Uses Adam optimizer with the learning rate specified in hyperparameters.
     def configure_optimizers(self):
-        return torch.optim.Adam(self.parameters(), lr=self.hparams.lr)
+        return torch.optim.Adam(self.parameters(), lr=self.hparams['lr'])

@@ -1,3 +1,15 @@
+# ai_spotibot_player
+# AudioMIX
+# audio/ai/planners/lighting_orchestrator.py
+
+# Orchestrates dynamic lighting effects based on predicted emotion tags and BPM.
+# This module takes predicted emotion tags and BPM as input,
+#  and applies corresponding lighting effects to different zones of the room.
+# It uses a predefined mapping of emotions to lighting zones, and includes
+#  fallback logic to assign zones based on BPM if emotion tags are missing.
+# Example usage:
+#   python3 -m audio.ai.planners.lighting_orchestrator
+
 import json
 from audio.led.audio_reactive import react_to_audio
 from audio.led.controller import LightController
@@ -27,11 +39,15 @@ def get_zone_by_bpm(bpm):
     else:
         return "top_ceiling"
 
-wav_path = features.get("source_path") # to be passed manually
-bpm = get_bpm_from_audio(wav_path)
 
-# Main function
 def apply_dynamic_zoning(emotion_tags, bpm=120, debug=False):
+    """
+    Applies dynamic lighting zoning based on emotion tags and BPM.
+    Args:      
+        emotion_tags: List of predicted emotion tags for the current track.
+        bpm: Tempo of the track, used for fallback zoning if no emotions are tagged.
+        debug: If True, prints detailed debug information about zoning decisions.
+    """
     controller = LightController()
 
     for mood in emotion_tags:
@@ -41,10 +57,17 @@ def apply_dynamic_zoning(emotion_tags, bpm=120, debug=False):
         react_to_audio(mood, bpm, zone)
 
 def load_features(path="audio/analysis_output/features_summary.json"):
+    """
+    Loads precomputed audio features from a JSON file.
+    """
     with open(path, "r") as f:
         return json.load(f)
 
 def run_lighting_orchestration():
+    """
+    Main function to run the lighting orchestration
+      based on predicted emotion tags and BPM.
+    """
     data = load_features()
     bpm = int(data.get("tempo", [120])[0])
     emotion_tags = []
