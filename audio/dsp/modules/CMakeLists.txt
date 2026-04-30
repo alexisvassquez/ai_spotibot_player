@@ -2,6 +2,8 @@
 # AudioMIX
 # audio/dsp/modules/CMakeLists.txt
 
+# CMakeLists.txt for the DSP modules of the AudioMIX project.
+
 file(GLOB DSP_MODULE_SOURCES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cc"
