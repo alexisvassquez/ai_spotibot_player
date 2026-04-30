@@ -2,6 +2,23 @@
 # AudioMIX
 # audioscript_runtime.py
 
+# This is the main runtime for AudioMIX's AudioScript.
+# It provides the shell interface,
+#  command registry, and built-in commands.
+# It also loads command modules from the
+#  performance_engine/modules directory.
+# The runtime supports a "safe mode" which only
+#  loads a limited set of modules for
+#  environments with strict security requirements.
+# Usage: 
+# python3 audioscript_runtime.py [--safe] [--no-emoji] [--no-symbols] [--debug] [script.audioscript]
+# 1. Run this script to start the AudioScript shell.
+# 2. Use load("module.py") to load command modules.
+# 3. Type AudioScript commands to control audio playback,
+#  LED patterns, and more.
+# The runtime also supports running .audioscript
+#  files passed as command-line arguments.
+
 from __future__ import annotations
 import sys, os, importlib, shlex, atexit, time
 import readline
@@ -35,6 +52,10 @@ USE_SYMBOLS = True
 VERBOSE = True # Set to True for debugging logs with --debug flag
 
 def main():
+    """
+    Main function to start the AudioScript shell.
+    It loads command modules, processes CLI flags, and enters the interactive loop.
+    """
     print ("main() reached!")
 
 # Register commands to registry function
@@ -42,6 +63,11 @@ def register_command(name: str, func):
     command_registry[name] = func
 
 def say(text, emoji=""):
+    """
+    Print text with optional emoji, respecting global settings for emojis and symbols.
+     - text: the message to print
+     - emoji: optional emoji to prefix the message
+    """
     from audioscript_runtime import USE_EMOJIS, USE_SYMBOLS
 
     # Replace visual symbols with Unicode-safe versions
@@ -57,6 +83,11 @@ def say(text, emoji=""):
 
 # Module loader
 def load_modules():
+    """
+    Load command modules from the performance_engine/modules directory.
+    In SAFE_MODE, only load modules in the SAFE_MODE_ALLOWLIST.
+    Each module should have a register() function that returns a dict of command_name: function pairs.
+    """
     module_dir = "performance_engine/modules"
     for file in os.listdir(module_dir):
         if not file.endswith(".py") or file.startswith("__"):
@@ -88,6 +119,10 @@ def load_modules():
 # Built-in AS functions
 # Lazy imports
 def glow(color):
+    """ 
+    Trigger LED glow with specified color. Color can be a name or hex code. 
+    Example: glow("red") or glow("#FF0000") 
+    """
     say(f"[LED] glowing {color}", "💡")
 
 # Global playback state
@@ -97,6 +132,11 @@ PLAYBACK_MODE = ("lossless", "wav")    # default
 # mode: 'lossless' or 'lossy'
 # codec: one of codec_sim.CODEC_MAP keys (ignored for lossless)
 def set_mode(mode: str, codec: str = "mp3_320"):
+    """
+    Set playback mode to 'lossless' or 'lossy' with specified codec for lossy.
+     - mode: 'lossless' or 'lossy'
+     - codec: codec key for lossy mode (e.g. 'mp3_128', 'aac_256')
+    """
     global PLAYBACK_MODE
     m = (mode or "").strip().lower()
     if m not in ("lossless", "lossy"):
@@ -112,6 +152,9 @@ def set_mode(mode: str, codec: str = "mp3_320"):
         say("Playback mode set to LOSSLESS", "🎚️")
 
 def get_mode():
+    """
+    Get current playback mode and codec if applicable.
+    Returns a string describing the current mode"""
     mode, codec = PLAYBACK_MODE
     if mode == "lossy":
         say(f"Current mode: LOSSY ({codec})", "🎚️")
@@ -125,6 +168,9 @@ register_command("get_mode", get_mode)
 # Load 'path', ensure internal WAV format. If mode is 'lossy', round-trip through codec.
 # Hand off to existing low-latency playback (PortAudio)
 def play(path: str, **kwargs):
+    """
+    Play the specified audio file with current playback mode settings.
+    """
     if SAFE_MODE:
         say(f"[SAFE] Would play: {path} (no audio processing in safe mode)")
         return
@@ -152,15 +198,38 @@ def play(path: str, **kwargs):
         except OSError: pass
 
 def _do_play(wav_path: str, **kwargs):
+    """
+    Internal function to play a WAV file using PortAudio.
+     - wav_path: path to the WAV file to play
+     - kwargs: additional parameters for playback (e.g. volume, loop)
+     """
     say(f"Now playing: {os.path.basename(wav_path)}", "🔊")
 
 def pulse(color, bpm):
+    """ 
+    Trigger LED pulse with specified color and BPM.
+     - color: name or hex code of the color (e.g. "blue" or "#0000FF")
+     - bpm: beats per minute for the pulse rate (e.g. 120) 
+     Example: pulse("blue", 120) 
+    """
     say(f"[LED] pulsing {color} @ {bpm} BPM", "💡")
 
 def mood_set(mood):
+    """ Set the current mood for lighting and effects. 
+    Mood can be any string (e.g. 'calm', 'energetic', 'dark'). 
+     Example: mood_set("calm") 
+    """
     say(f"[MOOD] context set to: {mood}", "🎼")
 
 def trigger_zones(zones, mood="calm", bpm=120):
+    """ 
+    Trigger lighting profiles for specified zones with given mood and BPM.
+     - zones: list of zone names to trigger (e.g. ["zone1", zone2"])
+     - mood: current mood for lighting effects (default: "calm")
+     - bpm: current BPM for pulse synchronization (default: 120)
+     Example: trigger_zones(["zone1", "zone2"], mood="energetic", bpm=140)
+     Note: In SAFE_MODE, this will only print the intended action without triggering actual lighting changes.
+    """
     if SAFE_MODE:
         say(f"[SAFE] Would trigger zones={zones} mood={mood} bpm={bpm}")
         return
@@ -173,6 +242,14 @@ def trigger_zones(zones, mood="calm", bpm=120):
 
 # Command execution
 def parse_and_execute(line):
+    """ 
+    Parse a line of input and execute the corresponding command.
+     - line: the input string to parse and execute
+     The expected format is: command(arg1, arg2, ...)
+     Arguments are parsed using shlex.split to handle quoted strings.
+     If the command is registered in the command_registry, it will be executed with the parsed arguments.
+     The result of the command execution will be printed. If the command is not found or if there is a syntax error, an error message will be printed instead.
+    """
     line = (line or "").strip()
     if line.startswith("#") or not line:
         return # ignore comments and blank lines
