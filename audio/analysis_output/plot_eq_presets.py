@@ -1,6 +1,15 @@
 # ai_spotibot_player
 # AudioMIX
 # audio/analysis_output/plot_eq_presets.py
+
+# This script reads EQ preset configurations from
+#  a JSON file and generates a plot of the EQ curves.
+# It supports presets defined as lists of
+#  frequency-gain pairs and handles potential 
+# data issues gracefully.
+# The resulting plot is saved as "docs/plots/eq_presets.png" 
+# for easy reference in documentation or reports.
+
 import json
 import matplotlib.pyplot as plt
 import os
@@ -20,6 +29,7 @@ with open(preset_path, "r") as f:
 plt.figure(figsize=(10, 6))
 plotted_count = 0
 
+# Iterate through presets and plot each one
 for label, config in presets.items():
     filters = config.get("filters", {})
     freqs = []
@@ -52,6 +62,7 @@ for label, config in presets.items():
     else:
         print (f"[!] No valid filters for: {label}")
 
+# Finalize plot
 plt.title("EQ Preset Curves")
 plt.xlabel("Frequency (Hz)")
 plt.ylabel("Gain (dB)")

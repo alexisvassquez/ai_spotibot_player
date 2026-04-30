@@ -51,6 +51,13 @@ for filepath, labels in samples.items():
 # Save features and labels
 with open("data/audio_features.json", "w") as f:
     json.dump(features_output, f, indent=2)
+# ai_spotibot_player
+# AudioMIX
+# audio/analysis_output/generate_audio_features.py
+
+# Basic function to save EQ labels
+# In real implementation, this would be more 
+# complex and based on actual analysis results
 
 with open("data/eq_labels.json", "w") as f:
     json.dump(labels_output, f, indent=2)
