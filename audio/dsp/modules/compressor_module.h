@@ -37,11 +37,12 @@
 #include "../core/compressor_params.h"
 #include "eq_module.h"
 
-namespace audiomix::dsp
-{
+namespace audiomix::dsp {
 
-  class CompressorModule final : public DspModule
-  {
+  using rbj::BiquadCoeffs;
+  using rbj::RbjCoeffs;
+
+  class CompressorModule final : public DspModule {
   public:
     CompressorModule() = default;
 
@@ -74,8 +75,8 @@ namespace audiomix::dsp
 
       mAttackCoeff = 0.0f;
       mReleaseCoeff = 0.0f;
-      mScHpCurrent = rbj::identity();
-      mScHpTarget = rbj::identity();
+      mScHpCurrent = BiquadCoeffs::identity();
+      mScHpTarget = BiquadCoeffs::identity();
       mScHpTarget = {};
       mScHpSmoothRemaining = 0;
 
@@ -112,7 +113,7 @@ namespace audiomix::dsp
       // Sidechain HP coeffs
       // Re-ealuated p/packet since sr may change since prepare()
       pkt.scHpEnabled = params.sidechain_hp_enabled;
-      pkt.scHpTarget = params.sidechain_hp_enabled ? rbj::highpass(params.sidechain_hp_hz, params.sidechain_hp_q, sr) : rbj::identity();
+      pkt.scHpTarget = params.sidechain_hp_enabled ? RbjCoeffs::makeHighpass(params.sidechain_hp_hz, params.sidechain_hp_q) : BiquadCoeffs::identity();
 
       publishPacket(pkt);
     }
@@ -162,7 +163,7 @@ namespace audiomix::dsp
           {
             const float *dIn = (detectionSource && detectionSource[ch]) ? detectionSource[ch] : nullptr;
             const float s = dIn ? dIn[i] : 0.0f;
-            const float filtered = useScHp ? biquad_process_sample(mScHpCurrent, s, &mSidechainState[ch]) : s;
+            const float filtered = useScHp ? biquad_process_sample(mScHpCurrent, mSidechainState[ch], s) : s;
             const float a = std::fabs(filtered);
             if (a > detectionSample)
               detectionSample = a;
@@ -282,7 +283,7 @@ namespace audiomix::dsp
 
     // Branching peak envelope follower
     inline void updateEnvelope(float& env, float detection) {
-      const float coeff = (detection > env) ? mActive.attackCoeff : mActive.releaseCoeff;
+      const float coeff = (detection > env) ? mAttackCoeff : mReleaseCoeff;
       env = coeff * env + (1.0f - coeff) * detection;
     }
 
@@ -345,7 +346,7 @@ namespace audiomix::dsp
       float mix = 1.0f;
 
       bool scHpEnabled = false;
-      BiquadCoeffs scHpTarget = rbj::identity();
+      BiquadCoeffs scHpTarget = BiquadCoeffs::identity();
     };
 
     void publishPacket(const CompPacket& pkt) {
@@ -411,8 +412,8 @@ namespace audiomix::dsp
     std::vector<BiquadState> mSidechainState;
 
     // smoothed sidechain HP coeffs (shared across channels)
-    BiquadCoeffs mScHpCurrent = rbj::identity();
-    BiquadCoeffs mScHpTarget = rbj::identity();
+    BiquadCoeffs mScHpCurrent = BiquadCoeffs::identity();
+    BiquadCoeffs mScHpTarget = BiquadCoeffs::identity();
     BiquadCoeffs mScHpDelta{};
     int mScHpSmoothRemaining = 0;
 

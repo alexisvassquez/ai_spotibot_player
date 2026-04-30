@@ -34,43 +34,41 @@ namespace audiomix::dsp {
     EqModule() = default;
 
     // thin stereo wrapper around processMulti()
-    void process(const float* inL, const float* inR,
-                 float* outL, float* outR,
-                 unsigned int numFrames) override {
-        const float* const inputs[2] = { inL, inR };
-        float* const outputs[2] = { outL, outR };
-        processMulti(inputs, outputs, 2, numFrames);
+    void process(const float* inL, const float* inR, float* outL, float* outR, unsigned int numFrames) override {
+      const float* const inputs[2] = { inL, inR };
+      float* const outputs[2] = { outL, outR };
+      processMulti(inputs, outputs, 2, numFrames);
     }
 
     void prepare(double sr, unsigned int maxBlock) override {
-        mSampleRate = (sr > 0.0) ? sr : 44100.0;          // 44.1 kHz
-        mMaxBlock   = (maxBlock > 0) ? maxBlock : 512;    // 512 buffer size
+      mSampleRate = (sr > 0.0) ? sr : 44100.0;          // 44.1 kHz
+      mMaxBlock   = (maxBlock > 0) ? maxBlock : 512;    // 512 buffer size
 
-        /*
-           Default: chain is 4ch (Master L/R + Booth L/R)
-           allocate per actual processMulti channel count lazily
-           Coeffs are fixed-size (10 band EQ), states allocated for channels
-           Starts in a known state (no pending packets)
-        */
-        mPacketReadyIndex.store(-1, std::memory_order_relaxed);
-        mPacketWriteIndex.store(0, std::memory_order_relaxed);
-        mPrepared = true;
+      /*
+        Default: chain is 4ch (Master L/R + Booth L/R)
+        allocate per actual processMulti channel count lazily
+        Coeffs are fixed-size (10 band EQ), states allocated for channels
+        Starts in a known state (no pending packets)
+      */
+      mPacketReadyIndex.store(-1, std::memory_order_relaxed);
+      mPacketWriteIndex.store(0, std::memory_order_relaxed);
+      mPrepared = true;
     }
 
     void reset() override {
-        std::fill(mPreampLin.begin(), mPreampLin.end(), 1.0f);
-        mPreampLinGlobal = 1.0f;
+      std::fill(mPreampLin.begin(), mPreampLin.end(), 1.0f);
+      mPreampLinGlobal = 1.0f;
 
-        for (auto& stCh : mState) {
-            for (auto& stBand : stCh) stBand = {};
-        }
+      for (auto& stCh : mState) {
+      for (auto& stBand : stCh) stBand = {};
+    }
 
-        for (int b = 0; b < EqParams::kMaxBands; ++b) {
-            mCurrent[b] = BiquadCoeffs::identity();
-            mTarget[b] = BiquadCoeffs::identity();
-            mDelta[b] = {};
-            mSmoothRemaining[b] = 0;
-        }
+      for (int b = 0; b < EqParams::kMaxBands; ++b) {
+        mCurrent[b] = BiquadCoeffs::identity();
+        mTarget[b] = BiquadCoeffs::identity();
+        mDelta[b] = {};
+        mSmoothRemaining[b] = 0;
+      }
 
         mPreampLinGlobal = 1.0f;
         mPreampTarget = 1.0f;
@@ -127,7 +125,7 @@ namespace audiomix::dsp {
 
       const unsigned int frames = std::min(numFrames, mMaxBlock);
 
-      for (unsigned int i = 0; frame < frames; ++i) {
+      for (unsigned int i = 0; i < frames; ++i) {
         // advance smoothing one sample at a time for all bands (shared) + preamp
         stepSmoothing();
 
@@ -138,12 +136,6 @@ namespace audiomix::dsp {
 
           float x = (in ? in[i] : 0.0f) * mPreampLinGlobal;
 
-          // if input missing, treat as silence
-          for (unsigned int i = 0; i < numFrames; ++i) {
-            if (mPreampSmoothRemaining > 0) {
-                mPreampLinGlobal += mPreampDelta; --mPreampSmoothRemaining;
-            }
-
           for (int band = 0; band < EqParams::kMaxBands; ++band) { 
             x = biquad_process_sample(mCurrent[band], mState[ch][band], x);
           }
@@ -151,10 +143,10 @@ namespace audiomix::dsp {
           out[i] = x;
         }
     }
-}
-    const EqParams& activeParams() const noexcept {
-        return mActive;
-    };
+  }
+
+  const EqParams& activeParams() const noexcept { 
+    return mActive;
   };
 
   private:
