@@ -1,13 +1,15 @@
 // ai_spotibot_player
 // AudioMIX
 // audio/dsp/modules/digital_choir.cpp
-
+//
 // Refer to `digital_choir.h`
 // SFX: "harmonic cloud", implemented as a lush ensemble/choir
-#include "audio/dsp/modules/digital_choir.h"
 
+#pragma once
 #include <algorithm>
 #include <cmath>
+
+#include "audio/dsp/modules/digital_choir.h"
 
 namespace audiomix::dsp {
 

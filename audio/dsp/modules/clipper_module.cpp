@@ -2,7 +2,12 @@
 // AudioMIX
 // audio/dsp/modules/clipper_module.cpp
 //
-// Safe with multichannel bridge
+/* 
+  Safe with multichannel bridge
+  Implements hard and soft clipping modes with drive, ceiling, and mix controls
+  Uses SmoothedParameter for smooth transitions of drive, ceiling, and mix
+  Control plane hooks are placeholders for now, will wire up later with ParamRegistry/BindingTable
+*/
 
 #include "clipper_module.h"
 

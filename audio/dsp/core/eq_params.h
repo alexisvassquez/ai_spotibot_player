@@ -1,7 +1,7 @@
 // ai_spotibot_player
 // AudioMIX
 // audio/dsp/core/eq_params.h
-
+//
 // Minimal header file for EQ parameters
 // 10-band standard
 

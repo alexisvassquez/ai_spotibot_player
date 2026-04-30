@@ -1,15 +1,25 @@
 // ai_spotibot_player
 // AudioMIX
 // audio/dsp/modules/shimmer.h
+//
+/* 
+  SFX: shimmer
+  Texturized sound as ethereal, glassy created by a combo of reverb + pitch-shifting
+  Reverb is processed w/ pitch-shifted harmonics (~octave higher)
+  Implementation: a feedback delay line w/ modulated delay time to approximate pitch shift
+  Control parameters:
+    - Wet/dry mix
+    - Feedback amount (how much of the output is fed back into the input)
+    - Octave mix (how much of the delayed signal is pitch-shifted and added back in)
+    - Base delay time (modulated around this time, sets the overall character of the effect)
+  Threading model: safe to use with multichannel bridge, parameters can be set from control thread via setParameter() with string IDs (AS-friendly) - will clamp and sanitize inputs
+*/
 
-// SFX: shimmer
-// Texturized sound as ethereal, glassy created by a combo of reverb + pitch-shifting
-// Reverb is processed w/ pitch-shifted harmonics (~octave higher)
 #pragma once
-
 #include <string>
 #include <vector>
 #include <cmath>
+
 #include "dsp_module.h"
 
 namespace audiomix::dsp {

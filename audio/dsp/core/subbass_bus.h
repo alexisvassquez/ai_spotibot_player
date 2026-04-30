@@ -1,7 +1,7 @@
-/// ai_spotibot_player
-/// AudioMIX
-/// audio/dsp/core/subbass_bus.h
-
+// ai_spotibot_player
+// AudioMIX
+// audio/dsp/core/subbass_bus.h
+//
 /*
   This struct acts a real-time safe communication bridge between:
      1. SubBassIsolationModule (analysis stage)

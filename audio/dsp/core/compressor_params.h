@@ -1,7 +1,7 @@
 // ai_spotibot_player
 // AudioMIX
 // audio/dsp/core/compressor_params.h
-
+//
 /*
   Compressor parameters - control thread side description of compressor state.
 

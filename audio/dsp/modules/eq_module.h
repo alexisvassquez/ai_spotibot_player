@@ -1,7 +1,7 @@
 // ai_spotibot_player
 // AudioMIX
 // audio/dsp/modules/eq_module.h
-
+//
 /*
    Real-time EQ engine up to 10 bands
    Per-channel biquad state
@@ -11,7 +11,6 @@
 */
 
 #pragma once
-
 #include <vector>
 #include <array>
 #include <algorithm>

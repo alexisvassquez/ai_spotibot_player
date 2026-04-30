@@ -1,7 +1,7 @@
 // ai_spotibot_player
 // AudioMIX
 // audio/dsp/core/eq_params_parse.h
-
+//
 // JSON parsing for EQ parameters
 // Using nlohmann/json (header-only)
 // Validate and clamp cmd == "eq.set"
@@ -13,7 +13,7 @@
 #include <algorithm>
 #include <cctype>
 
-#include "audio/dsp/core/eq_params.h"
+#include "../core/eq_params.h"
 #include <nlohmann/json.hpp>
 
 namespace audiomix::dsp {

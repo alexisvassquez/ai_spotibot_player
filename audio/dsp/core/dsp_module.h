@@ -9,7 +9,6 @@
 // for the control plane
 
 #pragma once
-
 #include <string>
 #include <algorithm>
 #include <cstdint>

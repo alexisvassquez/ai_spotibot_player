@@ -1,7 +1,7 @@
-/// ai_spotibot_player
-/// AudioMIX
-/// audio/dsp/modules/subbass_isolation.h
-
+// ai_spotibot_player
+// AudioMIX
+// audio/dsp/modules/subbass_isolation.h
+//
 /*
   ***Biquad Filter***
   We use a Direct Form I implementation for clarity
@@ -14,6 +14,7 @@
 #pragma once
 #include <cmath>
 #include <cstdint>
+
 #include "../core/subbass_bus.h"
 
 namespace audiomix::dsp {

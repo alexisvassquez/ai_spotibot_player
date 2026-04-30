@@ -11,14 +11,13 @@
 */
 
 #pragma once
-
-#include "audio/dsp/core/dsp_module.h"
-#include "audio/dsp/core/process_spec.h"
-#include "audio/dsp/core/process_context.h"
-
 #include <memory>
 #include <vector>
 #include <algorithm>
+
+#include "../core/dsp_module.h"
+#include "../core/process_spec.h"
+#include "../core/process_context.h"
 
 namespace audiomix::dsp {
 

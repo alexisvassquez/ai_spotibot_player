@@ -4,9 +4,10 @@
 //
 // Refer to gain_module.h
 
-#include "audio/dsp/modules/gain_module.h"
-
+#pragma once
 #include <algorithm>
+
+#include "audio/dsp/modules/gain_module.h"
 
 namespace audiomix::dsp {
 

@@ -1,14 +1,17 @@
 // ai_spotibot_player
 // AudioMIX
 // audio/dsp/modules/shimmer.cpp
-
+//
 // Refer to `shimmer.h`
 // DelayLine implementation
 // Definition: a digital filter, allows a signal to be delayed by
 // a number of samples
-#include "shimmer.h"
+
+#pragma once
 #include <cmath>
-#include <algorithm>    // std::fill
+#include <algorithm> // std::fill
+
+#include "shimmer.h"
 
 namespace audiomix::dsp {
 

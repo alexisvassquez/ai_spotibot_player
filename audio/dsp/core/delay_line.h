@@ -1,13 +1,12 @@
 // ai_spotibot_player
 // AudioMIX
 // audio/dsp/core/delay_line.h
-
+//
 // Fractional delay with linear interpolation
 // Method for estimating a missing value btwn two known data points by drawing
 // a straight line btwn them.
 
 #pragma once
-
 #include <vector>
 #include <algorithm>
 #include <cmath>

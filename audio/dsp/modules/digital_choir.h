@@ -1,19 +1,24 @@
 // ai_spotibot_player
 // AudioMIX
 // audio/dsp/modules/digital_choir.h
-
-// First module in DSP universe: a harmonic cloud/ensemble that takes stereo in
-// downmixes to mono for the voices
-// outputs a wide stereo choir with wet/dry control
+//
+/* 
+  First module in DSP universe: a harmonic cloud/ensemble that takes stereo in downmixes to mono for the voices outputs a wide stereo choir with wet/dry control
+  Each voice has a modulated delay (vibrato) with different base delay and modulation depth
+  to create a lush, moving harmonic cloud effect
+  Control parameters:
+    - Wet/dry mix
+    - Spread (pan distribution of voices)
+    - TODO: Future parameters: density (number of voices), brightness (EQ on voices), etc.
+*/
 
 #pragma once
+#include <vector>
 
 #include "audio/dsp/core/dsp_module.h"
 #include "audio/dsp/core/lfo.h"
 #include "audio/dsp/core/delay_line.h"
 #include "audio/dsp/core/smoothed_parameter.h"
-
-#include <vector>
 
 namespace audiomix::dsp {
 

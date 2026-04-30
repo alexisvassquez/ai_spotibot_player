@@ -2,10 +2,15 @@
 // AudioMIX
 // audio/dsp/core/smoothed_parameter.h
 //
-// Simple exponential smoothing (for wet/dry, depth, etc.)
+/* 
+  Simple exponential smoothing (for wet/dry, depth, etc.)
+  Smooths parameter changes over time to avoid zipper noise and create more natural transitions
+  Uses a time constant (in ms) to determine the smoothing factor (alpha)
+  Alpha is calculated as: alpha = 1 - exp(-1 / (sampleRate * tau)) where tau is the time constant in seconds (timeMs * 0.001)
+  The process() method updates the current value towards the target value using the smoothing factor
+*/
 
 #pragma once
-
 #include <cmath>
 
 namespace audiomix::dsp {

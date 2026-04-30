@@ -14,7 +14,7 @@
 #pragma once
 #include <cmath>
 
-#include "audio/dsp/core/rbj_coeffs.h"
+#include "../core/rbj_coeffs.h"
 
 namespace audiomix::dsp {
 

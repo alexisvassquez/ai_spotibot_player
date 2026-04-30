@@ -8,12 +8,11 @@
 // Applies to all channel pairs auto via multi process bridge
 
 #pragma once
+#include <cmath>
+#include <string>
 
 #include "audio/dsp/core/dsp_module.h"
 #include "audio/dsp/core/smoothed_parameter.h"
-
-#include <cmath>
-#include <string>
 
 namespace audiomix::dsp {
 

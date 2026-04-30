@@ -1,11 +1,13 @@
-/// ai_spotibot_player
-/// AudioMIX
-/// audio/dsp/modules/subbass_isolation.cpp
-
+// ai_spotibot_player
+// AudioMIX
+// audio/dsp/modules/subbass_isolation.cpp
+//
 /*
   Normalizes filter coefficients so that a0 = 1
   This keeps processing efficient and predictable.
 */
+
+#pragma once
 
 #include "subbass_isolation.h"
 

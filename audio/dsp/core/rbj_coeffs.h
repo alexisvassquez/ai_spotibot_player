@@ -1,7 +1,7 @@
 // ai_spotibot_player
 // AudioMIX
 // audio/dsp/core/rbj_coeffs.h
-
+//
 /*
   RBJ Cookbook coefficient generator
   This header generates normalized biquad coefficients
@@ -11,7 +11,6 @@
 */
 
 #pragma once
-
 #include <cmath>
 #include <algorithm>
 
