@@ -25,10 +25,12 @@
 #include "../core/eq_params.h"
 
 namespace audiomix::dsp {
+  using rbj::BiquadCoeffs;
+  using rbj::RbjCoeffs;
 
-// a0 normalized to 1
-class EqModule final : public DspModule {
-public:
+  // a0 normalized to 1
+  class EqModule final : public DspModule {
+  public:
     EqModule() = default;
 
     // thin stereo wrapper around processMulti()
@@ -115,54 +117,50 @@ public:
         mPacketWriteIndex.store(nextWriteIndex, std::memory_order_relaxed);
     }
 
-    void processMulti(const float* const* inputs,
-                      float* const* outputs,
-                      unsigned int numChannels,
-                      unsigned int numFrames) {
-        if (!mPrepared || !inputs || !outputs ||numChannels == 0 || numFrames == 0) { 
-            return; 
-        }
+    void processMulti(const float* const* inputs, float* const* outputs, unsigned int numChannels, unsigned int numFrames) override {
+      if (!mPrepared || !inputs || !outputs ||  numChannels == 0 || numFrames == 0) { return;
+      }
 
-        ensureChannels(numChannels); // ensure channel state exists before consuming packet
-        consumePendingPacket();
+      // ensure channel state exists before consuming packet
+      ensureChannels(numChannels);
+      consumePendingPacket();
 
-        for (unsigned int frame = 0; frame < numFrames; ++frame) {
-            // advance smoothing one sample at a time for all bands (shared) + preamp
-            stepSmoothing();
+      const unsigned int frames = std::min(numFrames, mMaxBlock);
 
-            for (unsigned int ch = 0; ch < numChannels; ++ch) {
-                const float* in = inputs[ch];
-                float* out = outputs[ch];
-            if (!out) continue;
+      for (unsigned int i = 0; frame < frames; ++i) {
+        // advance smoothing one sample at a time for all bands (shared) + preamp
+        stepSmoothing();
 
-            // if input missing, treat as silence
-            for (unsigned int i = 0; i < numFrames; ++i) {
-                if (mPreampSmoothRemaining > 0) {
-                    mPreampLinGlobal += mPreampDelta;
-                    --mPreampSmoothRemaining;
-                }
-                float x = (in ? in[i] : 0.0f); 
-                x *= mPreampLinGlobal;
+        for (unsigned int ch = 0; ch < numChannels; ++ch) {
+          const float* in = inputs[ch];
+          float* out = outputs[ch];
+          if (!out) continue;
 
-                for (int band = 0; band < EqParams::kMaxBands; ++band) {
-                    x = biquad_process_sample(mCurrent[band], mState[ch][band], x);
-                }
+          float x = (in ? in[i] : 0.0f) * mPreampLinGlobal;
 
-                if (out) {
-                    out[frame] = x;
-                }
+          // if input missing, treat as silence
+          for (unsigned int i = 0; i < numFrames; ++i) {
+            if (mPreampSmoothRemaining > 0) {
+                mPreampLinGlobal += mPreampDelta; --mPreampSmoothRemaining;
             }
+
+          for (int band = 0; band < EqParams::kMaxBands; ++band) { 
+            x = biquad_process_sample(mCurrent[band], mState[ch][band], x);
+          }
+
+          out[i] = x;
         }
     }
-
+}
     const EqParams& activeParams() const noexcept {
         return mActive;
-    }
+    };
+  };
 
-private:
+  private:
     struct CoeffPacket {
         EqParams active{};
-        std::array<BiquadCoeffs, EqParams::kMaxBands> targets{};    
+        std::array<BiquadCoeffs,EqParams::kMaxBands> targets{};    
         double sampleRate = 44100.0;    // 44.1 kHz
 
         int bandCount = 0;
@@ -213,11 +211,11 @@ private:
 
         switch (band.type) {
             case EqBandType::Peaking:
-                return RBJCoeffs::makePeakingEQ(sr, f0, q, gainDb);
+              return RbjCoeffs::makePeakingEQ(sr, f0, q, gainDb);
             case EqBandType::LowShelf:
-                return RBJCoeffs::makeLowShelf(sr, f0, gainDb, 1.0f);
+              return RbjCoeffs::makeLowShelf(sr, f0, gainDb, 1.0f);
             case EqBandType::HighShelf:
-                return RBJCoeffs::makeHighShelf(sr, f0, gainDb, 1.0f);
+              return RbjCoeffs::makeHighShelf(sr, f0, gainDb, 1.0f);
             default:
                 return BiquadCoeffs::identity();
         }
@@ -284,28 +282,7 @@ private:
         }
     }
 
-private:
-    struct CoeffPacket {
-        EqParams active{};
-        double sampleRate = 44100.0;    // 44.1 kHz
-
-        int bandCount = 0;
-        int smoothSamples = 1;
-
-        float preampTarget = 1.0f;
-        std::array<BiquadCoeffs, EqParams::kMaxBands> targets{};
-    };
-
-    // control thread publishes fully-computed packet into dbl buffer
-    // audio thread consumes packet w/o locks via an atomic index
-    void publishPacket(const CoeffPacket& pkt) {
-        const int next = 1 - mPacketWriteIndex.load(std::memory_order_relaxed);
-        mPackets[next] = pkt;
-        mPacketReadyIndex.store(next, std::memory_order_release);
-        mPacketWriteIndex.store(next, std::memory_order_relaxed);
-    }
-
-private:
+  private:
     double mSampleRate = 44100.0;    // 44.1 kHz
     unsigned int mMaxBlock = 512;    // max buffer size 512 samples
     bool mPrepared = false;
@@ -336,5 +313,5 @@ private:
     // reserved p/channel preamp cache
     std::vector<float> mPreampLin;
 };
-}
+
 } // namespace audiomix::dsp

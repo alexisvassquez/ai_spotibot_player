@@ -47,8 +47,8 @@ public:
         const float b0 = (1.0f - c.cos_w0) * 0.5f;
         const float b1 = 1.0f - c.cos_w0;
         const float b2 = (1.0f - c.cos_w0) * 0.5f;
-        const float a0 = 1.0f * c.alpha;
-        const float a1 = -2.0f - c.cos_w0;
+        const float a0 = 1.0f + c.alpha;
+        const float a1 = -2.0f * c.cos_w0;
         const float a2 = 1.0f - c.alpha;
         return normalize(b0, b1, b2, a0, a1, a2);
     }
@@ -58,17 +58,17 @@ public:
         const float b0 = (1.0f + c.cos_w0) * 0.5f;
         const float b1 = -(1.0f + c.cos_w0);
         const float b2 = (1.0f + c.cos_w0) * 0.5f;
-        const float a0 = 1.0f * c.alpha;
-        const float a1 = -2.0f - c.cos_w0;
+        const float a0 = 1.0f + c.alpha;
+        const float a1 = -2.0f * c.cos_w0;
         const float a2 = 1.0f - c.alpha;
         return normalize(b0, b1, b2, a0, a1, a2);
     }
 
     static inline BiquadCoeffs makeBandpass(float sampleRate, float frequency, float q = 1.0f) {
         const Common c = makeCommon(sampleRate, frequency, q);
-        const float b0 = 1.0f;
-        const float b1 = -2.0f * c.cos_w0;
-        const float b2 = 1.0f;
+        const float b0 = c.alpha;
+        const float b1 = 0.0f;
+        const float b2 = -c.alpha;
         const float a0 = 1.0f + c.alpha;
         const float a1 = -2.0f * c.cos_w0;
         const float a2 = 1.0f - c.alpha;

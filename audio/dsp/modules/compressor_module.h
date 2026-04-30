@@ -106,7 +106,7 @@ namespace audiomix::dsp
       pkt.thresholdDb = params.threshold_db;
       pkt.ratio = params.ratio;
       pkt.kneeDb = params.knee_db;
-      pkt.makeupDb = db_to_lin(params.makeup_db);
+      pkt.makeupLin = db_to_lin(params.makeup_db);
       pkt.mix = params.mix;
 
       // Sidechain HP coeffs
@@ -131,12 +131,12 @@ namespace audiomix::dsp
 
       const unsigned int frames = std::min(numFrames, mMaxBlock);
       const bool linked = (mActive.stereo_link == StereoLink::Linked);
-      const bool useScHp = mActive.sidechain_hp_enabled
+      const bool useScHp = mActive.sidechain_hp_enabled;
 
-                           // external sidechain plumbing reserved
-                           // currently always uses main input for detection
-                           // TODO: when chain wires sidechain routing, this where the input pointer will swtich.
-                           const float *const *detectionSource = inputs;
+      // external sidechain plumbing reserved
+      // currently always uses main input for detection
+      // TODO: when chain wires sidechain routing, this where the input pointer will swtich.
+      const float *const *detectionSource = inputs;
 
       for (unsigned int i = 0; i < frames; ++i)
       {
@@ -194,12 +194,12 @@ namespace audiomix::dsp
           const float dry = in ? in[i] : 0.0f;
           float gainLin = linkedGainLin;
 
-          if (linked)
+          if (!linked)
           {
             // dual-mono: compute per-channel gain reduction, but still use linked detection/envelope
             const float *dIn = (detectionSource && detectionSource[ch]) ? detectionSource[ch] : nullptr;
             const float s = dIn ? dIn[i] : 0.0f;
-            const float filtered = useScHp ? biquad_process_sample(mScHpCurrent, mSideChainState[ch], s) : s;
+            const float filtered = useScHp ? biquad_process_sample(mScHpCurrent, mSidechainState[ch], s) : s;
             const float det = std::fabs(filtered);
 
             updateEnvelope(mEnvelope[ch], det);
@@ -227,7 +227,7 @@ namespace audiomix::dsp
     float getGainReductionDb() const
     {
       return mGainReductionDb.load(std::memory_order_relaxed);
-    }
+    };
 
   private:
     // Helpers
@@ -258,7 +258,7 @@ namespace audiomix::dsp
     {
       using namespace compressor_limits;
       p.threshold_db = clampf(p.threshold_db, kThresholdMinDb, kThresholdMaxDb);
-      p.ratio = std::max(p.ratio, kRatioMin, kRatioMax);
+      p.ratio = clampf(p.ratio, kRatioMin, kRatioMax);
       p.attack_ms = clampf(p.attack_ms, kAttackMinMs, kAttackMaxMs);
       p.release_ms = clampf(p.release_ms, kReleaseMinMs, kReleaseMaxMs);
       p.knee_db = clampf(p.knee_db, kKneeMinDb, kKneeMaxDb);
