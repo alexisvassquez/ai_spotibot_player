@@ -14,7 +14,7 @@
 #include <cmath>
 #include <algorithm>
 
-namespace audiomix::dsp {
+namespace audiomix::dsp::rbj {
     struct BiquadCoeffs {
         float b0, b1, b2; // feedforward coefficients
         float a1, a2;     // feedback coefficients (a0 is normalized to 1)
@@ -237,4 +237,4 @@ private:
     }
 };
 
-} // namespace audiomix::dsp
+} // namespace audiomix::dsp::rbj

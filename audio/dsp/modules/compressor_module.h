@@ -100,6 +100,132 @@ namespace audiomix::dsp {
       pkt.makeupDb = db_to_lin(params.makeup_db);
       pkt.mix = params.mix;
 
-    }  
+      // Sidechain HP coeffs
+      // Re-ealuated p/packet since sr may change since prepare()
+      pkt.scHpEnabled = params.sidechain_hp_enabled;
+      pkt.scHpTarget = params.sidechain_hp_enabled ? rbj::highpass(params.sidechain_hp_hz, params.sidechain_hp_q, sr) : rbj::identity();
+
+      publishPacket(pkt);
+    }
+    
+    // Audio thread N-channel processing with optional sidechain
+    // sidechain: optional pointer to an array of channel pointers
+    // if params.sidechain_external is true and non-null, detection uses sidechain buffer
+    // otherwise, detection uses main input buffer (first 2 channels if stereo)
+    void processMulti(const float* const* inputs, float* const* outputs, unsigned int numChannels, unsigned int numFrames) override {
+      if (!mPrepared || numChannels == 0 || numFrames == 0) return;
+
+      consumePendingPacket();
+      ensureChannels(numChannels);
+
+      const unsigned int frames = std::min(numFrames, mMaxBlock);
+      const bool linked = (mActive.stereo_link == StereoLink::Linked);
+      const bool useScHp = mActive.sidechain_hp_enabled
+
+      // external sidechain plumbing reserved
+      // currently always uses main input for detection
+      // TODO: when chain wires sidechain routing, this where the input pointer will swtich.
+      const float* const* detectionSource = inputs;
+
+      for (unsigned int i = 0; i < frames; ++i) {
+        // smooth sidechain HP coeffs toward target if enabled
+        if (useScHp && mScHpSmoothRemaining > 0) {
+          mScHpCurrent.b0 += mScHpDelta.b0;
+          mScHpCurrent.b1 += mScHpDelta.b1;
+          mScHpCurrent.b2 += mScHpDelta.b2;
+          mScHpCurrent.a1 += mScHpDelta.a1;
+          mScHpCurrent.a2 += mScHpDelta.a2;
+          --mScHpSmoothRemaining;
+        }
+
+        // build detection signal
+        // linked: max abs across channels
+        float detectionSample = 0.0f;
+
+        if (linked) {
+          // linked: take max absolute value across all channels for detection
+          for (unsigned int ch = 0; ch < numChannels; ++ch) {
+            const float* dIn = (detectionSource && detectionSource[ch]) ? detectionSource[ch] : nullptr;
+            const float s = dIn ? dIn[i] : 0.0f;
+            const float filtered = useScHp ? biquad_process_sample(mScHpCurrent, s, &mSidechainState[ch]) : s;
+            const float a = std::fabs(filtered);
+            if (a > detectionSample) detectionSample = a;
+          }
+        }
+
+        // compute gain reduction (single value if linked)
+        float linkedGainLin = 1.0f;
+        float linkedGrDb = 0.0f;
+
+        if (linked) {
+          updateEnvelope(mEnvelope[0], detectionSample);
+          const float grDb = computeGainReduction(mEnvelope[0]);
+          linkedGrDb = grDb;
+          linkedGainLin = db_to_lin(-grDb);
+        }
+
+        // apply per channel gain reduction with linked detection if linked, or independent detection if dual-mono
+        float maxGrDbThisSample = linkedGrDb;
+
+        for (unsigned int ch = 0; ch < numChannels; ++ch) {
+          const float* in = (inputs && inputs[ch]) ? inputs[ch] : nullptr;
+          float* out = (outputs && outputs[ch]) ? outputs[ch] : nullptr;
+          if (!out) continue;
+
+          const float dry = in ? in[i] : 0.0f;
+          float gainLin = linkedGainLin;
+
+          if (linked) {
+            // dual-mono: compute per-channel gain reduction, but still use linked detection/envelope
+            const float* dIn = (detectionSource && detectionSource[ch]) ? detectionSource[ch] : nullptr;
+            const float s = dIn ? dIn[i] : 0.0f;
+            const float filtered = useScHp ? biquad_process_sample(mScHpCurrent, mSideChainState[ch], s) : s;
+            const float det = std::fabs(filtered);
+
+            updateEnvelope(mEnvelope[ch], det);
+            const float grDb = computeGainReduction(mEnvelope[ch]);
+            if (grDb > maxGrDbThisSample) maxGrDbThisSample = grDb;
+            gainLin = db_to_lin(-grDb);
+          }
+
+          const float wet = dry * gainLin * mActive_makeupLin;
+          out[i] = (1.0f - mActive.mix) * dry + mActive.mix * wet;
+        }
+
+        // publish gain reduction readout (last sample of block wins)
+        if (i + 1 == frames) {
+          mGainReductionDb.store(maxGrDbThisSample, std::memory_order_relaxed);
+        }
+      } 
+    }
+
+    // Public readout - gain reduction in dB (postive = compressing)
+    // Lock-free, safe to read from any thread
+    // e.g., LEDs, modulation, UI, etc.
+    float getGainReductionDb() const {
+      return mGainReductionDb.load(std::memory_order_relaxed);
+    }
+  
+  private:
+    // Helpers
+    static inline float clampf(float v, float lo, float hi) {
+      return std::max(lo, std::min(hi, v));
+    }
+
+    static inline float db_to_lin(float db) {
+      return std::pow(10.0f, db * 0.05f);
+    }
+
+    static inline float lin_to_db(float lin) {
+      // floor to avoid log(0); -120 dB is well below audible
+      // threshold and effectively silence for gain reduction readout purposes
+      return 20.0f * std::log10(std::max(lin, 1.0e-6f));
+    }
+
+    static float computeEnvCoeff(float timeMs, double sampleRate) {
+      const float timeSec = std::max(0.001f, timeMs * 0.001f);
+      return std::exp(-1.0f / (timeSec * static_cast<float>(sampleRate)));
+    }
   };
-}
+
+} // namespace audiomix::dsp

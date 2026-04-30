@@ -19,10 +19,10 @@
 #include <atomic>
 #include <mutex>
 
-#include "audio/dsp/core/dsp_module.h"
-#include "audio/dsp/core/rbj_coeffs.h"
-#include "audio/dsp/core/biquad.h"
-#include "audio/dsp/core/eq_params.h"
+#include "../core/dsp_module.h"
+#include "../core/rbj_coeffs.h"
+#include "../core/biquad.h"
+#include "../core/eq_params.h"
 
 namespace audiomix::dsp {
 

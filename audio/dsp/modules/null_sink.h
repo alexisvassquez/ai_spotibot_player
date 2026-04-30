@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include "audio/dsp/core/dsp_module.h"
+#include "../core/dsp_module.h"
 
 namespace audiomix::dsp {
 

@@ -149,6 +149,6 @@ namespace audiomix::dsp {
 
     inline constexpr float kSidechainHpQMin = 0.1f;
     inline constexpr float kSidechainHpQMax = 4.0f;
-  }
+  };
 
 } // namespace audiomix::dsp

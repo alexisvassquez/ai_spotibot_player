@@ -7,7 +7,7 @@
 #pragma once
 #include <algorithm>
 
-#include "audio/dsp/modules/gain_module.h"
+#include "gain_module.h"
 
 namespace audiomix::dsp {
 

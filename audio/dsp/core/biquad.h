@@ -1,7 +1,7 @@
 // ai_spotibot_player
 // AudioMIX
 // audio/dsp/core/biquad.h
-
+//
 /*
    RBJ Cookbook biquad processing
    Per-channel biquad state refers to the independent storage of delay variables
@@ -23,18 +23,17 @@ struct BiquadState {
     float z2 = 0.0f;
 };
 
-inline void biquad_reset(BiquadState& s) noexcept{
+inline void biquad_reset(BiquadState& s) noexcept {
     s.z1 = 0.0f;
     s.z2 = 0.0f;
-}
+};
 
 inline void biquad_reset_all(BiquadState* states, unsigned int count) noexcept {
     if (!states) return;
-
     for (unsigned int i = 0; i < count; ++i) {
         biquad_reset(states[i]);
-    }
-}
+    };
+};
 
 /*
    Transposed Direct Form II (stable + efficient)
@@ -49,10 +48,10 @@ inline float biquad_process_sample(const BiquadCoeffs& c, BiquadState& s, float 
     s.z1 = c.b1 * x - c.a1 * y + s.z2;
     s.z2 = c.b2 * x - c.a2 * y;
     return y;
-}
+};
 
 inline void biquad_set_identity(BiquadCoeffs& c) noexcept {
     c = BiquadCoeffs::identity();
-}
+};
 
 }    // namespace audiomix::dsp

@@ -11,8 +11,8 @@
 #include <cmath>
 #include <string>
 
-#include "audio/dsp/core/dsp_module.h"
-#include "audio/dsp/core/smoothed_parameter.h"
+#include "../core/dsp_module.h"
+#include "../core/smoothed_parameter.h"
 
 namespace audiomix::dsp {
 
