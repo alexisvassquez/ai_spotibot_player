@@ -41,9 +41,7 @@ public:
     // Process one stereo block
     // inL/inR (input left, input r) may alias outL/outR (output left, output right)
     // for in-place processing
-    virtual void process(const float* inL, const float* inR,
-                         float* outL, float* outR,
-                         unsigned int numFrames) = 0;
+    virtual void process(const float* inL, const float* inR, float* outL, float* outR, unsigned int numFrames) = 0;
 
     /*
       Multichannel entry point (default bridge -> stereo)
@@ -51,10 +49,7 @@ public:
         0/1 = Master L/R, 2/3 = Booth L/R
       Modules that need true multichannel behavior can override
     */
-    virtual void processMulti(const float* const* inputs,
-                              float* const* outputs,
-                              unsigned int numChannels,
-                              unsigned int numFrames)
+    virtual void processMulti(const float* const* inputs, float* const* outputs, unsigned int numChannels, unsigned int numFrames)
     {
         if (numFrames == 0 || numChannels == 0) return;
 
