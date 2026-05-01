@@ -304,7 +304,7 @@ make
 After building, to hear the first breath of AudioMIX run from the root:
 
 ```bash
-./build/test_sine_dsp.cpp
+./build/test_sine_dsp
 ```
 
 ### UI Preview

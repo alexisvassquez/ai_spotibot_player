@@ -7,7 +7,7 @@
   (DigitalChoir -> Shimmer -> EQ -> Gain -> Clipper)
   We can now hear what the engine actually sounds like for the first time.
 
-  Run with ./build/test_sine_dsp.cpp from root
+  Run with ./build/test_sine_dsp from root
 */
 
 #include <iostream>
