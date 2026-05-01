@@ -74,9 +74,8 @@ endforeach()
 # ------------------------------
 # PortAudio Detection
 # ------------------------------
-<<<<<<< HEAD
 # Optional override:
-#    cmake -S . -B build -DPORTAUDIO="C:\path\to\portaudio"
+#    cmake -S . -B build -DPORTAUDIO_ROOT="C:\path\to\portaudio"
 set(PORTAUDIO_ROOT "" CACHE PATH "Optional root directory for PortAudio")
 
 find_path(PORTAUDIO_INCLUDE_DIR
@@ -87,15 +86,6 @@ find_path(PORTAUDIO_INCLUDE_DIR
         /usr/include
         /usr/local/include
 )
-=======
-if (WIN32)
-    find_package(portaudio CONFIG REQUIRED)
-    message(STATUS "Using PortAudio from vcpkg")
-else()
-    find_path(PORTAUDIO_INCLUDE_DIR portaudio.h
-        PATHS "/usr/include" "/usr/local/include" "${CMAKE_SOURCE_DIR}/portaudio/include"
-    )
->>>>>>> 128da5a (modified:   CMakeLists.txt)
 
 find_library(PORTAUDIO_LIBRARY
     NAMES portaudio portaudio_static
