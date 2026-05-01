@@ -7,6 +7,7 @@ before installing Python requirements.
 ---
 
 ## Build Toolchain
+
 - CMake >= 3.22
 - C++17-compatible compiler
   - gcc/g++ (Linux)
@@ -16,6 +17,7 @@ before installing Python requirements.
 ---
 
 ## Audio Stack
+
 - PortAudio (required)
 - ALSA (Linux)
 - PulseAudio or PipeWire (recommended on Linux)
@@ -23,11 +25,13 @@ before installing Python requirements.
 ---
 
 ## MIDI Support
+
 - System MIDI backend (ALSA MIDI / CoreMIDI / Windows MIDI)
 
 ---
 
 ## Python
+
 - Python >= 3.11
 - pip
 - python3-venv (Debian/Ubuntu)
@@ -35,7 +39,20 @@ before installing Python requirements.
 ---
 
 ## Notes
+
 Many Python audio packages (PyAudio, sounddevice, pyalsaaudio)
 are thin bindings over system libraries. If these system
 dependencies are missing, pip installation may succeed
 but runtime audio I/O will fail.
+
+## WSL Audio Note
+
+The system PortAudio package does not include PulseAudio backend support.
+Build from source before compiling AudioMIX:
+    git clone <https://github.com/PortAudio/portaudio.git>
+    cd portaudio
+    ./configure --with-jack=no --enable-pa-backend-pulseaudio
+    make -j$(nproc) && sudo make install && sudo ldconfig
+
+Then configure AudioMIX with:
+    cmake -S . -B build -DPORTAUDIO_ROOT=/usr/local
