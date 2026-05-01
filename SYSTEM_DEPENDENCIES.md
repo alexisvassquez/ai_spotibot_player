@@ -58,7 +58,4 @@ Build from source before compiling AudioMIX:
     ```
 
 Then configure AudioMIX with:
-
-    ```bash
-    cmake -S . -B build -DPORTAUDIO_ROOT=/usr/local
-    ```
+    `cmake -S . -B build -DPORTAUDIO_ROOT=/usr/local`
