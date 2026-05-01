@@ -49,10 +49,16 @@ but runtime audio I/O will fail.
 
 The system PortAudio package does not include PulseAudio backend support.
 Build from source before compiling AudioMIX:
+
+    ```bash
     git clone <https://github.com/PortAudio/portaudio.git>
     cd portaudio
     ./configure --with-jack=no --enable-pa-backend-pulseaudio
     make -j$(nproc) && sudo make install && sudo ldconfig
+    ```
 
 Then configure AudioMIX with:
+
+    ```bash
     cmake -S . -B build -DPORTAUDIO_ROOT=/usr/local
+    ```
