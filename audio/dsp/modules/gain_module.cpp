@@ -4,7 +4,6 @@
 //
 // Refer to gain_module.h
 
-#pragma once
 #include <algorithm>
 
 #include "gain_module.h"

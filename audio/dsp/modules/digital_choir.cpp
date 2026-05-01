@@ -5,7 +5,6 @@
 // Refer to `digital_choir.h`
 // SFX: "harmonic cloud", implemented as a lush ensemble/choir
 
-#pragma once
 #include <algorithm>
 #include <cmath>
 
