@@ -198,3 +198,18 @@ target_link_libraries(test_clipper
 if(UNIX AND NOT APPLE)
     target_link_libraries(test_clipper PRIVATE m)
 endif()
+
+add_executable(test_sine_dsp
+    ${CMAKE_SOURCE_DIR}/audio/dsp/tests/test_sine_dsp.cpp
+)
+
+target_link_libraries(test_sine_dsp
+    PRIVATE 
+        audiomix_dsp_core
+        audiomix_dsp_modules
+        ${PORTAUDIO_LIBRARY}
+)
+
+if (UNIX AND NOT APPLE)
+    target_link_libraries(test_sine_dsp PRIVATE m)
+endif()
