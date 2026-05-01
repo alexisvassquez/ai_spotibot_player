@@ -301,6 +301,12 @@ cmake ..
 make
 ```
 
+After building, to hear the first breath of AudioMIX run from the root:
+
+```bash
+./build/test_sine_dsp.cpp
+```
+
 ### UI Preview
 
 ```bash
