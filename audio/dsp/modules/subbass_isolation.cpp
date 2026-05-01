@@ -7,8 +7,6 @@
   This keeps processing efficient and predictable.
 */
 
-#pragma once
-
 #include "subbass_isolation.h"
 
 namespace audiomix::dsp {

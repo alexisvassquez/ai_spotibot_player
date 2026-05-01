@@ -7,7 +7,6 @@
 // Definition: a digital filter, allows a signal to be delayed by
 // a number of samples
 
-#pragma once
 #include <cmath>
 #include <algorithm> // std::fill
 

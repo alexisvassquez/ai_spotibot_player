@@ -66,6 +66,9 @@ list(FILTER PROJECT_SOURCES EXCLUDE REGEX "portaudio/examples")
 # DSP tests should not be compiled into the main audiomix executable
 list(FILTER PROJECT_SOURCES EXCLUDE REGEX "/audio/dsp/tests/")
 
+# JSON
+list(FILTER PROJECT_SOURCES EXCLUDE REGEX "/json/")
+
 message(STATUS "Filtered project source files: ")
 foreach(src ${PROJECT_SOURCES})
     message(STATUS " ${src}")
@@ -151,20 +154,32 @@ target_include_directories(audiomix PRIVATE
 # ------------------------------
 # Link Libraries
 # ------------------------------
-find_package(nlohmann_json REQUIRED)
+# nlohmann_json (header only, fetched at configure time)
+include(FetchContent)
+FetchContent_Declare(
+    nlohmann_json
+    URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.hpp
+    DOWNLOAD_NO_EXTRACT TRUE
+    DOWNLOAD_DIR ${CMAKE_BINARY_DIR}/_deps/nlohmann
+)
+FetchContent_MakeAvailable(nlohmann_json)
 
-target_link_libraries(audiomix
-    PRIVATE
-        audiomix_dsp_core
-        audiomix_dsp_modules
-        ${PORTAUDIO_LIBRARY}
-        nlohmann_json::nlohmann_json    # NDJSON parser
+target_include_directories(audiomix PRIVATE 
+    ${CMAKE_BINARY_DIR}/deps/nlohmann
 )
 
 if(WIN32)
     target_link_libraries(audiomix PRIVATE winmm)
 elseif(UNIX AND NOT APPLE)
-    target_link_libraries(audiomix PRIVATE asound jack pthread m)
+    target_link_libraries(audiomix PRIVATE
+        audiomix_dsp_core
+        audiomix_dsp_modules
+        ${PORTAUDIO_LIBRARY} 
+        asound 
+        jack 
+        pthread 
+        m
+    )
 endif()
 
 # ------------------------------

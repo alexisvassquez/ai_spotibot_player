@@ -7,7 +7,6 @@
 // Uses smoothed parameter module to smooth linear gain
 // Applies to all channel pairs auto via multi process bridge
 
-#pragma once
 #include <cmath>
 #include <string>
 

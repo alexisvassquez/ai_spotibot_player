@@ -12,7 +12,6 @@
     - TODO: Future parameters: density (number of voices), brightness (EQ on voices), etc.
 */
 
-#pragma once
 #include <vector>
 
 #include "audio/dsp/core/dsp_module.h"
