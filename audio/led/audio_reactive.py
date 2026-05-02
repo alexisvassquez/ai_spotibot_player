@@ -1,3 +1,7 @@
+# ai_spotibot_player
+# AudioMIX
+# audio/led/audio_reactive.py
+
 from audio.led.controller import LightController
 from audio.led.color_profiles import get_color_for_mood, get_pattern_for_mood
 
