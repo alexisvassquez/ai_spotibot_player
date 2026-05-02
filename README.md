@@ -296,9 +296,8 @@ Python requirements are listed in `requirements.txt` and can be installed via th
 git clone https://github.com/alexisvassquez/ai_spotibot_player.git
 cd ai_spotibot_player
 pip install -r requirements.txt
-mkdir build && cd build
-cmake ..
-make
+cmake -S . -B build             # configure
+cmake --build build -j$(nproc)  # compile
 ```
 
 After building, to hear the first breath of AudioMIX run from the root:
