@@ -227,7 +227,8 @@ def trigger_zones(zones, mood="calm", bpm=120):
         say(f"[SAFE] Would trigger zones={zones} mood={mood} bpm={bpm}")
         return
     try:
-        from audio.ai.analysis.inference_engine import generate_lighting_profile    # lazy
+        # lazy
+        from audio.ai.analysis.inference_engine import generate_lighting_profile
         generate_lighting_profile({mood}, bpm=bpm, zone=zones)
         say(f"[LIGHTING] Triggered zones: {zones} | Mood: {mood} | BPM: {bpm}", "🌈")
     except Exception as e:
@@ -245,7 +246,8 @@ def parse_and_execute(line):
     """
     line = (line or "").strip()
     if line.startswith("#") or not line:
-        return # ignore comments and blank lines
+        # ignore comments and blank lines
+        return
 
     if "(" in line and line.endswith(")"):
         command, arg_str = line.split("(", 1)
