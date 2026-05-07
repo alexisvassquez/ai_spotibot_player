@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 ## [v0.1-alpha] - 2025-04-20
 
 ### Added
+
 - `analyze_audio.py` with MFCC, spectral contrast, and BPM analysis
 - Initial `main.cpp` and `audio_utils.cpp` for C++ PortAudio integration
 - `initial-script.py` prototype and CMake configuration for dual-language build
@@ -17,6 +18,7 @@ All notable changes to this project will be documented in this file.
 ---
 
 Future releases will include:
+
 - AudioScript DSL for user-programmable logic
 - Arduino LED integration layer
 - System map + visual architecture
@@ -27,6 +29,7 @@ Future releases will include:
 ## [v0.2-dev] - 2025-05-13
 
 ### Added
+
 - `led/` and `led-service/` modules for mood-to-RGB control and CLI-triggerable LED response
 - `main.py` in `led-service` to accept JSON input (e.g., `{ "mood": "hype", "bpm": 135 }`)
 - Custom color profile mappings and animation patterns (strobe, fade, pulse)
@@ -38,10 +41,12 @@ Future releases will include:
   - Ethical AI section
 
 ### Changed
+
 - Improved project language to reflect real-time modular architecture
 - Replaced “small and simple” messaging with “Modular, expressive, and built for real-time creative performance.”
 
 ### Fixed
+
 - Cleaned Git references and removed hardcoded API secrets from committed files
 - Regenerated and secured Spotify API credentials; `.env` pattern recommended
 
@@ -50,6 +55,7 @@ Future releases will include:
 ## [v0.2-dev] - 2025-06-26
 
 ### Added
+
 - `track_engine.py`: foundational `Track` class with volume, mute, and clip storage
 - `crossfade.py`: threaded volume crossfader between tracks with real-time feedback
 - AudioScript commands: `add_track()`, `add_clip()`, `set_volume()`, `mute_track()`, `crossfade()`
@@ -60,20 +66,24 @@ Future releases will include:
 - `pcvoice.mp3` (moved to `interface/`): original Spotibot voice now canonized as Juniper2.0's audio intro
 
 ### Changed
+
 - Refactored shell logging to route through `say()` for consistent emoji-based output
 - Updated `pulseaudio_oss.sh` for modern Crostini compatibility
 
 ### Fixed
+
 - Git move/restore issue with legacy Spotibot files
 - PulseAudio environment handling under non-owner ChromeOS user accounts
 
 ### Added
+
 - `sampler.py`: AudioScript-based sample trigger engine with `load_sample()` and `trigger_sample()`
 - Real-time LED pulse feedback when triggering samples
 - Support for PCM `.wav` file playback via `aplay`
 - Logging of sample playback metadata (bitrate, channels, frequency)
 
 ### Added
+
 - `sequencer.py`: Step-based pattern engine with `define_pattern()` and `play_pattern()` commands
 - AudioScript DSL support for BPM-controlled sample sequencing
 - Multi-threaded playback with internal `sequence_loop()` logic
@@ -81,6 +91,7 @@ Future releases will include:
 - CLI-safe pattern parsing via `shlex` for string-encoded step sequences
 
 ### Fixed
+
 - Casted BPM string argument to `float()` inside `play_pattern()` to prevent type errors
 - Updated `parse_and_execute()` in `audioscript_runtime.py` to use `shlex.split()` for safe comma handling in string arguments
 
@@ -89,6 +100,7 @@ Future releases will include:
 ## [v0.2.1] - 2025-07-05
 
 ### Added
+
 - `color(color)` AudioScript command to set static LED color
 - `fade(color, duration)` command for LED fade transitions
 - `delay(seconds)` command for pausing scripts
@@ -97,28 +109,35 @@ Future releases will include:
 - Arrow key support via `readline` for CLI shell editing
 
 ### Changed
+
 - Refactored `shell_tools.py` to instantiate `LightController` properly
 - Updated LED command feedback with zone-aware output and emojis
 - Improved developer experience for AudioScript Shell CLI
 
 ### Fixed
+
 - Resolved `ImportError` when accessing LED controller methods inside class
 
 ---
 
 ## [v0.2.2] - 2025-07-14
+
 ### Added
+
 - Modular command loader via `load_dynamic_commands()` in `shell_tools.py`
 - `fade_mod` command as proof-of-concept for dynamic CLI modules
 
 ### Fixed
+
 - Resolved circular import issues by moving `say()` to `utils/shell_output.py`
 - Normalized command parsing to pass arguments as list to `run(args)`
 
 ---
 
 ## [v0.3.0] - 2025-07-20
+
 ### Added
+
 - Implemented `eq_dataset.py` to dynamically load features and label EQ presets from audio directory and combined JSON
 - Built and debugged `plot_eq_presets.py` for visualizing EQ profiles using matplotlib, with smart parsing of both dict and list formats
 - Added support for color-coded line plots, log-scaled frequency axes, and auto-saving plots to `docs/plots/`
@@ -129,16 +148,20 @@ Future releases will include:
 - `version.py` to keep track of version control via CLI
 
 ### Changed
+
 - Updated plotting script to parse `gain_db` instead of `gain` field
 - Reorganized project tree and confirmed compatibility with GCP CLI utilities
 
 ### Fixed
+
 - Multiple goblins involving invalid filter structures, empty presets, and incorrect JSON parsing during plotting
 
 ---
 
 ## [0.3.1] - 2025-07-22
+
 ### Added
+
 - `train_eq_model.py` script to train a Lightning PyTorch model for EQ classification
 - `LightningEQNet` model with support for multi-label output: `bass_boost`, `mids_cut`, `treble`
 - `EQDataset` with MFCC + Spectral Contrast feature extraction via `librosa`
@@ -146,6 +169,7 @@ Future releases will include:
 - Saved model checkpoint at `models/eq_model.pt` and class labels in `models/eq_labels.txt`
 
 ### Notes
+
 - First successful end-to-end ML flow: custom audio → features → model training → prediction
 - EQ predictions are fully aligned with expected outputs (0.99–1.00 confidence for trained tags)
 - No GPU required; model trains and runs inference entirely on CPU inside Chromebook CLI
@@ -154,38 +178,48 @@ Future releases will include:
 ---
 
 ## [0.3.1] – 2025-07-23
+
 ### Added
+
 - New `Ethical API Use` section in README.md outlining responsible, non-scraping interaction with the Spotify Web API.
 - Added working `spotify/diagnostic.py` test script for initial Spotify API integration.
 
 ### Changed
+
 - Renamed `extract_spotify_features.py` to `spotify_api_features.py` for clarity and better alignment with project goals.
 
 ### Notes
+
 - This update reinforces the project's commitment to API transparency, ethical data use, and support for artist integrity.
 
 ---
 
 ## [0.3.1] - 2025-07-27
+
 ### Added
+
 - `train_eq_model.py`: Complete EQ model training pipeline using precomputed audio features and EQ label annotations.
 - `flatten_features()` method to dynamically flatten all relevant audio feature structures.
 - Debug logging for label/feature key matching, sample count, and input shape diagnostics.
 
 ### Fixed
+
 - Feature-label mismatch errors due to structural assumptions.
 - AttributeError caused by missing `flatten_features()` method in `EQDataset`.
 - Deprecation warnings and formatting issues in `analyze_audio.py` related to `tempo` parsing.
 - Overwriting issue in `audio_features.json` — now supports append-and-merge logic for multiple sample feature entries.
 
 ### Notes
+
 - EQ model now successfully loads features from `audio/analysis_output/data/audio_features.json` and labels from `eq_labels.json`.
 - Current state: **Model training confirmed working. Still in test mode.**
 
 ---
 
 ## [0.3.2] - 2025-08-02
+
 ### Added
+
 - **PyTorch EQ Model Inference**:
   - Implemented `predict_eq.py` to load `eq_model.pt` and extract features.
   - Predicted multi-label EQ tags with confidence scores from `.wav` and `.mp3` files.
@@ -211,17 +245,21 @@ Future releases will include:
   - Ensures consistent waveform output and compatibility with `soundfile`.
 
 ### Fixed
+
 - Fixed `ModuleNotFoundError` for `predict_eq.py` by using `-m` execution (`python3 -m audio.ai.modules.predict_eq`).
 - Resolved `NameError` and `TypeError` in `waveform_to_json.py` caused by variable mismatches and data type goblins (e.g., list vs dict).
 
 ### Misc
+
 - Added `dev_tools/` directory for safe, shell-free developer utilities.
 - Laid groundwork for future MIDI parsing and live waveform visualization in AudioScript shell.
 
 ---
 
 ## [v0.3.3-dev] – 2025-08-06
+
 ### Added
+
 - MIDI Feature Extraction Module (`extract_midi_features.py`)
 - Genre Tag Classifier (`midi_tag_classifier.py`) with refined tag logic
 - Tag-to-Behavior Mapper (`tag_to_settings.py`) with EQ and lighting scene automation
@@ -230,17 +268,22 @@ Future releases will include:
 - Began tagging system that informs Juniper2.0 performance behavior and AudioScript logic
 
 ### Updated
+
 - Expanded tag support to include `modern_pop`, `electronic_dance`, and `classical_expressive`
 - Confirmed system prints intelligent, stylized CLI output for user-facing feedback
 
 ### Notes
+
 - Emotional + creative states now reflected in automated system response
 
 ---
 
 ## [v0.4-dev] - 2025-09-18
+
 Includes backlog of changes previously unaccounted for.
+
 ### Added
+
 - `__init__.py` files in `audio_providers/` and `audio_providers/bandcamp/` to treat directories as Python packages and enable clean imports.
 - **Lossless/lossy playback A/B** 
   - Introduced a runtime playback mode toggle to audition “studio (lossless)” vs “real-world (lossy)” sound.
@@ -259,15 +302,18 @@ Includes backlog of changes previously unaccounted for.
   - `midi_bridge.py` — mapping JSON loader and tag-classification pipeline to AudioScript actions.
 
 ### Changed
+
 - Renamed `spotify/` directory to `audio_providers/` to support Spotify and Bandcamp integrations.
 - Cleaned absolute imports and typos across `sampler.py`, `midi.py`, and `midi_bridge.py`.
 
 ### Fixed
+
 - Safer temp-file lifecycle around transcoding and simulation artifacts
 - Cleanup after playback.
 - Clearer errors when `ffmpeg` is not found (actionable message instead of silent failure).
 
 ### Debugging / Refactor
+
 - Began major debugging phase of the **AudioScript Runtime** (`audioscript_runtime.py`):
   - Fixed relative import errors across multiple modules.
   - Added `register_command()` helper to cleanly register runtime commands.
@@ -289,12 +335,15 @@ Includes backlog of changes previously unaccounted for.
   - Marked other heavy libs as candidates for optional/deferred use.
 
 ### TODO:
+
 - **AS Shell stability:** remove any unnecessary imports at the top-level and spread them out to fix what's causing crashes.
 
 ---
 
 ## [v0.4-dev] - 2025-09-24
+
 ### Debugging Milestone
+
 - Completed module-by-module registration test with **Ultra-Safe Runtime**:
   - All modules imported cleanly.
   - No runtime kills when loaded individually.
@@ -305,6 +354,7 @@ Includes backlog of changes previously unaccounted for.
 - Reassured that overall **project architecture is sound**; AudioMIX shell and modules behave as designed once loaded.
 
 ### Notes
+
 - *Chrom-E,* the stalwart Chromebook dev machine, successfully carried both **AudioMIX** and **Track That Money** through this stage of development. 🖤👑  
 - **All hail Chrom-E, King of the Chromebooks!** 👑 Long may he reign until his teammate mini-PC arrives.  
 - Future work: acquire a dedicated mini-PC teammate for heavier compilation and ML workloads, while Chrom-E continues to serve as a reliable dev/test environment.
@@ -312,13 +362,16 @@ Includes backlog of changes previously unaccounted for.
 ---
 
 ## [v0.4-dev] - 2025-10-06
+
 ### Performance Engine Note
+
 - Added `audience_listener.py` script (live mic input module)
 - Detects crowd energy, cheering, or silence based on amplitude thresholds
 - Used to influence `mood` and trigger LED zone changes via `trigger_zones()`
 - Forms part of the Juniper2.0 reactive loop for stage-aware performances
 
 ### Added
+
 - **Functional language features to AudioScript v0.2**:
 - `let` expressions for pattern variables and FX chains
 - `repeat()`, `take()`, and lazy evaluation for infinite sequences
@@ -332,12 +385,14 @@ Includes backlog of changes previously unaccounted for.
 - `intro_showcase.audioscript`: official v0.2 demo script showcasing `let`, `repeat()`, `with` chaining, LED FX, and mood triggers
 
 ### Changed
+
 - `audioscript_runtime.py` split and refactored into modular runtime components
 - AudioScript README updated with new language features and functional DSL architecture
 - `AUDIOSCRIPT_SPEC.md` rewritten to document lazy evaluation, chaining, and reactivity
 
 
 ### Fixed
+
 - Improved REPL handling for nested command input and invalid function chains
 - Robust fallback in `parse_and_execute` for misused commands
 - Emoji-safe REPL output and better formatting of chained outputs
@@ -346,6 +401,7 @@ Includes backlog of changes previously unaccounted for.
 ## [v0.4-dev] - 2025-11-06
 
 ### Added
+
 - `audio_recorder.py` using PyAudio + ALSA for low-latency microphone capture on Chrom-E
 - `record()`, `record_stop()` AudioScript commands for real-time and timed audio takes
 - `list_inputs()`, `record_set_input()`, `record_set_format()` for device selection + channel/rate config
@@ -354,10 +410,12 @@ Includes backlog of changes previously unaccounted for.
 - Support for fallback playback via ChromeOS Files app due to null sink limitation in Crostini
 
 ### Changed
+
 - `oneshot()` logic hardened with goblin-proof error handling and CLI feedback
 - Recording now defaults to 48000 Hz / mono (safe for Chromebooks + VirtIO)
 
 ### Known Limitations
+
 - Playback from within Crostini currently blocked by `null-sink` on non-owner accounts (Chrom-E limitation)
 - Recommended workaround: export or play `.wav` files using Chrome browser or host system
 
@@ -367,18 +425,112 @@ Includes backlog of changes previously unaccounted for.
 
 ### Added
 
-* DSP: Introduced a dedicated DSP modules library (`audiomix_dsp_modules`) with its own CMake subdirectory, enabling scalable module development without modifying `main.cpp` or root source lists.
-* DSP: Added `GainModule` with dB-based gain control, linear-domain smoothing via `SmoothedParameter`, and real-time safe per-sample processing.
-* DSP: Established a hardened DSP chain foundation designed to scale toward multichannel setups (default target: 4 channels for live and booth-style configurations).
+- DSP: Introduced a dedicated DSP modules library (`audiomix_dsp_modules`) with its own CMake subdirectory, enabling scalable module development without modifying `main.cpp` or root source lists.
+- DSP: Added `GainModule` with dB-based gain control, linear-domain smoothing via `SmoothedParameter`, and real-time safe per-sample processing.
+- DSP: Established a hardened DSP chain foundation designed to scale toward multichannel setups (default target: 4 channels for live and booth-style configurations).
 
 ### Changed
 
-* Build: Refactored CMake architecture to clearly separate DSP core and DSP modules, improving dependency hygiene, incremental build times, and long-term maintainability.
-* DSP: Aligned module implementations with existing core DSP APIs (e.g., `SmoothedParameter`) to avoid abstraction drift and ensure deterministic startup/reset behavior.
+- Build: Refactored CMake architecture to clearly separate DSP core and DSP modules, improving dependency hygiene, incremental build times, and long-term maintainability.
+- DSP: Aligned module implementations with existing core DSP APIs (e.g., `SmoothedParameter`) to avoid abstraction drift and ensure deterministic startup/reset behavior.
 
 ### Fixed
 
-* DSP: Corrected issues in `DelayLine` reset logic and related DSP utilities that could cause compilation or runtime instability.
-* Build: Fixed incorrect `file(GLOB ...)` argument ordering in CMake that prevented module `.cpp` files from being discovered.
-* Build: Resolved system clock skew and timestamp-related build warnings that could cause unreliable incremental builds.
+- DSP: Corrected issues in `DelayLine` reset logic and related DSP utilities that could cause compilation or runtime instability.
+- Build: Fixed incorrect `file(GLOB ...)` argument ordering in CMake that prevented module `.cpp` files from being discovered.
+- Build: Resolved system clock skew and timestamp-related build warnings that could cause unreliable incremental builds.
 
+---
+
+## [v0.6-dev] - 2026-05-07
+
+### Architecture
+
+- Defined the two-mode system design that unifies AudioMIX around a clear north star:
+
+  - **Studio Mode** — producer at a desk, AI as collaborator, GUI + live coding, iterative and creative.
+  - **Performance Mode** — on stage, AI autonomous, crowd-reactive, real-time DSP adjustments, lights in sync.
+  - **AudioScript IR** established as the bridge between modes: authored in Studio, executed and mutated in Performance.
+
+- Identified the missing communication backbone and designed the layered message bus architecture:
+
+  - Python runtime → EventBus → DSPBridge → NDJSON → C++ `controlLoop` → DSP modules.
+
+### Added
+
+- `performance_engine/event_bus.py` — promoted from stub to fully operational pub/sub backbone.
+  - Added singleton `bus` instance shared across all of AudioMIX.
+  - Added full module docstring documenting the pub/sub philosophy, event naming conventions, and usage examples.
+
+- `performance_engine/dsp_bridge.py` — new file. The communication layer between the Python runtime and the C++ DSP engine.
+  - Subscribes to DSP events on the `EventBu`s and serializes them to NDJSON for the C++ `controlLoop`.
+  - Handles `dsp.eq.set`, `dsp.compressor.set`, `dsp.gain.set`, and `dsp.ping`.
+  - Thread-safe send via `threading.Lock` to prevent interleaved NDJSON on the pipe.
+  - `listen_for_acks()` stubbed and shaped for future `subprocess.Popen` integration.
+  - `attach_dsp_bridge()` convenience factory for clean startup wiring.
+
+- `performance_engine/modules/compressor.py` — new Python-side command module.
+  - Registers `compressor.set`, `compressor.status`, and `compressor.reset` in the AudioScript shell.
+  - Full parameter validation with descriptive error messages (threshold, ratio, attack_ms, release_ms).
+  - Partial update support — omitted arguments retain their current values.
+  - Emits `dsp.compressor.set` to the `EventBus` on every successful set.
+
+- `audio/dsp/core/compressor_params.h` — new C++ struct mirroring Python compressor parameters.
+- `audio/dsp/core/compressor_params_parse.h` — new NDJSON parser for compressor.set messages.
+  - Partial update aware — missing fields fall back to current `CompressorParams` values rather than hardcoded defaults.
+
+- `audio/dsp/audiomix_dsp.h` — new umbrella header consolidating all DSP core and module includes.
+  - Separates interface headers (included) from internal utility headers (pulled in transitively).
+  - Adding new DSP modules now requires a single line here rather than touching `main.cpp`.
+
+### Changed
+
+- `main.cpp` — significant cleanup and compressor integration:
+  - Replaced individual DSP includes with single `#include "audio/dsp/audiomix_dsp.h"`.
+  - Added `CompressorModule*` to `ControlBus` and `AudioState`.
+  - Added `compressor.set` handler to `controlLoop` with proper ack and error responses.
+  - Wired `CompressorModule` into the DSP chain: Choir → Shimmer → EQ → Compressor → Gain → Clipper.
+  - Removed dead code path in `controlLoop` (unreachable `unknown_command` error after `eq.set`).
+  - Cleaned stale TODO comments now that NDJSON parsing is real.
+  - Clarified PortAudio input/output parameter variable naming to eliminate scope confusion.
+
+- `audioscript_runtime.`py`:
+  - Removed duplicate `main()` stub (`reportRedeclaration` fix).
+  - Integrated `attach_dsp_bridge()` call at boot, before module loading.
+  - Fixed `trigger_zones()` import path: `audio.ai.inference_engine` -> `audio.ai.analysis.inference_engine`.
+  - Rewrote `parse_and_execute()` argument splitting — now handles empty args, quoted string args, and comma-separated numeric args correctly as three distinct cases. Fixed shadowed `line` variable in result loop.
+
+- `CMakeLists.txt`:
+  - Added `set(CMAKE_EXPORT_COMPILE_COMMANDS ON)` to generate `compile_commands.json` for IntelliSense.
+  - Replaced `FetchContent` nlohmann_json with system package (`sudo apt install nlohmann-json3-dev`) — faster, more reliable, no network dependency at configure time.
+
+- `requirements.txt`:
+  - Pinned `torch==2.7.1`, `torchaudio==2.7.1`, `torchvision==0.22.1` to resolve binary compatibility conflict that was preventing five performance engine modules from registering.
+
+### Fixed
+
+- Resolved `torchaudio` undefined symbol error (`torch_library_impl`) caused by mismatched `torch`/`torchaudio`/`torchvision` versions.
+- Fixed `audio.ai.inference_engine` import path in `led_controller.py` and related modules — corrected to `audio.ai.analysis.inference_engine`. Unblocked registration of `sequencer.py`, `crossfade.py`, `led_controller.py`, `clip_launcher.py`, and `sampler.py`.
+- Fixed syntax error in `audience_listener.py` (unmatched `)` on line 40).
+- Installed `pretty_midi` in new virtual environment, unblocking `midi_bridge.py` registration.
+- Fixed `constainsCmd` typo in `main.cpp` `controlLoop` (was causing C++ compiler error).
+- Fixed `param_ids.h` enum syntax — stray semicolon after `GainDb = 0` replaced with comma, resolving five cascading C++ compiler errors.
+- Fixed `inputParams` scope error in `main.cpp` PortAudio setup block.
+- Resolved VS Code IntelliSense false positives by pointing `c_cpp_properties.json` at `build/compile_commands.json` — IntelliSense now reads directly from the compiler's own configuration.
+
+### Milestone
+
+- First successful end-to-end round-trip confirmed: AudioScript shell command -> `parse_and_execute` -> `compressor_set` -> `bus.emit` -> `DSPBridge._handle_compressor_set` -> NDJSON serialization -> confirmed delivery. All layers of the Python pipeline communicating as designed. 🎛️
+
+Boot sequence (all modules now registering cleanly):
+```bash
+🌉 DSP bridge attached
+🧠 shell_tools, audio_recorder, sequencer, audience_listener, audio_player,
+   eq, track_engine, crossfade, led_controller, reset, clip_launcher,
+   sampler, provider_commands, mood_engine, midi, midi_bridge
+```
+
+### Notes
+
+- The C++ process is currently started separately from the Python runtime. `subprocess.Popen` launch from within `DSPBridge` is the next planned integration, which will close the pipe fully and enable real bidirectional ack flow.
+- `session_builder.py`, `fade_mod.py`, `context.py`, `mixer_panel.py`, `shared.py` intentionally show `⚠️ No register()` — these are utility stubs not yet promoted to command modules.

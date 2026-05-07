@@ -253,18 +253,24 @@ def parse_and_execute(line):
         command, arg_str = line.split("(", 1)
         arg_str = arg_str[:-1] # Remove trailing ")"
 
-        if "@" in arg_str:
-            parts = shlex.split(arg_str)
+        if not arg_str:
+            # no arguments
+            parts = []
+        elif '"' in arg_str or "'" in arg_str:
+            # quoted strings
+            # use shlex to handle them correctly
+            parts = [p.strip(",") for p in shlex.split(arg_str)]
         else:
-            parts = shlex.split(arg_str)
+            # numeric or simple args - split on commas
+            parts = [p.strip() for p in arg_str.split(",") if p.strip()]
 
         func = command_registry.get(command)
         if func:
             try:
                 result = func(*parts)
                 if isinstance(result, list):
-                    for line in result:
-                        say(line)
+                    for item in result:
+                        say(item)
                 elif isinstance(result, str):
                     say(result)
                 elif result is not None:
