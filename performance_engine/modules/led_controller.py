@@ -1,3 +1,12 @@
+# ai_spotibot_player
+# AudioMIX
+# performance_engine/modules/led_controller.py
+
+# Module to control LED hardware
+# Defines glow (color name), pulse reaction
+# to BPM, mood reactions, and zones
+# Registers AS commands to the AudioMIX AS shell
+
 import sys
 sys.path.append("audio/led")
 
