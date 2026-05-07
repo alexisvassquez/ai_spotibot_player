@@ -154,19 +154,8 @@ target_include_directories(audiomix PRIVATE
 # ------------------------------
 # Link Libraries
 # ------------------------------
-# nlohmann_json (header only, fetched at configure time)
-include(FetchContent)
-FetchContent_Declare(
-    nlohmann_json
-    URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.hpp
-    DOWNLOAD_NO_EXTRACT TRUE
-    DOWNLOAD_DIR ${CMAKE_BINARY_DIR}/_deps/nlohmann
-)
-FetchContent_MakeAvailable(nlohmann_json)
-
-target_include_directories(audiomix PRIVATE 
-    ${CMAKE_BINARY_DIR}/deps/nlohmann
-)
+# nlohmann_json
+find_package(nlohmann_json 3.2.0 REQUIRED)
 
 if(WIN32)
     target_link_libraries(audiomix PRIVATE winmm)

@@ -37,7 +37,7 @@ def dbfs(x):
 
 def _spectral_flux(prev_mag, cur_mag):
     diff = np.clip(cur_mag - prev_mag, 0, None)
-    return float(np.sum(diff) / len(diff) + 1e-9))
+    return float(np.sum(diff) / len(diff) + 1e-9)
 
 def _normalize_db(db, floor, peak):
     db = np.clip(db, floor, peak)
@@ -79,7 +79,7 @@ def calibrate(mode="quick", device="default", sr=32000, period_size=512, seconds
                 time.sleep(0.002)
         if chunks:
             return np.concatenate(chunks)
-        return np.zeros((period_size, dtype=np.float32)
+        return np.zeros(period_size, dtype=np.float32)
 
     # noise floor
     x_floor = _collect(seconds)

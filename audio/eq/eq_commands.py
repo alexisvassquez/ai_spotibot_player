@@ -1,3 +1,7 @@
+# ai_spotibot_player
+# AudioMIX
+# audio/eq/eq_commands.py
+
 from performance_engine.modules.shared import say
 from performance_engine.modules.context import command_registry
 from audio.eq.equalizer import (

@@ -12,3 +12,6 @@ class EventBus:
     def emit(self, event_name, payload=None):
         for handler in self._subscribers.get(event_name, []):
             handler(payload)
+
+# single shared instance for all of AudioMIX
+bus = EventBus()

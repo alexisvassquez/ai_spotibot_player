@@ -25,7 +25,6 @@ import readline
 from performance_engine.modules.context import command_registry
 
 # Allowlist -> SAFE_MODE (for lighter runtime load)
-# Light modules only
 SAFE_MODE = os.environ.get("AUDIOMIX_SAFE", "0") == "1"
 SAFE_MODE_ALLOWLIST = {
     "context.py",
@@ -49,14 +48,8 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 USE_EMOJIS = True
 USE_SYMBOLS = True
-VERBOSE = True # Set to True for debugging logs with --debug flag
-
-def main():
-    """
-    Main function to start the AudioScript shell.
-    It loads command modules, processes CLI flags, and enters the interactive loop.
-    """
-    print ("main() reached!")
+# Set to True for debugging logs with --debug flag
+VERBOSE = True
 
 # Register commands to registry function
 def register_command(name: str, func):
@@ -234,8 +227,8 @@ def trigger_zones(zones, mood="calm", bpm=120):
         say(f"[SAFE] Would trigger zones={zones} mood={mood} bpm={bpm}")
         return
     try:
-        from audio.ai.inference_engine import generate_lighting_profiles    # lazy
-        generate_lighting_profile({mood}, bpm=bpm, zones=zones)
+        from audio.ai.analysis.inference_engine import generate_lighting_profile    # lazy
+        generate_lighting_profile({mood}, bpm=bpm, zone=zones)
         say(f"[LIGHTING] Triggered zones: {zones} | Mood: {mood} | BPM: {bpm}", "🌈")
     except Exception as e:
         say(f"[ERROR] Lighting trigger failed: {e}", "❌")
@@ -294,6 +287,14 @@ def main():
         VERBOSE = True
     if "--safe" in sys.argv:
         SAFE_MODE = True
+
+    # Boot the event bus and attach
+    # DSP bridge
+    from performance_engine.event_bus import bus
+    from performance_engine.dsp_bridge import attach_dsp_bridge
+
+    bridge = attach_dsp_bridge(bus, verbose=VERBOSE)
+    say("DSP bridge attached", "🌉")
 
     # Load command modules after global settings are set
     load_modules()
