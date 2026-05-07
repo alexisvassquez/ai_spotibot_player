@@ -81,9 +81,23 @@ All notable changes to this project will be documented in this file.
 - Fixed `inputParams` scope error in `main.cpp` PortAudio setup block.
 - Resolved VS Code IntelliSense false positives by pointing `c_cpp_properties.json` at `build/compile_commands.json` — IntelliSense now reads directly from the compiler's own configuration.
 
+- `DSPBridge._send()` — added `separators=(',', ':')` to `json.dumps()` to
+  remove spaces from serialized NDJSON. Python's default serializer produces
+  `"cmd": "compressor.set"` (with spaces) while `containsCmd` in C++ matches
+  against `"cmd":"compressor.set"` (no spaces), causing all commands to fall
+  through to `unknown_command`. One space character. That was the goblin. 🎯
+
 ### Milestone
 
 - First successful end-to-end round-trip confirmed: AudioScript shell command -> `parse_and_execute` -> `compressor_set` -> `bus.emit` -> `DSPBridge._handle_compressor_set` -> NDJSON serialization -> confirmed delivery. All layers of the Python pipeline communicating as designed. 🎛️
+
+- **Phase 1 complete. Full round-trip confirmed with live ack from C++ engine:**
+  AudioScript shell → `parse_and_execute` → `compressor_set` → `bus.emit` →
+  `DSPBridge` → NDJSON subprocess pipe → `controlLoop` → `CompressorModule.setParams()`
+  → `{"cmd":"ack","ack":"compressor.set"}` → `[DSPBridge ← DSP] ack: compressor.set`
+
+  Every layer of the Python ↔ C++ pipeline operational. AudioMIX is now a
+  connected system. 🎛️
 
 Boot sequence (all modules now registering cleanly):
 

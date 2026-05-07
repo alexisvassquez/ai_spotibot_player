@@ -296,12 +296,15 @@ def main():
     if "--safe" in sys.argv:
         SAFE_MODE = True
 
+    LAUNCH_DSP = "--no-dsp" not in sys.argv
+    HEADLESS_DSP = "--no-headless" not in sys.argv
+
     # Boot the event bus and attach
     # DSP bridge
     from performance_engine.event_bus import bus
     from performance_engine.dsp_bridge import attach_dsp_bridge
 
-    bridge = attach_dsp_bridge(bus, verbose=VERBOSE)
+    bridge = attach_dsp_bridge(bus, launch=LAUNCH_DSP, headless=HEADLESS_DSP, verbose=VERBOSE)
     say("DSP bridge attached", "🌉")
 
     # Load command modules after global settings are set
@@ -330,6 +333,7 @@ def main():
             parse_and_execute(line)
         except KeyboardInterrupt:
             say("Exiting AudioMIX Shell. Goodbye 👋", "🛑")
+            bridge.shutdown()
             break
         except Exception as e:
             say(f"[AS Shell Error] {e}", "❌")

@@ -81,6 +81,9 @@ static void controlLoop(ControlBus* bus) {
     while (bus->running.load(std::memory_order_relaxed) && std::getline(std::cin, line)) {
         if (line.empty()) continue;
 
+        // TEMP DEBUG
+        std::cerr << "[controlLoop] received: " << line << std::endl;
+
         // ping/pong
         if (containsCmd(line, "ping")) {
             std::cout << "{\"cmd\":\"pong\"}" << std::endl;
@@ -105,6 +108,18 @@ static void controlLoop(ControlBus* bus) {
             bus->hasPendingEqParams.store(true, std::memory_order_release);
             // ack instead of silence (for testing purposes)
             std::cout << "{\"cmd\":\"ack\",\"ack\":\"eq.set\"}" << std::endl;
+            continue;
+        }
+
+        // compressor.set
+        if (containsCmd(line, "compressor.set")) {
+            CompressorParams parsed;
+            if (!parseCompressorSetLine(line, parsed)) {
+                std::cout << "{\"cmd\":\"error\",\"error\":\"bad_compressor_payload\"}" << std::endl;
+                continue;
+            }
+            if (bus->compressor) bus->compressor->setParams(parsed);
+            std::cout << "{\"cmd\":\"ack\",\"ack\":\"compressor.set\"}" << std::endl;
             continue;
         }
 
@@ -157,8 +172,14 @@ static int audioCallback(const void* inputBuffer, void* outputBuffer, unsigned l
 }
 
 // Main
-int main(int argc, char* argv[]) {
-    std::cout << "AudioMIX DSP is running!" << std::endl;
+int main(int argc, char* argv[]) 
+{
+    // disable stdio sync and force line buffering for pipe mode
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+    setvbuf(stdin, nullptr, _IOLBF, 0);
+
+    std::cerr << "AudioMIX DSP is running!" << std::endl;
 
     // Parse CLI flags
     bool headlessMode = false;
