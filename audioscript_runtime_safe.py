@@ -47,8 +47,8 @@ def show_help():
 
 def analyze(path):
     try:
-        from audio.ai.analyze_audio import analyze as run
-        from audio.ai.inference_engine import interpret_from_features
+        from audio.ai.analysis.analyze_audio import analyze as run
+        from audio.ai.analysis.inference_engine import interpret_from_features
 
         result, *_ = run(path)
         if not result or not isinstance(result, dict):
@@ -65,7 +65,7 @@ def analyze(path):
 # `zones=` kwarg to be coded into inference_engine.py script for LED zone support in future
 def trigger_zones(mood="calm", bpm=120):
     try:
-        from audio.ai.inference_engine import generate_lighting_profile
+        from audio.ai.analysis.inference_engine import generate_lighting_profile
         generate_lighting_profile({mood}, bpm=bpm)
         print (f"🌈  Mood: {mood} | BPM: {bpm}")
     except Exception as e:

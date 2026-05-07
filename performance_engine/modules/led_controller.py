@@ -2,11 +2,11 @@ import sys
 sys.path.append("audio/led")
 
 from audio.led.controller import LightController
-from audio_reactive import react_to_audio
-from color_profiles import get_color_for_mood
+from audio.led.audio_reactive import react_to_audio
+from audio.led.color_profiles import get_color_for_mood
 from performance_engine.utils.shell_output import say
 from performance_engine.modules.context import command_registry
-from audio.ai.inference_engine import generate_lighting_profile
+from audio.ai.analysis.inference_engine import generate_lighting_profile
 
 led = LightController()
 
@@ -26,7 +26,7 @@ def mood_react(mood, bpm):
 
 def trigger_zones(zones, mood="calm", bpm=120):
     try:
-        generate_lighting_profile({mood}, bpm=bpm, zones=zones)
+        generate_lighting_profile({mood}, bpm=bpm, zone=zones)
         say(f"[ZONES] Triggered: {zones} | Mood: {mood} | BPM: {bpm}", "🌈")
     except Exception as e:
         say(f"[ERROR] trigger_zones failed: {e}", "❌")
