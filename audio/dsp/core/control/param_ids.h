@@ -19,7 +19,7 @@ namespace audiomix::control {
 
 enum class ParamID : uint16_t {
     // Global / engine-level
-    GainDb = 0;          // dB gain for GainModule
+    GainDb = 0,          // dB gain for GainModule
     GainSmoothingMs,     // external control of smoothing
 
     // EQ
