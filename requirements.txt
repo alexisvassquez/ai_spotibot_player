@@ -36,6 +36,7 @@ pandas
 pyyaml>=6.0
 tqdm
 
+# --- Testing ---
 # --- External Services ---
 spotipy              # Spotify API integration
 
