@@ -1,6 +1,6 @@
 # ai_spotibot_player
 # AudioMIX
-# audio/ai/compiler/audio2script/script_generator.py
+# audioscript/compiler/audio2script/script_generator.py
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ import os
 from io import StringIO
 from typing import Dict, List
 
-from audio.ai.compiler.audio2script.script_ir import ShowIR, Section, Event
+from audioscript.compiler.audio2script.script_ir import ShowIR, Section, Event
 
 """
 AudioScript (AS) code generator.

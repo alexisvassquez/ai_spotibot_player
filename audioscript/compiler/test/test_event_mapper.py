@@ -1,9 +1,9 @@
 # ai_spotibot_player
 # AudioMIX
-# audio/ai/compiler/test/test_event_mapper.py
+# audioscript/compiler/test/test_event_mapper.py
 
-from audio.ai.compiler.audio2script.analyzer import analyze_audio
-from audio.ai.compiler.audio2script.event_mapper import map_features_to_events
+from audioscript.compiler.audio2script.analyzer import analyze_audio
+from audioscript.compiler.audio2script.event_mapper import map_features_to_events
 
 # Test Event Mapper v0
 def main():

@@ -1,6 +1,6 @@
 # ai_spotibot_player
 # AudioMIX
-# audio/ai/compiler/audio2script/analyzer.py
+# audioscript/compiler/audio2script/analyzer.py
 
 import numpy as np
 import librosa
@@ -8,7 +8,7 @@ import librosa.feature
 import librosa.segment
 
 from typing import List, Tuple
-from audio.ai.compiler.audio2script.script_ir import FeatureFrame, Section
+from audioscript.compiler.audio2script.script_ir import FeatureFrame, Section
 
 """
 Mid-complex audio analyzer for AudioScript (AS) compiler

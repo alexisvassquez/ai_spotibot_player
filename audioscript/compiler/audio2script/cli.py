@@ -1,13 +1,13 @@
 # ai_spotibot_player
 # AudioMIX
-# audio/ai/compiler/audio2script/cli.py
+# audioscript/compiler/audio2script/cli.py
 
 import sys
 import os
 
-from audio.ai.compiler.audio2script.analyzer import analyze_audio
-from audio.ai.compiler.audio2script.event_mapper import map_features_to_events
-from audio.ai.compiler.audio2script.script_generator import generate_audioscript
+from audioscript.compiler.audio2script.analyzer import analyze_audio
+from audioscript.compiler.audio2script.event_mapper import map_features_to_events
+from audioscript.compiler.audio2script.script_generator import generate_audioscript
 
 # CLI runner that saves result to a `.as` file
 def main():

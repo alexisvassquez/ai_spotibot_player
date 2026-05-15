@@ -1,6 +1,6 @@
 # ai_spotibot_player
 # AudioMIX
-# audio/ai/compiler/audio2script/script_ir.py
+# audioscript/compiler/audio2script/script_ir.py
 
 from __future__ import annotations
 from dataclasses import dataclass, field
@@ -10,6 +10,7 @@ from typing import Dict, List, Optional, Literal
 
 # A single point-in-time snapshot of audio feats
 # Dense, continuous timeline from the analyzer
+
 @dataclass
 class FeatureFrame:
     """

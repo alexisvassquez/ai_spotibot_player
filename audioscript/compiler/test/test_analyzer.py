@@ -1,8 +1,8 @@
 # ai_spotibot_player
 # AudioMIX
-# audio/ai/compiler/test/test_analyzer.py
+# audioscript/compiler/test/test_analyzer.py
 
-from audio.ai.compiler.audio2script.analyzer import analyze_audio
+from audioscript.compiler.audio2script.analyzer import analyze_audio
 
 # Test script to verify analyzer's stub logic
 def main():

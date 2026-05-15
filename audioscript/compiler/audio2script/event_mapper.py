@@ -1,9 +1,10 @@
 # ai_spotibot_player
 # AudioMIX
-# audio/ai/compiler/audio2script/event_mapper.py
+# audioscript/compiler/audio2script/event_mapper.py
+
 
 from typing import List
-from audio.ai.compiler.audio2script.script_ir import ShowIR, FeatureFrame, Section, Event
+from audioscript.compiler.audio2script.script_ir import ShowIR, FeatureFrame, Section, Event
 
 """
 Event Mapper v1

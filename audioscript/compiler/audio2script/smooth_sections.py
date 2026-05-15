@@ -1,9 +1,9 @@
 # ai_spotibot_player
 # AudioMIX
-# audio/ai/compiler/audio2script/smooth_sections.py
+# audioscript/compiler/audio2script/smooth_sections.py
 
 from typing import List
-from audio.ai.compiler.audio2script.script_ir import Section
+from audioscript.compiler.audio2script.script_ir import Section
 
 """
 Section Smoother - merges micro-sections into larger musical phrases.

@@ -1,12 +1,12 @@
 # ai_spotibot_player
 # AudioMIX
-# audio/ai/compiler/run.py
+# audioscript/compiler/audio2script/run.py
 
 import argparse
-from audio.ai.compiler.audio2script.analyzer import analyze_audio
-from audio.ai.compiler.audio2script.smooth_sections import smooth_sections
-from audio.ai.compiler.audio2script.event_mapper import map_features_to_events
-from audio.ai.compiler.audio2script.script_generator import generate_audioscript
+from audioscript.compiler.audio2script.analyzer import analyze_audio
+from audioscript.compiler.audio2script.smooth_sections import smooth_sections
+from audioscript.compiler.audio2script.event_mapper import map_features_to_events
+from audioscript.compiler.audio2script.script_generator import generate_audioscript
 
 """
 Universal Runner Script

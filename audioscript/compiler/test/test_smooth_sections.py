@@ -1,9 +1,9 @@
 # ai_spotibot_player
 # AudioMIX
-# audio/ai/compiler/test/test_smooth_sections.py
+# audioscript/compiler/test/test_smooth_sections.py
 
-from audio.ai.compiler.audio2script.analyzer import analyze_audio
-from audio.ai.compiler.audio2script.smooth_sections import smooth_sections
+from audioscript.compiler.audio2script.analyzer import analyze_audio
+from audioscript.compiler.audio2script.smooth_sections import smooth_sections
 
 # Test stub for section smoother
 
