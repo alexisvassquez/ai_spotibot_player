@@ -41,3 +41,4 @@ spotipy              # Spotify API integration
 
 # --- Developer UX + Utilities ---
 rich                 # Colorful logging, pretty tracebacks
+pytest               # Testing framework
