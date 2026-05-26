@@ -56,6 +56,7 @@ struct AudioState {
     GainModule* gain = nullptr;
     ClipperModule* clipper = nullptr;
     CompressorModule* compressor = nullptr;
+    AscensionReverbModule* reverb = nullptr;
 
     // control plane hook
     ControlBus* control = nullptr;
@@ -232,7 +233,27 @@ int main(int argc, char* argv[])
     state.eq = eq;
     control.eq = eq;
 
+    // Reverb module - FDN
+    auto* reverb = state.chain.emplaceModule<AscensionReverbModule>();
+    reverb->setParams(ReverbParams{
+        // 20 ms onset separation
+        .pre_delay_ms = 20.0f,
+        // T60: 2.5 sec tail
+        .decay_s = 2.5f,
+        // slightly large room
+        .size = 1.2f,
+        // warm, moderate HF absorption
+        .damping = 0.55f,
+        // subtle, sits under the mix
+        .wet = 0.25f,
+        // full stereo
+        .width = 1.0f,
+        .sample_rate = static_cast<int>(state.sampleRate)
+    });
+    state.reverb = reverb;
+
     // Compressor module
+    // catches the reverb tail
     auto* compressor = state.chain.emplaceModule<CompressorModule>();
     // defaults
     compressor->setParams(CompressorParams{});
