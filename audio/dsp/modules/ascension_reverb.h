@@ -273,7 +273,7 @@ private:
         }
         // Normalize: 1/sqrt(8) ≈ 0.35355339f
         constexpr float kNorm = 0.35355339f;
-        for (auto& s : x) s *- kNorm;
+        for (auto& s : x) s *= kNorm;
         return x;
     }
 
