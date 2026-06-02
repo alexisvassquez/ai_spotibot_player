@@ -1,7 +1,86 @@
 
-# 📦 CHANGELOG
+# 🎧 AudioMIX Core Engine
 
-All notable changes to this project will be documented in this file.
+## 📦CHANGELOG
+
+All notable changes to the AudioMIX core engine will be documented in this file.
+
+The AudioMIX Electron UI has its own separate changelog in the [AudioMIX Electron UI repository](https://github.com/alexisvassquez/audiomix-electron).
+
+---
+
+## [v0.7-dev] - 2026-06-02
+
+### Architecture
+
+- Aligned `session_state.py` with the AudioMIX Electron UI data model.
+  `SessionState` is now the single source of truth between the Python
+  engine and the Electron renderer — every field maps to a specific UI
+  surface and will be serialized over the FastAPI/WebSocket bridge when
+  the bridge is implemented.
+
+### Added
+
+- `performance_engine/session_state.py` — major expansion:
+
+  - `ClipLayer` dataclass — models a single audio layer inside a clip
+    container. Mirrors the layer data model in `audiomix-layers.jsx`.
+    Fields: `id`, `name`, `source_file`, `gain`, `freq_profile` (7-band
+    energy array: SUB, BASS, LO MID, MID, HI MID, PRESENCE, AIR).
+
+  - `ClipState` dataclass — models a clip container in the arrangement.
+    Clips are containers, not flat blocks — each clip holds multiple
+    `ClipLayer` instances that blend together. Mirrors the clip data
+    model in `audiomix-layers.jsx`. Fields: `id`, `track_id`, `name`,
+    `start_bar`, `length_bars`, `layers`, `is_dragging`.
+
+  - `HALDevice` dataclass — models a connected hardware device.
+    HAL covers LED arrays, DMX lighting rigs, MIDI controllers, OSC
+    routing, speakers, and connected stage machinery. Fields: `name`,
+    `status` ("online" | "offline" | "idle"), `detail`, `device_type`
+    ("led" | "midi" | "osc" | "dmx" | "audio").
+
+  - `make_default_session()` — factory function for clean session
+    initialization with sensible defaults. Called at AudioMIX boot or
+    when a new project is created. Accepts `project_name` argument which
+    flows through to the Electron TopBar and StatusBar displays.
+
+  - New `SessionState` fields added with GUI mapping documented inline:
+
+    | Field | GUI Surface |
+    | :---- | :---------- |
+    | `is_recording` | Transport.jsx record button state |
+    | `playhead_bar` | Arrangement playhead position |
+    | `project_name` | TopBar.jsx project display |
+    | `scene_name` | Sidebar.jsx active scene |
+    | `time_signature` | Transport.jsx time signature display |
+    | `active_script` | AS Shell panel active script |
+    | `audioscript_branch` | Sidebar.jsx IR/Live branch switcher |
+    | `last_as_command` | AS Shell console output |
+    | `last_as_result` | AS Shell console output |
+    | `reverb_mix` | Right panel reverb knob |
+    | `compressor_ratio` | Right panel compressor knob |
+    | `delay_ms` | Right panel delay knob |
+    | `sample_rate` | StatusBar.jsx audio telemetry |
+    | `buffer_size` | StatusBar.jsx audio telemetry |
+    | `latency_ms` | StatusBar.jsx audio telemetry |
+    | `cpu_percent` | StatusBar.jsx CPU display |
+    | `active_clips` | Arrangement clip layer model |
+    | `hal_devices` | Sidebar HAL devices panel |
+    | `last_error` | Debug introspection |
+
+### Notes
+
+- `session_state.py` is now shaped for direct JSON serialization via
+  the FastAPI bridge. When the bridge is implemented, `SessionState`
+  serializes to the exact JSON structure the Electron renderer expects.
+- `ClipLayer.freq_profile` is a 7-band energy array that feeds both
+  the frequency view spectrogram and Juniper2.0's clash detection logic.
+- All new fields include TODO comments pointing to the specific core
+  files that will eventually populate them.
+- `HALDevice` replaces the previous raw `Dict[str, Any]` for
+  `hal_devices` — typed fields enable proper serialization and
+  IDE-assisted development when wiring the HAL layer.
 
 ---
 
