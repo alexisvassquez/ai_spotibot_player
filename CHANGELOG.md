@@ -1,7 +1,7 @@
 
 # 🎧 AudioMIX Core Engine
 
-## 📦CHANGELOG
+## 📦 CHANGELOG
 
 All notable changes to the AudioMIX core engine will be documented in this file.
 
