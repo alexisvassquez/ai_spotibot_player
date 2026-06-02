@@ -237,7 +237,7 @@ Companion desktop UI for the core engine — Electron shell with DAW-style panel
 git clone https://github.com/alexisvassquez/audiomix-electron.git
 cd audiomix-electron
 npm install
-npm start
+npm run dev
 ```
 
 Status: **First Breath** milestone (v0.1-dev). FastAPI bridge to the backend is planned.
