@@ -58,6 +58,7 @@ ehthumbs.db
 # === VSCode or JetBrains IDEs (optional) ===
 .vscode/
 .idea/
+*.code-workspace
 
 # === Git ===
 *.swp
@@ -65,4 +66,4 @@ ehthumbs.db
 portaudio/
 *.save
 .ipynb_checkpoints/
-*.code-workspace
+
