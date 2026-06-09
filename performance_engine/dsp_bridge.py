@@ -2,11 +2,12 @@
 # AudioMIX
 # performance_engine/dsp_bridge.py
 
-# AudioMIX DSP Bridge
 """
-Connects the Python AudioMIX runtime to the 
-C++ DSP engine (audiomix library)
-via a subprocess pipe using NDJSON over stdin/stdout
+AudioMIX DSP Bridge
+
+Connects the Python AudioMIX runtime to the C++ 
+DSP engine (audiomix library) via a subprocess pipe 
+using NDJSON over stdin/stdout.
 
 The bridge subscribes to DSP events on the EventBus and
 forwards them as NDJSON commands to the C++ controlLoop.
@@ -15,17 +16,19 @@ stdout on a dedicated daemon thread.
 
 Launch behavior:
   launch=True (default) - bridge attempts to start the
-    audiomix binary. If the binary is not found, a warning
-    is printed and bridge runs in no-op mode.
-    The Python shell continues to function normally.
-  launch=False - bridge runs in no-op mode intentionally. Use
-    this for stage control scenarios where audio output is
-    handled externally (mixer, DJ setup), or for Python-only
-    development sessions.
+  audiomix binary. 
+  If the binary is not found, a warning is printed and 
+  bridge runs in no-op mode.
+  The Python shell continues to function normally.
+
+  launch=False - bridge runs in no-op mode intentionally. 
+  Use this for stage control scenarios where audio output is
+  handled externally (mixer, DJ setup), or for Python-only
+  development sessions.
 
 CLI flag:
   --no-dsp - passed by audioscript_runtime.py to set
-    launch=False at startup
+  launch=False at startup
 
 Event naming convention:
   "dsp.eq.set" -> {"cmd": "eq.set", ...}
@@ -52,11 +55,12 @@ class DSPBridge:
     commands for the C++ audiomix DSP engine
     
     When launch=True and the binary exists, the bridge
-      starts the process and holds references to its
-      stdin/stdout pipes.
+    starts the process and holds references to its
+    stdin/stdout pipes.
+
     When launch=False or the binary is not found, all
-      send operations are silent no-ops so the rest of the
-      system continues unaffected.
+    send operations are silent no-ops so the rest of the
+    system continues unaffected.
     """
 
     def __init__(self, event_bus, launch: bool = True, headless: bool = True, verbose: bool = False):
@@ -109,8 +113,14 @@ class DSPBridge:
             args.append("--headless")
 
         try:
-            self._process = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1,
-            ) # line-buffered
+            self._process = subprocess.Popen(
+                args, 
+                stdin=subprocess.PIPE, 
+                stdout=subprocess.PIPE, 
+                stderr=None, 
+                text=True, 
+                bufsize=1,    # line-buffered
+            )
             self._active = True
             if self._verbose:
                 mode = "headless" if headless else "full audio"
