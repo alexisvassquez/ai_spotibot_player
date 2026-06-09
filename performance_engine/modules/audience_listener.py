@@ -2,8 +2,9 @@
 # AudioMIX
 # performance_engine/modules/audience_listener.py
 
-# AudioMIX Audience Listener
 """
+AudioMIX Audience Listener
+
 Real-time crowd energy detection using ALSA
 microphone capture.
 
@@ -310,7 +311,7 @@ def start_listener(device: str = "default", sr: int = 32000, period_size: int = 
 
         pcm.close()
 
-    t = threading.Thread(target=worker, args=(_stop_flag,), daemon=True)
+    t = threading.Thread(target=worker, daemon=True)
     t.start()
     return _stop_flag
 

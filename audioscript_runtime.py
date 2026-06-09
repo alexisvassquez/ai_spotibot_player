@@ -2,22 +2,24 @@
 # AudioMIX
 # audioscript_runtime.py
 
-# This is the main runtime for AudioMIX's AudioScript.
-# It provides the shell interface,
-#  command registry, and built-in commands.
-# It also loads command modules from the
-#  performance_engine/modules directory.
-# The runtime supports a "safe mode" which only
-#  loads a limited set of modules for
-#  environments with strict security requirements.
-# Usage: 
-# python3 audioscript_runtime.py [--safe] [--no-emoji] [--no-symbols] [--debug] [script.audioscript]
-# 1. Run this script to start the AudioScript shell.
-# 2. Use load("module.py") to load command modules.
-# 3. Type AudioScript commands to control audio playback,
-#  LED patterns, and more.
-# The runtime also supports running .audioscript
-#  files passed as command-line arguments.
+"""
+This is the main runtime for AudioMIX's AudioScript.
+It provides the shell interface, command registry, and
+built-in commands.
+It also loads command modules from the 
+`performance_engine/modules` directory.
+The runtime supports a "safe mode" which only loads a 
+limited set of modules for environments with strict security requirements.
+
+Usage: python3 audioscript_runtime.py [--safe] [--no-emoji] [--no-symbols] [--debug] [script.audioscript]
+
+1. Run this script to start the AudioScript shell.
+2. Use load("module.py") to load command modules.
+3. Type AudioScript commands to control audio playback,
+LED patterns, and more.
+
+The runtime also supports running .audioscript files passed as command-line arguments.
+"""
 
 from __future__ import annotations
 import sys, os, importlib, shlex, atexit, time
@@ -162,11 +164,14 @@ register_command("get_mode", get_mode)
 # Hand off to existing low-latency playback (PortAudio)
 def play(path: str, **kwargs):
     """
-    Play the specified audio file with current playback mode settings.
+    Play the specified audio file with current playback mode settings via the AudioPlayer module.
+    Delegates to performance_engine.modules.audio_player
     """
     if SAFE_MODE:
-        say(f"[SAFE] Would play: {path} (no audio processing in safe mode)")
+        say(f"[SAFE] Would play: {path} (no audio in safe mode)")
         return
+    from performance_engine.modules.audio_player import play as _play
+    _play(path)
 
     #lazy
     from audio.ai.modules.convert_audio import ensure_internal
