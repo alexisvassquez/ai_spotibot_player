@@ -65,5 +65,3 @@ ehthumbs.db
 portaudio/
 *.save
 .ipynb_checkpoints/
-*.code-workspace
-/json/
