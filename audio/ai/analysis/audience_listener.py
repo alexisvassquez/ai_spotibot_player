@@ -8,15 +8,17 @@
 # If the average loudness exceeds a defined threshold,
 # it indicates that the audience is hyped or cheering.
 
-import pyaudio
 import numpy as np
-from torchaudio.functional import loudness
 
 def detect_hype(threshold_db=65, listen_time=3, chunk=1024, rate=44100):
     """
     Listens to the mic input and returns True if average loudness
     exceeds the threshold (indicating hype or cheering)
     """
+    # lazy, only loads when called
+    # helps with boot time for AS shell
+    import pyaudio
+    from torchaudio.functional import loudness
     p = pyaudio.PyAudio()
 
     stream = p.open(format=pyaudio.paInt16,

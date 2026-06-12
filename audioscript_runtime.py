@@ -22,7 +22,8 @@ The runtime also supports running .audioscript files passed as command-line argu
 """
 
 from __future__ import annotations
-import sys, os, importlib, shlex, atexit, time
+import sys, os, importlib, shlex, atexit
+import time as _time
 import readline
 from performance_engine.modules.context import command_registry
 
@@ -87,6 +88,7 @@ def load_modules():
     for file in os.listdir(module_dir):
         if not file.endswith(".py") or file.startswith("__"):
              continue
+        _t = _time.time()
 
         if SAFE_MODE and file not in SAFE_MODE_ALLOWLIST:
             if VERBOSE: say(f"Safe mode: skipping {file}")
@@ -110,6 +112,8 @@ def load_modules():
         except Exception as e:
             if VERBOSE:
                 say(f"❌ Failed to import {file}: {e}", "💥")
+        if VERBOSE:
+            say(f"  loaded in {_time.time()-_t:.2f}s")
 
 # Built-in AS functions
 # Lazy imports
@@ -338,11 +342,15 @@ def main():
             parse_and_execute(line)
         except KeyboardInterrupt:
             say("Exiting AudioMIX Shell. Goodbye 👋", "🛑")
+            try:
+                readline.write_history_file(histfile)
+            except OSError:
+                pass
             bridge.shutdown()
             break
         except Exception as e:
             say(f"[AS Shell Error] {e}", "❌")
-            time.sleep(0.01)
+            _time.sleep(0.01)
 
 if __name__ == "__main__":
     main()

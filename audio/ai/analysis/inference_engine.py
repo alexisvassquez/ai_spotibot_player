@@ -2,12 +2,15 @@
 # AudioMIX
 # audio/ai/analysis/inference_engine.py
 
-# Inference Engine for AudioMIX
-# This module takes extracted audio features and
-#  infers high-level events, moods, and lighting profiles.
-# It generates an AudioScript with inferred commands
-#  and a lighting profile based on detected emotions,
-#  BPM, and audience engagement.
+"""
+AudioMIX Inference Engine
+
+This module takes extracted audio features and
+infers high-level events, moods, and lighting profiles.
+It generates an AudioScript with inferred commands
+and a lighting profile based on detected emotions,
+BPM, and audience engagement.
+"""
 
 import os
 import json

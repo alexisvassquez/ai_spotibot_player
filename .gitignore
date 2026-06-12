@@ -18,6 +18,7 @@ myenv/
 venv/
 ENV/
 amenv/
+.venv/
 
 # === dotenv credentials ===
 .env
@@ -66,4 +67,3 @@ ehthumbs.db
 portaudio/
 *.save
 .ipynb_checkpoints/
-
