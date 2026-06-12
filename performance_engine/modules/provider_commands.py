@@ -24,6 +24,6 @@ def stop_provider(provider="spotify"):
 
 def register():
     return {
-        "play": play_provider,    # e.g, play("<song_title>, "spotify")
-        "stop": stop_provider
+        "provider.play": play_provider,    # e.g, play("<song_title>, "spotify")
+        "provider.stop": stop_provider
     }
